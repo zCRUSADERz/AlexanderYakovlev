@@ -6,6 +6,9 @@ import static org.junit.Assert.assertThat;
 
 /**
  * Calculator test.
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 30.12.2017
+ * @version 1.0
  */
 public class CalculatorTest {
 

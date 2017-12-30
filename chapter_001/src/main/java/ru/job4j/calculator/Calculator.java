@@ -2,12 +2,9 @@ package ru.job4j.calculator;
 
 /**
  * Calculator
- *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 30.12.2017
  * @version 1.0
- *
- *
  */
 public class Calculator {
     private double result;
