@@ -1,9 +1,7 @@
 package ru.job4j.condition;
 
-import java.math.BigDecimal;
-
 /**
- * triangle.
+ * Triangle.
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 31.12.2017
  * @version 1.0
@@ -24,7 +22,7 @@ public class Triangle {
      * @param ab - distance between points a and b.
      * @param ac - distance between points a and c.
      * @param bc - distance between points b and c.
-     * @return - semiperimitr.
+     * @return - semiperimeter.
      */
     private double semiperimeter(double ab, double ac, double bc) {
         return (ab + ac + bc) / 2;
