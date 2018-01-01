@@ -21,4 +21,14 @@ public class MaxTest {
         int result = maximum.max(1, 2);
         assertThat(result, is(2));
     }
+
+    /**
+     * Test maximum of three numbers.
+     */
+    @Test
+    public void whenFirstLessSecondAndSecondLessThird() {
+        Max maximum = new Max();
+        int result = maximum.max(1, 2, 3);
+        assertThat(result, is(3));
+    }
 }
