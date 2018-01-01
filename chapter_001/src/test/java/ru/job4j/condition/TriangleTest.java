@@ -1,6 +1,7 @@
 package ru.job4j.condition;
 
 import org.junit.Test;
+
 import static org.hamcrest.number.IsCloseTo.closeTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -31,12 +32,13 @@ public class TriangleTest {
      * Test non-existent triangle.
      */
     @Test
-    public void whenTriangleSetThreePointsOnOneStraightLineThenTriangleAreaMinusOne() {
+    public void whenSetThreePointsOnOneStraightLineThenTriangleAreaMinusOne() {
         Point a = new Point(0, 0);
         Point b = new Point(2, 2);
         Point c = new Point(10, 10);
         Triangle triangle = new Triangle(a, b, c);
         double result = triangle.area();
-        assertThat(result, is(-1.0));
+        double expected = -1.0;
+        assertThat(result, is(expected));
     }
 }
