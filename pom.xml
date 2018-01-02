@@ -1,10 +1,10 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
 	<groupId>ru.job4j</groupId>
-	<artifactId>junior</artifactId>
+	<artifactId>AlexanderYakovlev</artifactId>
 	<packaging>pom</packaging>
 	<version>2.0</version>
-	<name>junior</name>
+	<name>AlexanderYakovlev</name>
 	<url>http://job4j.ru/</url>
 	
 	<properties>
@@ -15,7 +15,8 @@
 	
 	<modules>
 	    <module>chapter_001</module>
-    </modules>
+		<module>chapter_002</module>
+	</modules>
 	
 	<dependencies>
 	    <dependency>
