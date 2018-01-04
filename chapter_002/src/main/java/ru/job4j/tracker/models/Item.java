@@ -1,4 +1,4 @@
-package ru.job4j.tracker;
+package ru.job4j.tracker.models;
 
 /**
  * Item.
@@ -36,5 +36,21 @@ public class Item {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name != null ? name : "";
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc != null ? desc : "";
+    }
+
+    public long getCreated() {
+        return created;
     }
 }
