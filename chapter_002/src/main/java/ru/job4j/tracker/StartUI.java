@@ -64,7 +64,7 @@ public class StartUI {
      * @param input - user input.
      * @param tracker - tracker for items.
      */
-    private StartUI(Input input, Tracker tracker) {
+    public StartUI(Input input, Tracker tracker) {
         this.input = input;
         this.tracker = tracker;
     }
@@ -80,7 +80,7 @@ public class StartUI {
     /**
      * Init console program.
      */
-    private void init() {
+    public void init() {
         boolean exit = false;
         while (!exit) {
             showMenu();

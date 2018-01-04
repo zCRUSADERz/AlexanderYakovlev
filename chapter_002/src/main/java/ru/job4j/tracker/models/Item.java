@@ -1,5 +1,7 @@
 package ru.job4j.tracker.models;
 
+import java.util.Date;
+
 /**
  * Item.
  *
@@ -13,6 +15,15 @@ public class Item {
     private String desc;
     private long created;
     private String[] comments;
+
+    /**
+     * Default constructor.
+     */
+    public Item() {
+        name = "";
+        desc = "";
+        created = new Date().getTime();
+    }
 
     /**
      * Constructor item.
