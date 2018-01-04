@@ -17,8 +17,7 @@ public class BoardTest {
     public void whenPaintBoardWithWidthThreeAndHeightThreeThenStringWithThreeColsAndThreeRows() {
         Board board = new Board();
         String result = board.paint(3, 3);
-        String line = System.getProperty("line.separator");
-        String expected = String.format("X X%s X %sX X%s", line, line, line);
+        String expected = String.format("X X%n X %nX X%n");
         assertThat(result, is(expected));
     }
 
@@ -26,8 +25,7 @@ public class BoardTest {
     public void whenPaintBoardWithWidthFiveAndHeightFourThenStringWithFiveColsAndFourRows() {
         Board board = new Board();
         String result = board.paint(5, 4);
-        String line = System.getProperty("line.separator");
-        String expected = String.format("X X X%s X X %sX X X%s X X %s", line, line, line, line);
+        String expected = String.format("X X X%n X X %nX X X%n X X %n");
         assertThat(result, is(expected));
     }
 }
