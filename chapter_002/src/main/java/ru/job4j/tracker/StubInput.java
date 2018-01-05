@@ -25,6 +25,8 @@ public class StubInput implements Input {
      * @return - answer.
      */
     public String ask(String question) {
+        System.out.print(question);
+        System.out.println();
         return answers[position++];
     }
 }
