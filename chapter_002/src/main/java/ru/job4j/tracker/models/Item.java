@@ -1,5 +1,6 @@
 package ru.job4j.tracker.models;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -63,5 +64,18 @@ public class Item {
 
     public long getCreated() {
         return created;
+    }
+
+    /**
+     * Item to string.
+     */
+    public String toString() {
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+        return new StringBuilder()
+                .append(String.format("Заявка: %s, Id: %s%n", name, id))
+                .append(String.format("Описание: %s%n", desc))
+                .append(String.format("Дата создания заявки: %s%n", format.format(new Date(created))))
+                .append("-------------------------")
+                .toString();
     }
 }
