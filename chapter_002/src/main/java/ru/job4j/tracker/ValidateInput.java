@@ -7,7 +7,29 @@ package ru.job4j.tracker;
  * @since 6.01.2017
  * @version 1.0
  */
-public class ValidateInput extends ConsoleInput {
+public class ValidateInput implements Input {
+    /**
+     * User input.
+     */
+    private final Input input;
+
+    /**
+     * Constructor.
+     * @param input - user input.
+     */
+    public ValidateInput(Input input) {
+        this.input = input;
+    }
+
+    /**
+     * Ask user.
+     * @param question - question for user.
+     * @return - answer.
+     */
+    @Override
+    public String ask(String question) {
+        return input.ask(question);
+    }
 
     /**
      * Ask user valid answer.
@@ -21,7 +43,7 @@ public class ValidateInput extends ConsoleInput {
         boolean invalid = true;
         do {
             try {
-                value = super.ask(question, range);
+                value = input.ask(question, range);
                 invalid = false;
             } catch (MenuOutException moe) {
                 System.out.println(moe.getMessage());
