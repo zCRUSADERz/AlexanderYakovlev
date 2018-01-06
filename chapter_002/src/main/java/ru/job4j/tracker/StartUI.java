@@ -24,20 +24,14 @@ public class StartUI {
     private final MenuTracker menu;
 
     /**
-     * Range of key menu.
-     */
-    private int[] range;
-
-    /**
      * Constructor user interface.
      * @param input - user input.
      * @param tracker - tracker for items.
      */
-    public StartUI(Input input, Tracker tracker) {
+    StartUI(Input input, Tracker tracker) {
         this.input = input;
         this.tracker = tracker;
         menu = new MenuTracker(input, tracker);
-        range = menu.getRange();
     }
 
     /**
@@ -55,7 +49,7 @@ public class StartUI {
         int key;
         do {
             menu.show();
-            key = input.ask("Введите пункт меню: ", range);
+            key = input.ask("Введите пункт меню: ", menu.getRange());
             menu.select(key);
         } while (key != 6);
     }

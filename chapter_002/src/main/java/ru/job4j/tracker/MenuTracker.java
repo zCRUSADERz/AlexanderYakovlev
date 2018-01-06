@@ -23,11 +23,15 @@ public class MenuTracker {
     /**
      * User actions.
      */
-    private UserAction[] actions = new UserAction[7];
+    private UserAction[] actions = new UserAction[20];
     /**
      * Range of key menu.
      */
-    private final int[] range = new int[7];
+    private int[] range = new int[20];
+    /**
+     * Position in actions array;
+     */
+    private int position;
 
     /**
      * Constructor menu tracker.
@@ -40,13 +44,17 @@ public class MenuTracker {
         fillActions();
     }
 
+    public int[] getRange() {
+        return range;
+    }
+
     /**
      * Show menu.
      */
     public void show() {
         System.out.println("Меню.");
-        for (UserAction action : actions) {
-            System.out.println(action.info());
+        for (int i = 0; i < position; i++) {
+            System.out.println(actions[i].info());
         }
     }
 
@@ -58,37 +66,47 @@ public class MenuTracker {
         actions[key].execute(input, tracker);
     }
 
-    public int[] getRange() {
-        return range;
+    /**
+     * Add new user action in menu.
+     * @param action - user action.
+     */
+    public void addActions(UserAction action) {
+        actions[position++] = action;
+        updateRange();
+    }
+
+    /**
+     * Update range of key menu.
+     */
+    private void updateRange() {
+        range[position - 1] = position - 1;
     }
 
     /**
      * Fill all action in array.
      */
     private void fillActions() {
-        actions[0] = new AddItem();
-        actions[1] = new ShowAllItem();
-        actions[2] = new EditItem();
-        actions[3] = new DeleteItem();
-        actions[4] = new FindById();
-        actions[5] = new FindByName();
-        actions[6] = new Exit();
-        for (UserAction action : actions) {
-            int key = action.key();
-            range[key] = key;
-        }
+        addActions(new AddItem(0, "Добавить новую заявку"));
+        addActions(new ShowAllItem(1, "Показать все заявки"));
+        addActions(new EditItem(2, "Редактировать заявку"));
+        addActions(new DeleteItem(3, "Удалить заявку"));
+        addActions(new FindById(4, "Найти заявку по Id"));
+        addActions(new FindByName(5, "Найти заявку по названию"));
+        addActions(new Exit(6, "Закончить работу"));
     }
 
     /**
      * User action: add item in tracker.
      */
-    private class AddItem implements UserAction {
+    private class AddItem extends BaseAction {
+
         /**
-         * Key action.
-         * @return - key.
+         * Constructor.
+         * @param key - menu key.
+         * @param name - name action;
          */
-        public int key() {
-            return 0;
+        public AddItem(int key, String name) {
+            super(key, name);
         }
 
         /**
@@ -104,26 +122,20 @@ public class MenuTracker {
             tracker.add(item);
             System.out.println("---------- Новая заявка с Id: " + item.getId() + " ----------");
         }
-
-        /**
-         * Print info.
-         * @return - info.
-         */
-        public String info() {
-            return key() + ". Добавить новую заявку.";
-        }
     }
 
     /**
      * User action: show all item in tracker.
      */
-    private static class ShowAllItem implements UserAction {
+    private static class ShowAllItem extends BaseAction {
+
         /**
-         * Key action.
-         * @return - key.
+         * Constructor.
+         * @param key - menu key.
+         * @param name - name action;
          */
-        public int key() {
-            return 1;
+        public ShowAllItem(int key, String name) {
+            super(key, name);
         }
 
         /**
@@ -142,26 +154,20 @@ public class MenuTracker {
                 System.out.println("- Зарегистрированных заявок в системе нет.");
             }
         }
-
-        /**
-         * Print info.
-         * @return - info.
-         */
-        public String info() {
-            return key() + ". Показать все заявки.";
-        }
     }
 
     /**
      * User action: edit item in tracker.
      */
-    private class EditItem implements UserAction {
+    private class EditItem extends BaseAction {
+
         /**
-         * Key action.
-         * @return - key.
+         * Constructor.
+         * @param key - menu key.
+         * @param name - name action;
          */
-        public int key() {
-            return 2;
+        public EditItem(int key, String name) {
+            super(key, name);
         }
 
         /**
@@ -183,26 +189,20 @@ public class MenuTracker {
                 System.out.println("- Заявка с Id: " + id + " не зарегистрированна в системе.");
             }
         }
-
-        /**
-         * Print info.
-         * @return - info.
-         */
-        public String info() {
-            return key() + ". Редактировать заявку.";
-        }
     }
 
     /**
      * User action: delete item in tracker.
      */
-    private class DeleteItem implements UserAction {
+    private class DeleteItem extends BaseAction {
+
         /**
-         * Key action.
-         * @return - key.
+         * Constructor.
+         * @param key - menu key.
+         * @param name - name action;
          */
-        public int key() {
-            return 3;
+        public DeleteItem(int key, String name) {
+            super(key, name);
         }
 
         /**
@@ -215,26 +215,20 @@ public class MenuTracker {
             String id = input.ask("Введите Id заявки, которую желаете удалить: ");
             tracker.delete(id);
         }
-
-        /**
-         * Print info.
-         * @return - info.
-         */
-        public String info() {
-            return key() + ". Удалить заявку.";
-        }
     }
 
     /**
      * User action: find item by Id in tracker.
      */
-    private class FindById implements UserAction {
+    private class FindById extends BaseAction {
+
         /**
-         * Key action.
-         * @return - key.
+         * Constructor.
+         * @param key - menu key.
+         * @param name - name action;
          */
-        public int key() {
-            return 4;
+        public FindById(int key, String name) {
+            super(key, name);
         }
 
         /**
@@ -252,27 +246,21 @@ public class MenuTracker {
                 System.out.println("- Заявка с Id: " + id + " не зарегистрированна в системе.");
             }
         }
-
-        /**
-         * Print info.
-         * @return - info.
-         */
-        public String info() {
-            return key() + ". Найти заявку по Id.";
-        }
     }
 }
 
 /**
  * User action: find items by name in tracker.
  */
-class FindByName implements UserAction {
+class FindByName extends BaseAction {
+
     /**
-     * Key action.
-     * @return - key.
+     * Constructor.
+     * @param key - menu key.
+     * @param name - name action;
      */
-    public int key() {
-        return 5;
+    public FindByName(int key, String name) {
+        super(key, name);
     }
 
     /**
@@ -293,26 +281,20 @@ class FindByName implements UserAction {
             System.out.println("- Зарегистрированных заявок с названием " + name + " в системе нет.");
         }
     }
-
-    /**
-     * Print info.
-     * @return - info.
-     */
-    public String info() {
-        return key() + ". Найти заявку по названию.";
-    }
 }
 
 /**
  * User action: exit.
  */
-class Exit implements UserAction {
+class Exit extends BaseAction {
+
     /**
-     * Key action.
-     * @return - key.
+     * Constructor.
+     * @param key - menu key.
+     * @param name - name action;
      */
-    public int key() {
-        return 6;
+    public Exit(int key, String name) {
+        super(key, name);
     }
 
     /**
@@ -321,13 +303,5 @@ class Exit implements UserAction {
      * @param tracker - tracker.
      */
     public void execute(Input input, Tracker tracker) {
-    }
-
-    /**
-     * Print info.
-     * @return - info.
-     */
-    public String info() {
-        return key() + ". Закончить работу.";
     }
 }
