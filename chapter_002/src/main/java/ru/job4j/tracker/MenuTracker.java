@@ -4,6 +4,13 @@ import ru.job4j.tracker.models.Item;
 
 import java.util.Date;
 
+/**
+ * Menu tracker.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 5.01.2017
+ * @version 1.0
+ */
 public class MenuTracker {
     /**
      * User input.
@@ -17,6 +24,10 @@ public class MenuTracker {
      * User actions.
      */
     private UserAction[] actions = new UserAction[7];
+    /**
+     * Range of key menu.
+     */
+    private final int[] range = new int[7];
 
     /**
      * Constructor menu tracker.
@@ -47,6 +58,10 @@ public class MenuTracker {
         actions[key].execute(input, tracker);
     }
 
+    public int[] getRange() {
+        return range;
+    }
+
     /**
      * Fill all action in array.
      */
@@ -58,10 +73,14 @@ public class MenuTracker {
         actions[4] = new FindById();
         actions[5] = new FindByName();
         actions[6] = new Exit();
+        for (UserAction action : actions) {
+            int key = action.key();
+            range[key] = key;
+        }
     }
 
     /**
-     * Class add item in tracker.
+     * User action: add item in tracker.
      */
     private class AddItem implements UserAction {
         /**
@@ -96,7 +115,7 @@ public class MenuTracker {
     }
 
     /**
-     * Class show all item in tracker.
+     * User action: show all item in tracker.
      */
     private static class ShowAllItem implements UserAction {
         /**
@@ -133,6 +152,9 @@ public class MenuTracker {
         }
     }
 
+    /**
+     * User action: edit item in tracker.
+     */
     private class EditItem implements UserAction {
         /**
          * Key action.
@@ -171,6 +193,9 @@ public class MenuTracker {
         }
     }
 
+    /**
+     * User action: delete item in tracker.
+     */
     private class DeleteItem implements UserAction {
         /**
          * Key action.
@@ -200,6 +225,9 @@ public class MenuTracker {
         }
     }
 
+    /**
+     * User action: find item by Id in tracker.
+     */
     private class FindById implements UserAction {
         /**
          * Key action.
@@ -235,6 +263,9 @@ public class MenuTracker {
     }
 }
 
+/**
+ * User action: find items by name in tracker.
+ */
 class FindByName implements UserAction {
     /**
      * Key action.
@@ -244,6 +275,11 @@ class FindByName implements UserAction {
         return 5;
     }
 
+    /**
+     * Find items by name in tracker.
+     * @param input - user input.
+     * @param tracker - tracker.
+     */
     public void execute(Input input, Tracker tracker) {
         System.out.println("---------- Поис заявки по названию ----------");
         String name = input.ask("Введите название заявки(ок), которую(ые) желаете найти: ");
@@ -267,6 +303,9 @@ class FindByName implements UserAction {
     }
 }
 
+/**
+ * User action: exit.
+ */
 class Exit implements UserAction {
     /**
      * Key action.
@@ -276,6 +315,11 @@ class Exit implements UserAction {
         return 6;
     }
 
+    /**
+     * Exit.
+     * @param input - user input.
+     * @param tracker - tracker.
+     */
     public void execute(Input input, Tracker tracker) {
     }
 

@@ -11,6 +11,9 @@ import ru.job4j.tracker.models.Item;
  */
 public class Tracker {
     private Item[] items = new Item[100];
+    /**
+     * Position in items array;
+     */
     private int position = 0;
     private int nextId = 1;
 

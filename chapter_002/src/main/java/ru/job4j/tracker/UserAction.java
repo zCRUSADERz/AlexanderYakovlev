@@ -15,7 +15,16 @@ public interface UserAction {
      */
     int key();
 
+    /**
+     * Run user action.
+     * @param input - user input.
+     * @param tracker - tracker.
+     */
     void execute(Input input, Tracker tracker);
 
+    /**
+     * Menu info.
+     * @return - menu info.
+     */
     String info();
 }

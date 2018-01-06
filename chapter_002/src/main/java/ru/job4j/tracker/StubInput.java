@@ -29,4 +29,14 @@ public class StubInput implements Input {
         System.out.println();
         return answers[position++];
     }
+
+    /**
+     * Ask user valid answer.
+     * @param question - question.
+     * @param range - range of key menu.
+     * @return - key menu.
+     */
+    public int ask(String question, int[] range) {
+        return Integer.valueOf(ask(question));
+    }
 }

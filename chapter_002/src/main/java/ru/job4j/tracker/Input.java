@@ -15,4 +15,12 @@ public interface Input {
      * @return - answer.
      */
     String ask(String question);
+
+    /**
+     * Ask user valid answer.
+     * @param question - question.
+     * @param range - range of key menu.
+     * @return - key menu.
+     */
+    int ask(String question, int[] range);
 }
