@@ -34,26 +34,13 @@ public class Bishop extends Figure {
             int nextX = source.x;
             int nextY = source.y;
             for (int i = 0; i < cells.length; i++) {
-                if (first) {
-                    if (numCells > 0) {
-                        nextX++;
-                        nextY++;
-                    } else {
-                        nextX--;
-                        nextY--;
-                    }
-                    cells[i] = new Cell(nextX, nextY);
+                nextX += numCells > 0 ? 1 : -1;
+                if ((first && (numCells > 0) || (second && (numCells < 0)))) {
+                    nextY++;
                 } else {
-                    if (numCells > 0) {
-                        nextX++;
-                        nextY--;
-                    } else {
-                        nextX--;
-                        nextY++;
-                    }
-                    cells[i] = new Cell(nextX, nextY);
+                    nextY--;
                 }
-
+                cells[i] = new Cell(nextX, nextY);
             }
             return cells;
         } else {
