@@ -45,7 +45,9 @@ public class MenuTracker {
     }
 
     public int[] getRange() {
-        return range;
+        int[] tmp = new int[position];
+        System.arraycopy(range, 0, tmp, 0, position);
+        return tmp;
     }
 
     /**
@@ -92,7 +94,6 @@ public class MenuTracker {
         addActions(new DeleteItem(3, "Удалить заявку"));
         addActions(new FindById(4, "Найти заявку по Id"));
         addActions(new FindByName(5, "Найти заявку по названию"));
-        addActions(new Exit(6, "Закончить работу"));
     }
 
     /**
@@ -269,7 +270,7 @@ class FindByName extends BaseAction {
      * @param tracker - tracker.
      */
     public void execute(Input input, Tracker tracker) {
-        System.out.println("---------- Поис заявки по названию ----------");
+        System.out.println("---------- Поиск заявки по названию ----------");
         String name = input.ask("Введите название заявки(ок), которую(ые) желаете найти: ");
         Item[] items = tracker.findByName(name);
         if (items != null) {
@@ -287,14 +288,20 @@ class FindByName extends BaseAction {
  * User action: exit.
  */
 class Exit extends BaseAction {
+    /**
+     * Object to be stopped.
+     */
+    private Stop stop;
 
     /**
      * Constructor.
-     * @param key - menu key.
-     * @param name - name action;
+     * @param key - Key menu.
+     * @param name - Name user action.
+     * @param stop - Object to be stopped.
      */
-    public Exit(int key, String name) {
+    public Exit(int key, String name, Stop stop) {
         super(key, name);
+        this.stop = stop;
     }
 
     /**
@@ -303,5 +310,6 @@ class Exit extends BaseAction {
      * @param tracker - tracker.
      */
     public void execute(Input input, Tracker tracker) {
+        stop.stop();
     }
 }

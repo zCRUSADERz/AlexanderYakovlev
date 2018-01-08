@@ -38,7 +38,10 @@ public class ValidateInputTest {
         );
         input.ask("Enter", new int[]{1});
         assertThat(
-                out.toString().split(System.lineSeparator())[1],
-                is("Введите корректное значение снова."));
+                out.toString(),
+                is(
+                        String.format("Enter%nВведите корректное значение снова.%nEnter%n")
+                )
+        );
     }
 }

@@ -1,12 +1,17 @@
 package ru.job4j.tracker;
 
-import com.sun.javafx.binding.StringFormatter;
-
+/**
+ * Base user action.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 6.01.2017
+ * @version 1.0
+ */
 public abstract class BaseAction implements UserAction {
     private final int key;
     private final String name;
 
-    protected BaseAction(final int key, final String name) {
+    protected BaseAction(int key, String name) {
         this.key = key;
         this.name = name;
     }

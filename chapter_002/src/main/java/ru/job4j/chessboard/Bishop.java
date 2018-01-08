@@ -28,7 +28,9 @@ public class Bishop extends Figure {
         Cell[] cells;
         boolean first = (source.x - dest.x) == (source.y - dest.y);
         boolean second = (source.x + source.y) == (dest.x + dest.y);
-        if (first || second) {
+        if (!(first || second)) {
+            throw new ImposibleMoveException(String.format("Ход на ячейку %d:%d невозможен.", dest.x, dest.y));
+        } else {
             int numCells = dest.x - source.x;
             cells = new Cell[Math.abs(numCells)];
             int nextX = source.x;
@@ -42,10 +44,8 @@ public class Bishop extends Figure {
                 }
                 cells[i] = new Cell(nextX, nextY);
             }
-            return cells;
-        } else {
-            throw new ImposibleMoveException(String.format("Ход на ячейку %d:%d невозможен.", dest.x, dest.y));
         }
+        return cells;
     }
 
     /**

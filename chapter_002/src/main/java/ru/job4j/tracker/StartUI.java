@@ -7,7 +7,7 @@ package ru.job4j.tracker;
  * @since 4.01.2017
  * @version 2.0
  */
-public class StartUI {
+public class StartUI implements Stop {
     /**
      * User input
      */
@@ -22,6 +22,10 @@ public class StartUI {
      * Tracker menu.
      */
     private final MenuTracker menu;
+    /**
+     * Flag to exit the program;
+     */
+    private boolean working;
 
     /**
      * Constructor user interface.
@@ -32,6 +36,8 @@ public class StartUI {
         this.input = input;
         this.tracker = tracker;
         menu = new MenuTracker(input, tracker);
+        working = true;
+        menu.addActions(new Exit((menu.getRange().length), "Закончить работу", this));
     }
 
     /**
@@ -46,11 +52,13 @@ public class StartUI {
      * Init console program.
      */
     public void init() {
-        int key;
         do {
             menu.show();
-            key = input.ask("Введите пункт меню: ", menu.getRange());
-            menu.select(key);
-        } while (key != 6);
+            menu.select(input.ask("Введите пункт меню: ", menu.getRange()));
+        } while (working);
+    }
+
+    public void stop() {
+        working = false;
     }
 }
