@@ -4,6 +4,7 @@ import org.junit.Test;
 import ru.job4j.tracker.models.Item;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -77,8 +78,7 @@ public class TrackerTest {
     public void whenEmptyTrackerthenFindAllResultNull() {
         Tracker tracker = new Tracker();
         Item[] result = tracker.findAll();
-        Item[] expected = null;
-        assertThat(result, is(expected));
+        assertThat(result, is(nullValue()));
     }
 
     @Test
@@ -103,8 +103,7 @@ public class TrackerTest {
         Item item1 = new Item("test1", "testDescription1", 123L);
         tracker.add(item1);
         Item[] result = tracker.findByName("test");
-        Item[] expected = null;
-        assertThat(result, is(expected));
+        assertThat(result, is(nullValue()));
     }
 
     @Test
@@ -113,8 +112,7 @@ public class TrackerTest {
         Item item1 = new Item("test1", "testDescription1", 123L);
         tracker.add(item1);
         Item result = tracker.findById("0");
-        Item expected = null;
-        assertThat(result, is(expected));
+        assertThat(result, is(nullValue()));
     }
 
     @Test

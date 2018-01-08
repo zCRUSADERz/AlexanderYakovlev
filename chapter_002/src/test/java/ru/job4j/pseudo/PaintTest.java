@@ -10,6 +10,14 @@ import java.io.PrintStream;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+
+/**
+ * Paint test.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 5.01.2017
+ * @version 1.0
+ */
 public class PaintTest {
     private final PrintStream stdout = System.out;
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();

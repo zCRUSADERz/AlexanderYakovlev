@@ -5,13 +5,12 @@ import org.junit.Before;
 import org.junit.Test;
 import ru.job4j.tracker.models.Item;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -95,8 +94,7 @@ public class StartUITest {
     @Test
     public void whenAddItemAndUserSelectShowAllItemThenShowAllItem() {
         Tracker tracker = new Tracker();
-        Date itemCreatedDate = new Date();
-        Item item = new Item("1", "desc item", itemCreatedDate.getTime());
+        Item item = new Item("1", "desc item");
         tracker.add(item);
         Input input = new StubInput(new String[]{"1", "6"});
         new StartUI(input, tracker).init();
@@ -119,7 +117,7 @@ public class StartUITest {
                                 .append("Дата создания заявки: ")
                                 .append(
                                         new SimpleDateFormat("dd.MM.yyyy hh:mm")
-                                                .format(itemCreatedDate)
+                                                .format(item.getDateCreated())
                                 )
                                 .append("-------------------------")
                                 .toString()
@@ -142,7 +140,7 @@ public class StartUITest {
     @Test
     public void whenAddItemAndUserEditThisItemThenShowEdit() {
         Tracker tracker = new Tracker();
-        Item item = new Item("test name", "desc", 1);
+        Item item = new Item("test name", "desc");
         tracker.add(item);
         Input input = new StubInput(new String[]{"2", item.getId(), "test name", "desc", "6"});
         new StartUI(input, tracker).init();
@@ -214,21 +212,19 @@ public class StartUITest {
     public void whenUserDeleteItemWithIdTwoThenTrackerRemoveThisItem() {
         Tracker tracker = new Tracker();
         Item item1 = tracker.add(new Item());
-        Item item2 = tracker.add(new Item());
-        Item item3 = tracker.add(new Item());
+        tracker.add(new Item());
+        tracker.add(new Item());
         String itemId = item1.getId();
         Input input = new StubInput(new String[]{"3", itemId, "6"});
         new StartUI(input, tracker).init();
         Item result = tracker.findById(itemId);
-        Item expected = null;
-        assertThat(result, is(expected));
+        assertThat(result, is(nullValue()));
     }
 
     @Test
     public void whenAddItemAndUserSelectFindByIdThenShowThisItem() {
         Tracker tracker = new Tracker();
-        Date itemCreated = new Date();
-        Item item = tracker.add(new Item("1", "desc", itemCreated.getTime()));
+        Item item = tracker.add(new Item("1", "desc"));
         String itemId = item.getId();
         Input input = new StubInput(new String[]{"4", itemId, "6"});
         new StartUI(input, tracker).init();
@@ -253,7 +249,7 @@ public class StartUITest {
                                 .append("Дата создания заявки: ")
                                 .append(
                                         new SimpleDateFormat("dd.MM.yyyy hh:mm")
-                                                .format(itemCreated)
+                                                .format(item.getDateCreated())
                                 )
                                 .append("-------------------------")
                                 .toString()
@@ -270,14 +266,13 @@ public class StartUITest {
         String[] strings = outString.split(System.lineSeparator());
         String result = strings[11];
         String expected = "- Заявка с Id: 1 не зарегистрированна в системе.";
+        assertThat(result, is(expected));
     }
 
     @Test
     public void whenAddItemAndUserSelectFindByNameThisItemThenShowItem() {
         Tracker tracker = new Tracker();
-        Date itemCreated = new Date();
-        Item item = tracker.add(new Item("1", "desc", itemCreated.getTime()));
-        String itemId = item.getId();
+        Item item = tracker.add(new Item("1", "desc"));
         Input input = new StubInput(new String[]{"5", item.getName(), "6"});
         new StartUI(input, tracker).init();
         String outString = new String(out.toByteArray());
@@ -303,7 +298,7 @@ public class StartUITest {
                                 .append("Дата создания заявки: ")
                                 .append(
                                         new SimpleDateFormat("dd.MM.yyyy hh:mm")
-                                                .format(itemCreated)
+                                                .format(item.getDateCreated())
                                 )
                                 .append("-------------------------")
                                 .toString()
@@ -320,5 +315,6 @@ public class StartUITest {
         String[] strings = outString.split(System.lineSeparator());
         String result = strings[11];
         String expected = "- Зарегистрированных заявок с названием name в системе нет.";
+        assertThat(result, is(expected));
     }
 }

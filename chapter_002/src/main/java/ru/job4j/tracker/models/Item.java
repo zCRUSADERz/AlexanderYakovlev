@@ -30,6 +30,17 @@ public class Item {
      * Constructor item.
      * @param name - name.
      * @param desc - description.
+     */
+    public Item(String name, String desc) {
+        this.name = name;
+        this.desc = desc;
+        created = new Date().getTime();
+    }
+
+    /**
+     * Constructor item.
+     * @param name - name.
+     * @param desc - description.
      * @param created - date of creation.
      */
     public Item(String name, String desc, long created) {
@@ -62,8 +73,8 @@ public class Item {
         this.desc = desc != null ? desc : "";
     }
 
-    public long getCreated() {
-        return created;
+    public Date getDateCreated() {
+        return new Date(created);
     }
 
     /**
