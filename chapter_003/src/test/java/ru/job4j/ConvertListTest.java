@@ -20,7 +20,7 @@ public class ConvertListTest {
     @Test
     public void whenArrayToList() {
         ConvertList convert = new ConvertList();
-        int[][] array = new int[][]{{1},{4}};
+        int[][] array = new int[][]{{1}, {4}};
         List<Integer> result = convert.toList(array);
         List<Integer> expected = new ArrayList<>(Arrays.asList(1, 4));
         assertThat(result, is(expected));

@@ -23,7 +23,7 @@ public class ConvertList {
         for (int[] arr : array) {
             capacity += arr.length;
         }
-        List<Integer> list = new ArrayList<>((int)(capacity * 1.25));
+        List<Integer> list = new ArrayList<>((int) (capacity * 1.25));
         for (int[] arr : array) {
             for (int num : arr) {
                 list.add(num);
@@ -39,7 +39,7 @@ public class ConvertList {
      * @return - array.
      */
     public int[][] toArray(List<Integer> list, int rows) {
-        double size = (double)list.size() / rows;
+        double size = (double) list.size() / rows;
         int column = (size % (int) size) != 0 ? (int) size + 1 : (int) size;
         int[][] array = new int[rows][column];
         Iterator<Integer> iterator = list.iterator();
