@@ -78,7 +78,7 @@ public class StartUITest {
         Tracker tracker = new Tracker();
         Input input = new StubInput(new String[]{"0", "test name", "desc", "6"});
         new StartUI(input, tracker).init();
-        assertThat(tracker.findAll()[0].getName(), is("test name"));
+        assertThat(tracker.findAll().get(0).getName(), is("test name"));
     }
 
     @Test
@@ -155,7 +155,7 @@ public class StartUITest {
     @Test
     public void whenUserEditItemThenTrackerHasUpdatedValue() {
         Tracker tracker = new Tracker();
-        Item item = tracker.add(new Item());
+        Item item = tracker.add(new Item("", ""));
         Input input = new StubInput(new String[]{"2", item.getId(), "test name", "desc", "6"});
         new StartUI(input, tracker).init();
         assertThat(tracker.findById(item.getId()).getName(), is("test name"));
@@ -181,9 +181,9 @@ public class StartUITest {
     @Test
     public void whenUserDeleteItemWithIdTwoThenTrackerRemoveThisItem() {
         Tracker tracker = new Tracker();
-        Item item1 = tracker.add(new Item());
-        tracker.add(new Item());
-        tracker.add(new Item());
+        Item item1 = tracker.add(new Item("", ""));
+        tracker.add(new Item("", ""));
+        tracker.add(new Item("", ""));
         String itemId = item1.getId();
         Input input = new StubInput(new String[]{"3", itemId, "6"});
         new StartUI(input, tracker).init();

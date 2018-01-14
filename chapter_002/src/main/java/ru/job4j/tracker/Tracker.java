@@ -2,19 +2,19 @@ package ru.job4j.tracker;
 
 import ru.job4j.tracker.models.Item;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
 /**
  * Tracker item.
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 3.01.2017
- * @version 1.0
+ * @version 2.0
  */
 public class Tracker {
-    private Item[] items = new Item[100];
-    /**
-     * Position in items array;
-     */
-    private int position = 0;
+    private final ArrayList<Item> items = new ArrayList<>();
     private int nextId = 1;
 
     /**
@@ -24,7 +24,7 @@ public class Tracker {
      */
     public Item add(Item item) {
         item.setId(generateId());
-        items[position++] = item;
+        items.add(item);
         return item;
     }
 
@@ -36,8 +36,8 @@ public class Tracker {
     public void replace(String id, Item item) {
         int index = findIndexById(id);
         if (index != -1) {
-            item.setId(items[index].getId());
-            items[index] = item;
+            item.setId(items.get(index).getId());
+            items.set(index, item);
         }
     }
 
@@ -48,8 +48,7 @@ public class Tracker {
     public void delete(String id) {
         int index = findIndexById(id);
         if (index != -1) {
-            System.arraycopy(items, index + 1, items, index, position - 1 - index);
-            position--;
+            items.remove(index);
         }
     }
 
@@ -57,15 +56,8 @@ public class Tracker {
      * find all items.
      * @return - items in tracker.
      */
-    public Item[] findAll() {
-        Item[] result;
-        if (position != 0) {
-            result = new Item[position];
-            System.arraycopy(items, 0, result, 0, position);
-        } else {
-            result = null;
-        }
-        return result;
+    public List<Item> findAll() {
+        return new ArrayList<>(items);
     }
 
     /**
@@ -73,22 +65,13 @@ public class Tracker {
      * @param key - name.
      * @return - items.
      */
-    public Item[] findByName(String key) {
-        Item[] tmp = new Item[position];
-        int size = 0;
-        for (int i = 0; i < position; i++) {
-            if (items[i].getName().equals(key)) {
-                tmp[size++] = items[i];
+    public List<Item> findByName(String key) {
+        List<Item> result = new ArrayList<>();
+        for (Item item : items) {
+            if (item.getName().equals(key)) {
+                result.add(item);
             }
         }
-        Item[] result;
-        if (size != 0) {
-            result = new Item[size];
-            System.arraycopy(tmp, 0, result, 0, size);
-        } else {
-            result = null;
-        }
-
         return result;
     }
 
@@ -99,9 +82,11 @@ public class Tracker {
      */
     public Item findById(String id) {
         Item result = null;
-        int index = findIndexById(id);
-        if (index != -1) {
-            result = items[index];
+        for (Item item : items) {
+            if (item.getId().equals(id)) {
+                result = item;
+                break;
+            }
         }
         return result;
     }
@@ -121,9 +106,10 @@ public class Tracker {
      */
     private int findIndexById(String id) {
         int result = -1;
-        for (int i = 0; i < position; i++) {
-            if (items[i].getId().equals(id)) {
-                result = i;
+        ListIterator<Item> iterator = items.listIterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().getId().equals(id)) {
+                result = iterator.previousIndex();
                 break;
             }
         }

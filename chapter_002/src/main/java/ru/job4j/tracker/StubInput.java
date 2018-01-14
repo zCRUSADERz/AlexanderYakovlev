@@ -1,11 +1,13 @@
 package ru.job4j.tracker;
 
+import java.util.List;
+
 /**
  * StubInput.
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 4.01.2017
- * @version 1.0
+ * @version 2.0
  */
 public class StubInput implements Input {
     private String[] answers;
@@ -15,7 +17,7 @@ public class StubInput implements Input {
      * Constructor.
      * @param answers - array of answers.
      */
-    public StubInput(String[] answers) {
+    StubInput(String[] answers) {
         this.answers = answers;
     }
 
@@ -36,7 +38,7 @@ public class StubInput implements Input {
      * @param range - range of key menu.
      * @return - key menu.
      */
-    public int ask(String question, int[] range) {
+    public int ask(String question, List<Integer> range) {
         return Integer.valueOf(ask(question));
     }
 }

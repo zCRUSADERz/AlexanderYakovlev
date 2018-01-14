@@ -1,11 +1,13 @@
 package ru.job4j.tracker;
 
+import java.util.List;
+
 /**
  * Validate input.
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 6.01.2017
- * @version 1.0
+ * @version 2.0
  */
 public class ValidateInput implements Input {
     /**
@@ -17,7 +19,7 @@ public class ValidateInput implements Input {
      * Constructor.
      * @param input - user input.
      */
-    public ValidateInput(Input input) {
+    ValidateInput(Input input) {
         this.input = input;
     }
 
@@ -38,7 +40,7 @@ public class ValidateInput implements Input {
      * @return - key menu.
      */
     @Override
-    public int ask(String question, int[] range) {
+    public int ask(String question, List<Integer> range) {
         int value = -1;
         boolean invalid = true;
         do {

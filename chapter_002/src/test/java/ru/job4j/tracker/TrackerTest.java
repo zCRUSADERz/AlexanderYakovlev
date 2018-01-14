@@ -3,6 +3,9 @@ package ru.job4j.tracker;
 import org.junit.Test;
 import ru.job4j.tracker.models.Item;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
@@ -21,7 +24,7 @@ public class TrackerTest {
         Tracker tracker = new Tracker();
         Item item = new Item("test1", "testDescription", 123L);
         tracker.add(item);
-        assertThat(tracker.findAll()[0], is(item));
+        assertThat(tracker.findAll().get(0), is(item));
     }
 
     @Test
@@ -29,7 +32,7 @@ public class TrackerTest {
         Tracker tracker = new Tracker();
         Item item = new Item("test1", "testDescription", 123L);
         tracker.add(item);
-        String resultId = tracker.findAll()[0].getId();
+        String resultId = tracker.findAll().get(0).getId();
         String expected = "1";
         assertThat(resultId, is(expected));
     }
@@ -55,8 +58,8 @@ public class TrackerTest {
         Item item3 = new Item("test3", "testDescription3", 125L);
         tracker.add(item3);
         tracker.delete("2");
-        Item[] result = tracker.findAll();
-        Item[] expected = {item1, item3};
+        List<Item> result = tracker.findAll();
+        List<Item> expected = Arrays.asList(item1, item3);
         assertThat(result, is(expected));
     }
 
@@ -69,16 +72,17 @@ public class TrackerTest {
         tracker.add(item2);
         Item item3 = new Item("test3", "testDescription3", 125L);
         tracker.add(item3);
-        Item[] result = tracker.findAll();
-        Item[] expected = {item1, item2, item3};
+        List<Item> result = tracker.findAll();
+        List<Item> expected = Arrays.asList(item1, item2, item3);
         assertThat(result, is(expected));
     }
 
     @Test
-    public void whenEmptyTrackerthenFindAllResultNull() {
+    public void whenEmptyTrackerthenFindAllResultEmptyList() {
         Tracker tracker = new Tracker();
-        Item[] result = tracker.findAll();
-        assertThat(result, is(nullValue()));
+        List<Item> result = tracker.findAll();
+        int expected = 0;
+        assertThat(result.size(), is(expected));
     }
 
     @Test
@@ -92,18 +96,19 @@ public class TrackerTest {
         tracker.add(item3);
         Item item4 = new Item("test2", "testDescription4", 126L);
         tracker.add(item4);
-        Item[] result = tracker.findByName(item2.getName());
-        Item[] expected = {item2, item4};
+        List<Item> result = tracker.findByName(item2.getName());
+        List<Item> expected = Arrays.asList(item2, item4);
         assertThat(result, is(expected));
     }
 
     @Test
-    public void whenAddItemAndFindByNameNotEqualsItemThenResultNull() {
+    public void whenAddItemAndFindByNameNotEqualsItemThenResultEmptyList() {
         Tracker tracker = new Tracker();
         Item item1 = new Item("test1", "testDescription1", 123L);
         tracker.add(item1);
-        Item[] result = tracker.findByName("test");
-        assertThat(result, is(nullValue()));
+        List<Item> result = tracker.findByName("test");
+        int expected = 0;
+        assertThat(result.size(), is(expected));
     }
 
     @Test

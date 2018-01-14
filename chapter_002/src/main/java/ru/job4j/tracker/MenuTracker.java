@@ -2,14 +2,16 @@ package ru.job4j.tracker;
 
 import ru.job4j.tracker.models.Item;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Menu tracker.
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 5.01.2017
- * @version 1.0
+ * @version 2.0
  */
 public class MenuTracker {
     /**
@@ -23,31 +25,28 @@ public class MenuTracker {
     /**
      * User actions.
      */
-    private UserAction[] actions = new UserAction[20];
+    private ArrayList<UserAction> actions;
     /**
      * Range of key menu.
      */
-    private int[] range = new int[20];
-    /**
-     * Position in actions array;
-     */
-    private int position;
+    private ArrayList<Integer> range;
 
     /**
      * Constructor menu tracker.
      * @param input - user input.
      * @param tracker - tracker.
      */
-    public MenuTracker(Input input, Tracker tracker) {
+    MenuTracker(Input input, Tracker tracker) {
         this.input = input;
         this.tracker = tracker;
+        actions = new ArrayList<>();
+        range = new ArrayList<>();
         fillActions();
+
     }
 
-    public int[] getRange() {
-        int[] tmp = new int[position];
-        System.arraycopy(range, 0, tmp, 0, position);
-        return tmp;
+    public List<Integer> getRange() {
+        return new ArrayList<>(range);
     }
 
     /**
@@ -55,8 +54,8 @@ public class MenuTracker {
      */
     public void show() {
         System.out.println("Меню.");
-        for (int i = 0; i < position; i++) {
-            System.out.println(actions[i].info());
+        for (UserAction action : actions) {
+            System.out.println(action.info());
         }
     }
 
@@ -65,7 +64,12 @@ public class MenuTracker {
      * @param key - key action.
      */
     public void select(int key) {
-        actions[key].execute(input, tracker);
+        for (UserAction action : actions) {
+            if (action.key() == key) {
+                action.execute(input, tracker);
+                break;
+            }
+        }
     }
 
     /**
@@ -73,7 +77,7 @@ public class MenuTracker {
      * @param action - user action.
      */
     public void addActions(UserAction action) {
-        actions[position++] = action;
+        actions.add(action);
         updateRange();
     }
 
@@ -81,7 +85,7 @@ public class MenuTracker {
      * Update range of key menu.
      */
     private void updateRange() {
-        range[position - 1] = position - 1;
+        range.add(range.size() - 1);
     }
 
     /**
@@ -106,7 +110,7 @@ public class MenuTracker {
          * @param key - menu key.
          * @param name - name action;
          */
-        public AddItem(int key, String name) {
+        AddItem(int key, String name) {
             super(key, name);
         }
 
@@ -135,7 +139,7 @@ public class MenuTracker {
          * @param key - menu key.
          * @param name - name action;
          */
-        public ShowAllItem(int key, String name) {
+        ShowAllItem(int key, String name) {
             super(key, name);
         }
 
@@ -145,8 +149,8 @@ public class MenuTracker {
          * @param tracker - tracker.
          */
         public void execute(Input input, Tracker tracker) {
-            Item[] items = tracker.findAll();
-            if (items != null) {
+            List<Item> items = tracker.findAll();
+            if (items.size() != 0) {
                 System.out.println("---------- Зарегистрированны следующие заявки: ----------");
                 for (Item item : items) {
                     System.out.println(item);
@@ -167,7 +171,7 @@ public class MenuTracker {
          * @param key - menu key.
          * @param name - name action;
          */
-        public EditItem(int key, String name) {
+        EditItem(int key, String name) {
             super(key, name);
         }
 
@@ -202,7 +206,7 @@ public class MenuTracker {
          * @param key - menu key.
          * @param name - name action;
          */
-        public DeleteItem(int key, String name) {
+        DeleteItem(int key, String name) {
             super(key, name);
         }
 
@@ -228,7 +232,7 @@ public class MenuTracker {
          * @param key - menu key.
          * @param name - name action;
          */
-        public FindById(int key, String name) {
+        FindById(int key, String name) {
             super(key, name);
         }
 
@@ -260,7 +264,7 @@ class FindByName extends BaseAction {
      * @param key - menu key.
      * @param name - name action;
      */
-    public FindByName(int key, String name) {
+    FindByName(int key, String name) {
         super(key, name);
     }
 
@@ -272,8 +276,8 @@ class FindByName extends BaseAction {
     public void execute(Input input, Tracker tracker) {
         System.out.println("---------- Поиск заявки по названию ----------");
         String name = input.ask("Введите название заявки(ок), которую(ые) желаете найти: ");
-        Item[] items = tracker.findByName(name);
-        if (items != null) {
+        List<Item> items = tracker.findByName(name);
+        if (items.size() != 0) {
             System.out.println("---------- Зарегистрированны следующие заявки: ----------");
             for (Item item : items) {
                 System.out.println(item);
@@ -299,7 +303,7 @@ class Exit extends BaseAction {
      * @param name - Name user action.
      * @param stop - Object to be stopped.
      */
-    public Exit(int key, String name, Stop stop) {
+    Exit(int key, String name, Stop stop) {
         super(key, name);
         this.stop = stop;
     }

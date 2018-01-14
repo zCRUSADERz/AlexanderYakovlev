@@ -1,5 +1,6 @@
 package ru.job4j.tracker;
 
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Scanner;
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 4.01.2017
- * @version 1.0
+ * @version 2.0
  */
 public class ConsoleInput implements Input {
     private Scanner scanner = new Scanner(System.in);
@@ -28,11 +29,11 @@ public class ConsoleInput implements Input {
      * @param range - range of key menu.
      * @return - key menu.
      */
-    public int ask(String question, int[] range) {
-        int key = Integer.valueOf(ask(question));
+    public int ask(String question, List<Integer> range) {
+        Integer key = Integer.valueOf(ask(question));
         boolean exist = false;
-        for (int value : range) {
-            if (value == key) {
+        for (Integer value : range) {
+            if (value.compareTo(key) == 0) {
                 exist = true;
                 break;
             }

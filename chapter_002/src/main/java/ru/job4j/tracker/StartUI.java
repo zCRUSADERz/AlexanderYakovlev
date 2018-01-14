@@ -37,7 +37,7 @@ public class StartUI implements Stop {
         this.tracker = tracker;
         menu = new MenuTracker(input, tracker);
         working = true;
-        menu.addActions(new Exit((menu.getRange().length), "Закончить работу", this));
+        menu.addActions(new Exit((menu.getRange().size()), "Закончить работу", this));
     }
 
     /**
