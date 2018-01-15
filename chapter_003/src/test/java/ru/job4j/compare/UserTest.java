@@ -19,7 +19,7 @@ public class UserTest {
         User user1 = new User("One", 75);
         User user2 = new User("Second", 25);
         int result = user1.compareTo(user2);
-        int expected = 50;
+        int expected = 1;
         assertThat(result, is(expected));
     }
 }
