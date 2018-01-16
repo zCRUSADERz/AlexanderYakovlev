@@ -7,9 +7,9 @@ package ru.job4j.chessboard;
  * @since 7.01.2017
  * @version 1.0
  */
-public class ImposibleMoveException extends Exception {
+class ImposibleMoveException extends Exception {
 
-    public ImposibleMoveException(String msg) {
+    ImposibleMoveException(String msg) {
         super(msg);
     }
 }

@@ -1,5 +1,6 @@
 package ru.job4j.tracker;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Scanner;
 
@@ -11,8 +12,22 @@ import java.util.Scanner;
  * @version 2.0
  */
 public class ConsoleInput implements Input {
-    private Scanner scanner = new Scanner(System.in);
+    private Scanner scanner;
 
+    /**
+     * Default constructor.
+     */
+    ConsoleInput() {
+        scanner = new Scanner(System.in);
+    }
+
+    /**
+     * Constructor for testing.
+     * @param in - input stream;
+     */
+    ConsoleInput(InputStream in) {
+        scanner = new Scanner(in);
+    }
     /**
      * Ask user.
      * @param question - question for user.

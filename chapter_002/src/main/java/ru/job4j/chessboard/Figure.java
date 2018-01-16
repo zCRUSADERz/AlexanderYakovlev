@@ -16,11 +16,23 @@ public abstract class Figure {
     /**
      * @param position - position in chessboard.
      */
-    public Figure(Cell position) {
+    Figure(Cell position) {
         this.position = position;
     }
 
+    /**
+     * Possible figure path.
+     * @param source - figure location.
+     * @param dest - destination.
+     * @return - array of cells along the path of the figure.
+     * @throws ImposibleMoveException - if this way impossible.
+     */
     public abstract Cell[] way(Cell source, Cell dest) throws ImposibleMoveException;
 
+    /**
+     * Copying figure.
+     * @param dest - destination.
+     * @return - copy of the figure.
+     */
     public abstract Figure copy(Cell dest);
 }

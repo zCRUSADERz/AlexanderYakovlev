@@ -7,9 +7,9 @@ package ru.job4j.chessboard;
  * @since 7.01.2017
  * @version 1.0
  */
-public class OccupiedWayException extends Exception {
+class OccupiedWayException extends Exception {
 
-    public OccupiedWayException(String msg) {
+    OccupiedWayException(String msg) {
         super(msg);
     }
 }

@@ -49,6 +49,16 @@ public class TrackerTest {
     }
 
     @Test
+    public void whenReplaceNonExistItemThenNothing() {
+        Tracker tracker = new Tracker();
+        Item previous = new Item("test1", "testDescription", 123L);
+        tracker.add(previous);
+        Item next = new Item("test2", "testDescription2", 1234L);
+        tracker.replace("2", next);
+        assertThat(tracker.findById(previous.getId()).getName(), is("test1"));
+    }
+
+    @Test
     public void whenAddThreeItemAndDeleteSecondThenTrackerHaveTwoItemFirstAndSecond() {
         Tracker tracker = new Tracker();
         Item item1 = new Item("test1", "testDescription1", 123L);

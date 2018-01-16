@@ -7,9 +7,9 @@ package ru.job4j.chessboard;
  * @since 7.01.2017
  * @version 1.0
  */
-public class FigureNotFoundException extends Exception {
+class FigureNotFoundException extends Exception {
 
-    public FigureNotFoundException(String msg) {
+    FigureNotFoundException(String msg) {
         super(msg);
     }
 }

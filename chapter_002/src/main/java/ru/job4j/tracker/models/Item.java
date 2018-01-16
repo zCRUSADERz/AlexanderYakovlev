@@ -54,15 +54,11 @@ public class Item {
     }
 
     public void setName(String name) {
-        this.name = name != null ? name : "";
-    }
-
-    public String getDesc() {
-        return desc;
+        this.name = name;
     }
 
     public void setDesc(String desc) {
-        this.desc = desc != null ? desc : "";
+        this.desc = desc;
     }
 
     public Date getDateCreated() {

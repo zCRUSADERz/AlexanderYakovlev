@@ -31,26 +31,17 @@ public class CollectionsTestRemoveDuplicates {
      * @param percent - percentage of duplicates.
      * @param numOfDuplicate - number of objects with duplicates.
      */
-    private CollectionsTestRemoveDuplicates(int amount, double percent, int numOfDuplicate) {
+    CollectionsTestRemoveDuplicates(int amount, double percent, int numOfDuplicate) {
         this.amount = amount;
         this.percent = percent;
         this.numOfDuplicate = numOfDuplicate;
-    }
-
-    public static void main(String[] args) {
-        CollectionsTestRemoveDuplicates testPerformance = new CollectionsTestRemoveDuplicates(50000, 0.1, 1000);
-        Object[] objects = testPerformance.getArray();
-        ArrayList<Object> arrayList = new ArrayList<>(Arrays.asList(objects));
-        LinkedList<Object> linkedList = new LinkedList<>(Arrays.asList(objects));
-        System.out.println("LinkedList: " + testPerformance.testLinked(linkedList));
-        System.out.println("ArrayList:  " + testPerformance.test(arrayList));
     }
 
     /**
      * Test any List.
      * @param list - list.
      */
-    private long test(List<Object> list) {
+    long test(List<Object> list) {
         int size = list.size() - 1;
         long start = System.currentTimeMillis();
         for (int i = 0; i < size; i++) {
@@ -70,7 +61,7 @@ public class CollectionsTestRemoveDuplicates {
      * Test LinkedList.
      * @param list - LinkedList
      */
-    private long testLinked(LinkedList<Object> list) {
+    long testLinked(LinkedList<Object> list) {
         int size = list.size() - 1;
         long start = System.currentTimeMillis();
         for (int i = 0; i < size; i++) {
@@ -91,7 +82,7 @@ public class CollectionsTestRemoveDuplicates {
      * get Array unique objects.
      * @return - array unique objects.
      */
-    private Object[] getArray() {
+    Object[] getArray() {
         Object[] objects = new Object[amount];
         for (int i = 0; i < amount; i++) {
             objects[i] = new Object();

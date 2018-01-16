@@ -1,8 +1,10 @@
 package ru.job4j.chessboard;
 
+import org.hamcrest.core.IsNull;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -34,8 +36,7 @@ public class BoardTest {
         board.figures[source.x][source.y] = new Bishop(source);
         board.move(source, dest);
         Figure result = board.figures[source.x][source.y];
-        Figure expected = null;
-        assertThat(result, is(expected));
+        assertThat(result, nullValue());
     }
 
     @Test(expected = OccupiedWayException.class)
@@ -54,6 +55,14 @@ public class BoardTest {
         Cell source = new Cell(5, 4);
         Cell dest = new Cell(7, 7);
         board.figures[source.x][source.y] = new Bishop(source);
+        board.move(source, dest);
+    }
+
+    @Test(expected = FigureNotFoundException.class)
+    public void whenExistFigureMoveThenThrowImposibleMoveException() throws ImposibleMoveException, OccupiedWayException, FigureNotFoundException {
+        Board board = new Board();
+        Cell source = new Cell(5, 4);
+        Cell dest = new Cell(7, 7);
         board.move(source, dest);
     }
 }

@@ -18,9 +18,9 @@ public class Board {
      * @param source - source cell.
      * @param dest - destination cell.
      * @return - true if figure move on destination cell.
-     * @throws ImposibleMoveException
-     * @throws OccupiedWayException
-     * @throws FigureNotFoundException
+     * @throws ImposibleMoveException - if this way impossible.
+     * @throws OccupiedWayException - if there is another figure on the way.
+     * @throws FigureNotFoundException - if figure not found.
      */
     public boolean move(Cell source, Cell dest)
             throws ImposibleMoveException, OccupiedWayException, FigureNotFoundException {

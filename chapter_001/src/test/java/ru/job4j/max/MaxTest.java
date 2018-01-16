@@ -26,9 +26,9 @@ public class MaxTest {
      * Test maximum of three numbers.
      */
     @Test
-    public void whenFirstLessSecondAndSecondLessThird() {
+    public void whenFirstMoreSecondAndSecondMoreThird() {
         Max maximum = new Max();
-        int result = maximum.max(1, 2, 3);
+        int result = maximum.max(3, 2, 1);
         assertThat(result, is(3));
     }
 }

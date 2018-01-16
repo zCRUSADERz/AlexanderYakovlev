@@ -16,7 +16,7 @@ public class Profession {
      * @param name - name person.
      * @param diploma - diploma.
      */
-    public Profession(String name, Diploma diploma) {
+    Profession(String name, Diploma diploma) {
         this.name = name;
         this.diploma = diploma;
     }
@@ -27,13 +27,5 @@ public class Profession {
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * Getter.
-     * @return - diploma.
-     */
-    public Diploma getDiploma() {
-        return diploma;
     }
 }

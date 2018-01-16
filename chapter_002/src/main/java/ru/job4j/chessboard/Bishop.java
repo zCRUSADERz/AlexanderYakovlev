@@ -12,7 +12,7 @@ public class Bishop extends Figure {
     /**
      * @param dest - cell.
      */
-    public Bishop(Cell dest) {
+    Bishop(Cell dest) {
         super(dest);
     }
 
@@ -21,7 +21,7 @@ public class Bishop extends Figure {
      * @param source - source cell.
      * @param dest - destination cell.
      * @return - cell on way figure.
-     * @throws ImposibleMoveException
+     * @throws ImposibleMoveException - if this way impossible.
      */
     @Override
     public Cell[] way(Cell source, Cell dest) throws ImposibleMoveException {

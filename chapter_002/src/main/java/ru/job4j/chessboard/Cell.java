@@ -15,7 +15,7 @@ public class Cell {
      * @param x - x coordinate in chessboard.
      * @param y - y coordinate in chessboard.
      */
-    public Cell(int x, int y) {
+    Cell(int x, int y) {
         this.x = x;
         this.y = y;
     }
