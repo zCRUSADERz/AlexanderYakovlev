@@ -23,9 +23,10 @@ public class ListCompare implements Comparator<List<Integer>> {
     public int compare(List<Integer> left, List<Integer> right) {
         int result = Integer.compare(left.size(), right.size());
         if (result == 0) {
-            Iterator<Integer> iterator = right.iterator();
-            for (Integer first : left) {
-                int tmp = Integer.compare(first, iterator.next());
+            Iterator<Integer> firstIterator = left.iterator();
+            Iterator<Integer> secondIterator = right.iterator();
+            while (firstIterator.hasNext()) {
+                int tmp = Integer.compare(firstIterator.next(), secondIterator.next());
                 if (tmp != 0) {
                     result = tmp;
                     break;
