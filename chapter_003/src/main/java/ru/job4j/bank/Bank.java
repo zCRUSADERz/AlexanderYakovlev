@@ -70,11 +70,10 @@ public class Bank {
                 break;
             }
         }
-        if (result != null) {
-            return result;
-        } else {
+        if (result == null) {
             throw new UserNotFoundException("User with passport: " + passport + " not found.");
         }
+        return result;
     }
 
     /**
@@ -122,10 +121,9 @@ public class Bank {
                 break;
             }
         }
-        if (result != null) {
-            return result;
-        } else {
+        if (result == null) {
             throw new AccountNotFoundException("User with requisites: " + requisite + " not found.");
         }
+        return result;
     }
 }
