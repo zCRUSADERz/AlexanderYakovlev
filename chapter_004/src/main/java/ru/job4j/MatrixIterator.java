@@ -43,14 +43,16 @@ public class MatrixIterator<T> implements Iterator<T> {
      * Returns true if the iteration has more elements.
      * @return - true, if has next element.
      */
+    @Override
     public boolean hasNext() {
         return secondIndex != -1;
     }
 
     /**
-     * Returns the next element
+     * Returns the next element.
      * @return - next element.
      */
+    @Override
     public T next() {
         if (!hasNext()) {
             throw new NoSuchElementException("Iteration has no more elements");
@@ -65,6 +67,7 @@ public class MatrixIterator<T> implements Iterator<T> {
     /**
      * Removes the last element returned by this iterator.
      */
+    @Override
     public void remove() {
         if (previousSecondIndex == -1) {
             throw new IllegalStateException();
