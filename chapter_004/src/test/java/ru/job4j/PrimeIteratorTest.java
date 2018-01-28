@@ -56,4 +56,9 @@ public class PrimeIteratorTest {
         it = new PrimeIterator(new int[]{4, 6});
         assertThat("should return false, cause there is no any prime number", it.hasNext(), is(false));
     }
+
+    @Test (expected = UnsupportedOperationException.class)
+    public void whenRemoveThenUnsupportedOperationException() {
+        it.remove();
+    }
 }
