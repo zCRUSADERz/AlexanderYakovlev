@@ -17,6 +17,7 @@ public class SimpleArray<T> implements Iterable<T> {
     /**
      * Default constructor.
      * @param capacity - capacity array.
+     * @throws IllegalArgumentException - if capacity is negative.
      */
     SimpleArray(int capacity) {
         if (capacity < 0) {
@@ -59,6 +60,7 @@ public class SimpleArray<T> implements Iterable<T> {
      * @param index - index of the element to return.
      * @return - element.
      */
+    @SuppressWarnings("unchecked")
     public T get(int index) {
         rangeCheck(index);
         return (T) array[index];
@@ -83,8 +85,10 @@ public class SimpleArray<T> implements Iterable<T> {
             /**
              * Returns the next element.
              * @return - next element.
+             * @throws NoSuchElementException - if the iteration has no more elements.
              */
             @Override
+            @SuppressWarnings("unchecked")
             public T next() {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
@@ -96,6 +100,8 @@ public class SimpleArray<T> implements Iterable<T> {
 
             /**
              * Removes the last element returned by this iterator.
+             * @throws IllegalStateException - if the next method has not yet been called,
+             * or the remove method has already been called after the last call to the next method
              */
             @Override
             public void remove() {
