@@ -11,9 +11,8 @@ import java.util.*;
  */
 public class PrimeIterator implements Iterator {
     private int[] numbers;
-    private Set<Integer> primeNumbers = new HashSet<>();
-    private int cursor;
-    private int size;
+    private List<Integer> primeNumbers = new ArrayList<>();
+    private Iterator<Integer> it;
 
     /**
      * Default constructor.
@@ -21,10 +20,8 @@ public class PrimeIterator implements Iterator {
      */
     PrimeIterator(int[] numbers) {
         this.numbers = numbers;
-        size = numbers.length;
-        cursor = -1;
-        setPrimeNumbers();
-        setCursor();
+        initPrimeNumbers();
+        it = primeNumbers.iterator();
     }
 
     /**
@@ -33,7 +30,7 @@ public class PrimeIterator implements Iterator {
      */
     @Override
     public boolean hasNext() {
-        return cursor != size;
+        return it.hasNext();
     }
 
     /**
@@ -42,12 +39,7 @@ public class PrimeIterator implements Iterator {
      */
     @Override
     public Object next() {
-        if (!hasNext()) {
-            throw new NoSuchElementException("Iteration has no more elements");
-        }
-        int result = numbers[cursor];
-        setCursor();
-        return result;
+        return it.next();
     }
 
     /**
@@ -55,13 +47,13 @@ public class PrimeIterator implements Iterator {
      */
     @Override
     public void remove() {
-        throw new UnsupportedOperationException();
+        it.remove();
     }
 
     /**
      * Finding for all the primes we need.
      */
-    private void setPrimeNumbers() {
+    private void initPrimeNumbers() {
         int max = 0;
         for (int n : numbers) {
             if (max < n) {
@@ -70,7 +62,7 @@ public class PrimeIterator implements Iterator {
         }
         if (max > 1) {
             boolean[] s = new boolean[max + 1];
-            Arrays.fill(s, true);
+            Arrays.fill(s, 2, max + 1, true);
             for (int k = 2; k <= max; k++) {
                 if (s[k]) {
                     for (int l = k * k; l <= max; l += k) {
@@ -78,23 +70,12 @@ public class PrimeIterator implements Iterator {
                     }
                 }
             }
-            for (int i = 2; i <= max; i++) {
-                if (s[i]) {
-                    primeNumbers.add(i);
+            for (int n : numbers) {
+                if (s[n]) {
+                    primeNumbers.add(n);
                 }
             }
         }
 
-    }
-
-    /**
-     * Sets the cursor on the next prime number.
-     */
-    private void setCursor() {
-        while (++cursor < size && !primeNumbers.isEmpty()) {
-            if ((primeNumbers.contains(numbers[cursor]))) {
-                break;
-            }
-        }
     }
 }
