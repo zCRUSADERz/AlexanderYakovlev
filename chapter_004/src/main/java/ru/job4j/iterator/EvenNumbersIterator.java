@@ -22,8 +22,7 @@ public class EvenNumbersIterator implements Iterator {
     EvenNumbersIterator(int[] numbers) {
         this.numbers = numbers;
         size = numbers.length;
-        cursor = -1;
-        setCursor();
+        cursor = 0;
     }
 
     /**
@@ -32,7 +31,15 @@ public class EvenNumbersIterator implements Iterator {
      */
     @Override
     public boolean hasNext() {
-        return cursor != size;
+        boolean exist = false;
+        for (int i = cursor; i < size; i++) {
+            if (isEven(numbers[i])) {
+                cursor = i;
+                exist = true;
+                break;
+            }
+        }
+        return exist;
     }
 
     /**
@@ -44,9 +51,8 @@ public class EvenNumbersIterator implements Iterator {
         if (!hasNext()) {
             throw new NoSuchElementException("Iteration has no more elements");
         }
-        int result = numbers[cursor];
-        setCursor();
-        return result;
+        return numbers[cursor++];
+
     }
 
     /**
@@ -58,13 +64,11 @@ public class EvenNumbersIterator implements Iterator {
     }
 
     /**
-     * Sets the cursor on the next even number.
+     * Checks an even number.
+     * @param num - number.
+     * @return if num even then true.
      */
-    private void setCursor() {
-        while (++cursor < size) {
-            if ((numbers[cursor] % 2) == 0) {
-                break;
-            }
-        }
+    private boolean isEven(int num) {
+        return (num % 2) == 0;
     }
 }

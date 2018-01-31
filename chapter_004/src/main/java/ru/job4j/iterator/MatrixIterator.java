@@ -16,19 +16,19 @@ public class MatrixIterator<T> implements Iterator<T> {
     /**
      * Index of next element returns.
      */
-    private int firstIndex = 0;
+    private int i = 0;
     /**
-     * Index of next element returns in subarray; -1 if no such.
+     * Index of next element returns in subarray;
      */
-    private int secondIndex = -1;
+    private int j = 0;
     /**
      * Index of last element returned.
      */
-    private int previousFirstIndex = 0;
+    private int previousI = 0;
     /**
      * Index of last element returned in subarray; -1 if no such.
      */
-    private int previousSecondIndex = -1;
+    private int previousJ = -1;
 
     /**
      * Default constructor.
@@ -36,7 +36,6 @@ public class MatrixIterator<T> implements Iterator<T> {
      */
     MatrixIterator(T[][] array) {
         this.array = array;
-        setNextIndex();
     }
 
     /**
@@ -45,7 +44,22 @@ public class MatrixIterator<T> implements Iterator<T> {
      */
     @Override
     public boolean hasNext() {
-        return secondIndex != -1;
+        boolean exist = false;
+        if (array.length != 0) {
+            if (j >= array[i].length) {
+                for (int next = i + 1; next < array.length; next++) {
+                    if (array[next].length > 0) {
+                        i = next;
+                        j = 0;
+                        exist = true;
+                        break;
+                    }
+                }
+            } else {
+                exist = true;
+            }
+        }
+        return exist;
     }
 
     /**
@@ -57,10 +71,9 @@ public class MatrixIterator<T> implements Iterator<T> {
         if (!hasNext()) {
             throw new NoSuchElementException("Iteration has no more elements");
         }
-        T result = array[firstIndex][secondIndex];
-        previousFirstIndex = firstIndex;
-        previousSecondIndex = secondIndex;
-        setNextIndex();
+        T result = array[i][j];
+        previousI = i;
+        previousJ = j++;
         return result;
     }
 
@@ -69,47 +82,23 @@ public class MatrixIterator<T> implements Iterator<T> {
      */
     @Override
     public void remove() {
-        if (previousSecondIndex == -1) {
+        if (previousJ == -1) {
             throw new IllegalStateException();
         }
-        int size = array[previousFirstIndex].length;
+        int size = array[previousI].length;
         if (size == 1) {
-            array[previousFirstIndex] = Arrays.copyOf(array[previousFirstIndex], 0);
+            array[previousI] = Arrays.copyOf(array[previousI], 0);
         } else {
             System.arraycopy(
-                    array[previousFirstIndex], previousSecondIndex + 1,
-                    array[previousFirstIndex], previousSecondIndex,
-                    size - previousSecondIndex - 1
+                    array[previousI], previousJ + 1,
+                    array[previousI], previousJ,
+                    size - previousJ - 1
             );
-            if (previousSecondIndex < size - 1) {
-                secondIndex--;
+            if (previousJ < size - 1) {
+                j--;
             }
-            array[previousFirstIndex] = Arrays.copyOf(array[previousFirstIndex], size - 1);
+            array[previousI] = Arrays.copyOf(array[previousI], size - 1);
         }
-        previousSecondIndex = -1;
-    }
-
-    /**
-     * Set first and second Index of the next element.
-     */
-    private void setNextIndex() {
-        if (array.length != 0) {
-            secondIndex++;
-            boolean exist = false;
-            if (secondIndex >= array[firstIndex].length) {
-                firstIndex++;
-                for (int i = firstIndex; i < array.length; i++) {
-                    if (array[i].length > 0) {
-                        firstIndex = i;
-                        secondIndex = 0;
-                        exist = true;
-                        break;
-                    }
-                }
-                if (!exist) {
-                    secondIndex = -1;
-                }
-            }
-        }
+        previousJ = -1;
     }
 }

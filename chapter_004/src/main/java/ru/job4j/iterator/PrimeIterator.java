@@ -11,8 +11,10 @@ import java.util.*;
  */
 public class PrimeIterator implements Iterator {
     private int[] numbers;
-    private List<Integer> primeNumbers = new ArrayList<>();
-    private Iterator<Integer> it;
+    private Set<Integer> primeNumbers;
+    private boolean initializePrimeNumbers;
+    private int cursor;
+    private int size;
 
     /**
      * Default constructor.
@@ -20,8 +22,10 @@ public class PrimeIterator implements Iterator {
      */
     PrimeIterator(int[] numbers) {
         this.numbers = numbers;
-        initPrimeNumbers();
-        it = primeNumbers.iterator();
+        size = numbers.length;
+        cursor = 0;
+        primeNumbers = new HashSet<>();
+        initializePrimeNumbers = false;
     }
 
     /**
@@ -30,7 +34,18 @@ public class PrimeIterator implements Iterator {
      */
     @Override
     public boolean hasNext() {
-        return it.hasNext();
+        if (!initializePrimeNumbers) {
+            initPrimeNumbers();
+        }
+        boolean exist = false;
+        for (int i = cursor; i < size; i++) {
+            if (primeNumbers.contains(numbers[i])) {
+                cursor = i;
+                exist = true;
+                break;
+            }
+        }
+        return exist;
     }
 
     /**
@@ -39,7 +54,10 @@ public class PrimeIterator implements Iterator {
      */
     @Override
     public Object next() {
-        return it.next();
+        if (!hasNext()) {
+            throw new NoSuchElementException("Iteration has no more elements");
+        }
+        return numbers[cursor++];
     }
 
     /**
@@ -47,7 +65,7 @@ public class PrimeIterator implements Iterator {
      */
     @Override
     public void remove() {
-        it.remove();
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -61,21 +79,22 @@ public class PrimeIterator implements Iterator {
             }
         }
         if (max > 1) {
-            boolean[] s = new boolean[max + 1];
-            Arrays.fill(s, 2, max + 1, true);
+            boolean[] notPrime = new boolean[max + 1];
+            notPrime[0] = true;
+            notPrime[1] = true;
             for (int k = 2; k <= max; k++) {
-                if (s[k]) {
+                if (!notPrime[k]) {
                     for (int l = k * k; l <= max; l += k) {
-                        s[l] = false;
+                        notPrime[l] = true;
                     }
                 }
             }
             for (int n : numbers) {
-                if (s[n]) {
+                if (!notPrime[n]) {
                     primeNumbers.add(n);
                 }
             }
         }
-
+        initializePrimeNumbers = true;
     }
 }

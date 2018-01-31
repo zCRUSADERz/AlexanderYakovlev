@@ -57,8 +57,8 @@ public class PrimeIteratorTest {
         assertThat("should return false, cause there is no any prime number", it.hasNext(), is(false));
     }
 
-    @Test (expected = IllegalStateException.class)
-    public void whenRemoveThenIllegalStateException() {
+    @Test (expected = UnsupportedOperationException.class)
+    public void whenRemoveThenUnsupportedOperationException() {
         it.remove();
     }
 }
