@@ -19,7 +19,7 @@ public class LinkedList<E> implements Iterable<E> {
      */
     private int modCount;
 
-    LinkedList() {
+    public LinkedList() {
         first = null;
         last = null;
         size = 0;
