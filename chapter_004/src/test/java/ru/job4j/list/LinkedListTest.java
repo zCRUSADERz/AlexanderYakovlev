@@ -56,6 +56,12 @@ public class LinkedListTest {
     }
 
     @Test
+    public void whenRemoveThenReturnRemovedElement() {
+        String result = list.remove(0);
+        assertThat(result, is("0"));
+    }
+
+    @Test
     public void whenAddAndIteratorHasNextThenReturnTrue() {
         Iterator<String> it = list.iterator();
         boolean result = it.hasNext();

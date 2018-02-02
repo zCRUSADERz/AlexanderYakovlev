@@ -49,9 +49,16 @@ public class LinkedList<E> implements Iterable<E> {
      * @return - element at the index position.
      */
     public E get(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
-        }
+        checkIndex(index);
+        return node(index).item;
+    }
+
+    public E remove(int index) {
+        checkIndex(index);
+        return removeNode(node(index));
+    }
+
+    private Node<E> node(int index) {
         Node<E> result;
         if (index < (size >> 1)) {
             Node<E> node = first;
@@ -66,14 +73,14 @@ public class LinkedList<E> implements Iterable<E> {
             }
             result = node;
         }
-        return result.item;
+        return result;
     }
 
     /**
      * Remove node and restores links between nodes.
      * @param node - removable node.
      */
-    private void removeNode(Node<E> node) {
+    private E removeNode(Node<E> node) {
         Node<E> next = node.next;
         Node<E> previous = node.previous;
 
@@ -88,12 +95,20 @@ public class LinkedList<E> implements Iterable<E> {
             next.previous = previous;
         }
 
+        E result = node.item;
         node.item = null;
         node.previous = null;
         node.next = null;
 
         size--;
         modCount++;
+        return result;
+    }
+
+    private void checkIndex(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
     }
 
     @Override
