@@ -14,11 +14,6 @@ public class StartUI implements Stop {
     private final Input input;
 
     /**
-     * Tracker for items.
-     */
-    private final Tracker tracker;
-
-    /**
      * Tracker menu.
      */
     private final MenuTracker menu;
@@ -34,7 +29,6 @@ public class StartUI implements Stop {
      */
     StartUI(Input input, Tracker tracker) {
         this.input = input;
-        this.tracker = tracker;
         menu = new MenuTracker(input, tracker);
         working = true;
         menu.addActions(new Exit((menu.getRange().size()), "Закончить работу", this));
