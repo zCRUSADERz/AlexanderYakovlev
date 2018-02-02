@@ -21,7 +21,7 @@ public class ArrayList<E> implements Iterable<E> {
      */
     private int modCount = 0;
 
-    ArrayList() {
+    public ArrayList() {
         objects = new Object[DEFAULT_CAPACITY];
     }
 
@@ -55,6 +55,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @param index - position.
      * @return - element at the index position.
      */
+    @SuppressWarnings("unchecked")
     public E get(int index) {
         if (index >= size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
@@ -83,11 +84,12 @@ public class ArrayList<E> implements Iterable<E> {
              * @return - next element.
              */
             @Override
+            @SuppressWarnings("unchecked")
             public E next() {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                return (E) objects[cursor];
+                return (E) objects[cursor++];
             }
 
             /**
