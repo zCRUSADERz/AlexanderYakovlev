@@ -13,7 +13,7 @@ import java.util.Iterator;
 public class SimpleLinkedSet<E> implements Iterable<E> {
     private LinkedList<E> list;
 
-    SimpleLinkedSet() {
+    public SimpleLinkedSet() {
         list = new LinkedList<>();
     }
 
@@ -22,6 +22,22 @@ public class SimpleLinkedSet<E> implements Iterable<E> {
      * @param value - element to be added to this set.
      */
     public void add(E value) {
+        if (!contains(value)) {
+            list.add(value);
+        }
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return list.iterator();
+    }
+
+    /**
+     * Returns true if this set contains the element.
+     * @param value -  element whose presence in this set is to be tested.
+     * @return - true if this set contains the element
+     */
+    public boolean contains(E value) {
         boolean exist = false;
         if (value == null) {
             for (E element : list) {
@@ -38,13 +54,6 @@ public class SimpleLinkedSet<E> implements Iterable<E> {
                 }
             }
         }
-        if (!exist) {
-            list.add(value);
-        }
-    }
-
-    @Override
-    public Iterator<E> iterator() {
-        return list.iterator();
+        return exist;
     }
 }
