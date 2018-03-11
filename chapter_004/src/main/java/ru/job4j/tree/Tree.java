@@ -50,6 +50,26 @@ public class Tree<E extends Comparable<E>> implements SimpleTree<E> {
         return rsl;
     }
 
+    /**
+     * Проверяет двоичное ли дерево.
+     * @return - true, если двоичное.
+     */
+    @Override
+    public boolean isBinary() {
+        Queue<Node<E>> data = new LinkedList<>();
+        data.offer(root);
+        int counter = 0;
+        while (counter <= 2 && !data.isEmpty()) {
+            counter = 0;
+            Node<E> node = data.poll();
+            for (Node<E> childs : node.leaves()) {
+                data.offer(childs);
+                counter++;
+            }
+        }
+        return counter <= 2;
+    }
+
     @Override
     public Iterator<E> iterator() {
         return new Itr();

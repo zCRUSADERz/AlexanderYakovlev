@@ -13,5 +13,16 @@ public interface SimpleTree<E extends Comparable<E>> extends Iterable<E> {
      */
     boolean add(E parent, E child);
 
+    /**
+     * Ищет элемент в дереве.
+     * @param value - значение.
+     * @return - возвращает ноду, с этим элементов.
+     */
     Optional<Node<E>> findBy(E value);
+
+    /**
+     * Проверяет двоичное ли дерево.
+     * @return - true, если двоичное.
+     */
+    boolean isBinary();
 }
