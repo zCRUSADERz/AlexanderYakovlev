@@ -102,6 +102,9 @@ public class Tree<E extends Comparable<E>> implements SimpleTree<E> {
         @Override
         public E next() {
             checkModification();
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
             E result;
             Node<E> node = data.poll();
             result = node.value();

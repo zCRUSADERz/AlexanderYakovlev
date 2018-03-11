@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -86,6 +87,15 @@ public class TreeTest {
         Tree<Integer> tree = new Tree<>(1);
         Iterator<Integer> it = tree.iterator();
         it.remove();
+    }
+
+    @Test (expected = NoSuchElementException.class)
+    public void whenTreeEmptyThenIteratorNextThrowException() {
+        Tree<Integer> tree = new Tree<>(1);
+        Iterator<Integer> it = tree.iterator();
+        it.next();
+        it.next();
+
     }
 
     @Test
