@@ -1,20 +1,17 @@
 package ru.job4j.broker;
 
-import ru.job4j.broker.orderstore.ExchangeCups;
-import ru.job4j.broker.orderstore.OrderStore;
-import ru.job4j.broker.order.*;
+import ru.job4j.broker.issuers.IssuerList;
+import ru.job4j.broker.orders.SimpleOrder;
+import ru.job4j.broker.orders.action.*;
+import ru.job4j.broker.orders.type.wrappers.AskOrderWrapper;
+import ru.job4j.broker.orders.type.wrappers.BidOrderWrapper;
 
-/**
- * Trade system.
- *
- * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
- * @since 04.03.2018
- */
 public class TradeSystem {
-    private ExchangeCups cups;
+    // TODO нужен интерфейс.
+    private final IssuerList issuerList;
 
     public TradeSystem() {
-        cups = new ExchangeCups();
+        this.issuerList = new IssuerList();
     }
 
     /**
@@ -26,26 +23,45 @@ public class TradeSystem {
      * @param price - price.
      * @param volume - volume.
      */
-    public void newOrder(int id, String book, TypeAction typeAction,
-                         TypeOrder typeOrder, int price, int volume) {
+    public void newOrder(int id, String book, String typeAction,
+                         String typeOrder, int price, int volume) {
         validateOrder(id, price, volume);
         validateBook(book);
-        OrderStore orderStore = cups.orderStore(book, price);
-        if (TypeAction.ADD == typeAction) {
-            OrderAdd order = new OrderAdd(
-                    new SimpleOrder(id, typeOrder, price, volume)
-            );
-            order.register(orderStore);
-        } else if (TypeAction.DELETE == typeAction) {
-            OrderDelete order = new OrderDelete(
-                    new SimpleOrder(id, typeOrder, price, volume)
-            );
-            order.delete(orderStore);
+        validateAction(typeAction);
+        validateType(typeOrder);
+        ActionOrders order;
+        if ("ask".equals(typeOrder.toLowerCase())) {
+            AskOrderWrapper wrapper = new AskOrderWrapper();
+            if ("add".equals(typeAction.toLowerCase())) {
+                order = new OrderAskAdd(
+                        book, price,
+                        wrapper.wrap(new SimpleOrder(id, volume)), issuerList
+                );
+                order.doAction();
+            } else if ("delete".equals(typeAction.toLowerCase())) {
+                order = new OrderAskDelete(
+                        book, price,
+                        wrapper.wrap(new SimpleOrder(id, volume)), issuerList
+                );
+                order.doAction();
+            }
         }
-    }
-
-    public String toString() {
-        return cups.toString();
+        if ("bid".equals(typeOrder.toLowerCase())) {
+            BidOrderWrapper wrapper = new BidOrderWrapper();
+            if ("add".equals(typeAction.toLowerCase())) {
+                order = new OrderBidAdd(
+                        book, price,
+                        wrapper.wrap(new SimpleOrder(id, volume)), issuerList
+                );
+                order.doAction();
+            } else if ("delete".equals(typeAction.toLowerCase())) {
+                order = new OrderBidDelete(
+                        book, price,
+                        wrapper.wrap(new SimpleOrder(id, volume)), issuerList
+                );
+                order.doAction();
+            }
+        }
     }
 
     private void validateOrder(int id, int price, int volume) {
@@ -64,5 +80,29 @@ public class TradeSystem {
         if (book == null) {
             throw new IllegalArgumentException("Book should not be null");
         }
+    }
+
+    private void validateAction(String typeAction) {
+        if (typeAction == null) {
+            throw new IllegalArgumentException("Type action should not be null");
+        }
+        if (!("add".equals(typeAction.toLowerCase())
+                || "delete".equals(typeAction.toLowerCase()))) {
+            throw new IllegalArgumentException("Type action should be: add or delete.");
+        }
+    }
+
+    private void validateType(String typeOrder) {
+        if (typeOrder == null) {
+            throw new IllegalArgumentException("Type order should not be null");
+        }
+        if (!("ask".equals(typeOrder.toLowerCase())
+                || "bid".equals(typeOrder.toLowerCase()))) {
+            throw new IllegalArgumentException("Type order should be: ask or bid.");
+        }
+    }
+
+    public String toString() {
+        return issuerList.toString();
     }
 }
