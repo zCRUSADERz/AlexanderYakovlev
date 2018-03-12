@@ -4,14 +4,14 @@ public class SimpleMultiThreading {
 
     public void calc(String line) {
         System.out.println("Calc run");
-        new Thread(() -> {
+        Thread t1 = new Thread(() -> {
             int counter = 0;
             for (String ignored : line.split(" ")) {
                 counter++;
             }
             System.out.println(String.format("Number of words: %d", counter));
-        }).start();
-        new Thread(() -> {
+        });
+        Thread t2 = new Thread(() -> {
             int counter = 0;
             for (char ch : line.toCharArray()) {
                 if (ch == ' ') {
@@ -19,6 +19,15 @@ public class SimpleMultiThreading {
                 }
             }
             System.out.println(String.format("Number of spaces: %d", counter));
-        }).start();
+        });
+        t1.start();
+        t2.start();
+        try {
+            t1.join();
+            t2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Calc finished.");
     }
 }
