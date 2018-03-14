@@ -1,5 +1,11 @@
-package ru.job4j;
+package ru.job4j.threads;
 
+/**
+ * Простое многопоточное приложение.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 14.03.2018
+ */
 public class SimpleMultiThreading {
 
     public void calc(String line) {
