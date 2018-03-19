@@ -4,7 +4,6 @@ import ru.job4j.broker.orders.type.AskOrders;
 import ru.job4j.broker.orders.type.BidOrders;
 import ru.job4j.broker.orders.type.wrappers.AskOrderWrapper;
 import ru.job4j.broker.orders.type.wrappers.BidOrderWrapper;
-import ru.job4j.broker.orders.type.wrappers.TypeOrdersWrapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,27 +33,15 @@ public class IssuerList {
     public GlassPriceLevel<AskOrders, BidOrders> registrar(String book, int price) {
         GlassPriceLevel<AskOrders, BidOrders> registrar;
         Map<Integer, GlassPriceLevel<AskOrders, BidOrders>> issuer;
-        TypeOrdersWrapper<AskOrders> askWrapper;
-        TypeOrdersWrapper<BidOrders> bidWrapper;
         if (issuerList.containsKey(book)) {
             issuer = issuerList.get(book);
             if (issuer.containsKey(price)) {
                 registrar = issuer.get(price);
             } else {
-                askWrapper = new AskOrderWrapper();
-                bidWrapper = new BidOrderWrapper();
-                registrar = new GlassPriceLevel<>(askWrapper, bidWrapper, price);
-                issuer.put(price, registrar);
+                registrar = newRegistrar(price, issuer);
             }
         } else {
-            issuer = new HashMap<>();
-            askWrapper = new AskOrderWrapper();
-            bidWrapper = new BidOrderWrapper();
-            registrar = new GlassPriceLevel<>(askWrapper, bidWrapper, price);
-            issuer.put(price, registrar);
-            issuerList.put(
-                    book, issuer
-            );
+            registrar = newRegistrar(price, newIssuer(book));
         }
         return registrar;
     }
@@ -96,5 +83,31 @@ public class IssuerList {
             }
         }
         return result.toString();
+    }
+
+    private synchronized Map<Integer, GlassPriceLevel<AskOrders, BidOrders>> newIssuer(
+            String book) {
+        Map<Integer, GlassPriceLevel<AskOrders, BidOrders>> result;
+        if (issuerList.containsKey(book)) {
+            result = issuerList.get(book);
+        } else {
+            result = new HashMap<>();
+            issuerList.put(book, result);
+        }
+        return result;
+    }
+
+    private synchronized GlassPriceLevel<AskOrders, BidOrders> newRegistrar(
+            int price, Map<Integer, GlassPriceLevel<AskOrders, BidOrders>> issuer) {
+        GlassPriceLevel<AskOrders, BidOrders> result;
+        if (issuer.containsKey(price)) {
+            result = issuer.get(price);
+        } else {
+            result = new GlassPriceLevel<>(
+                    new AskOrderWrapper(), new BidOrderWrapper(), price
+            );
+            issuer.put(price, result);
+        }
+        return result;
     }
 }

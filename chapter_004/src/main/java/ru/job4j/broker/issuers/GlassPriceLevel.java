@@ -77,14 +77,14 @@ public class GlassPriceLevel<A extends AskOrders, B extends BidOrders>
     public String ordersToString() {
         StringJoiner result = new StringJoiner(System.lineSeparator());
         String askOrders = askRepository.toString();
-        if ("".equals(askOrders)) {
+        if (askOrders.isEmpty()) {
             result.add("Ask orders: no one");
         } else {
             result.add("Ask orders:");
             result.add(askOrders);
         }
         String bidOrders = bidRepository.toString();
-        if ("".equals(bidOrders)) {
+        if (bidOrders.isEmpty()) {
             result.add("Bid orders: no one");
         } else {
             result.add("Bid orders:");

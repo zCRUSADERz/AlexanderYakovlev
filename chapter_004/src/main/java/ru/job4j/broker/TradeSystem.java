@@ -6,13 +6,14 @@ import ru.job4j.broker.orders.action.*;
 import ru.job4j.broker.orders.type.wrappers.AskOrderWrapper;
 import ru.job4j.broker.orders.type.wrappers.BidOrderWrapper;
 
+import java.util.Date;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class TradeSystem {
     // TODO нужен интерфейс.
-    private final IssuerList issuerList;
-
-    public TradeSystem() {
-        this.issuerList = new IssuerList();
-    }
+    private final IssuerList issuerList = new IssuerList();
 
     /**
      * Processes the addition of a new order.
@@ -64,6 +65,10 @@ public class TradeSystem {
         }
     }
 
+    public String toString() {
+        return issuerList.toString();
+    }
+
     private void validateOrder(int id, int price, int volume) {
         if (id < 0 || price < 0 || volume <= 0) {
             throw new IllegalArgumentException(
@@ -100,9 +105,5 @@ public class TradeSystem {
                 || "bid".equals(typeOrder.toLowerCase()))) {
             throw new IllegalArgumentException("Type order should be: ask or bid.");
         }
-    }
-
-    public String toString() {
-        return issuerList.toString();
     }
 }

@@ -30,6 +30,12 @@ public interface OrderRepositories {
     Order withdrawOrder(Order order);
 
     /**
+     * Возвращает ордер в начало очереди.
+     * @param order - возвращаемый ордер.
+     */
+    void returnOrder(Order order);
+
+    /**
      * Проверяет пусто ли хранилище.
      * @return - true, если пусто.
      */

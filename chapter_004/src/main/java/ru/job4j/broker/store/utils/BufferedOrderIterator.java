@@ -18,7 +18,6 @@ import java.util.*;
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 08.03.2018
  */
-// TODO Итератор возвращает ордера путая их порядок, нужно исправлять!
 public class BufferedOrderIterator<T extends TypeOrders> implements BufferedIterator<T> {
     private final OrderRepositories store;
     private final TypeOrdersWrapper<T> wrapper;
@@ -104,11 +103,10 @@ public class BufferedOrderIterator<T extends TypeOrders> implements BufferedIter
         return result;
     }
 
-    // TODO В будущем переделать так, чтобы ордера возвращались всей пачкой.
     private void returnExtraOrders() {
         ListIterator<Order> it = list.listIterator(list.size());
         while (it.hasPrevious()) {
-            store.addOrder(it.previous());
+            store.returnOrder(it.previous());
         }
         list.clear();
     }

@@ -136,8 +136,8 @@ public class GlassPriceLevelTest {
                 "Ask orders: no one%n"
                         + "Bid orders:%n"
                         + "order id: 15, volume: 35%n"
-                        + "order id: 16, volume: 30%n"
-                        + "order id: 17, volume: 55"
+                        + "order id: 17, volume: 55%n"
+                        + "order id: 16, volume: 30"
         );
         assertThat(result, is(expected));
     }

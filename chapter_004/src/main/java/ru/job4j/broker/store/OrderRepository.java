@@ -7,14 +7,12 @@ import ru.job4j.broker.store.utils.BufferedIterator;
 import ru.job4j.broker.store.utils.BufferedOrderIterator;
 import ru.job4j.broker.store.utils.OrderDemandById;
 
-import java.util.Iterator;
-import java.util.NavigableSet;
-import java.util.StringJoiner;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * Хранилище ордеров.
- * TODO Требования:
+ * Требования:
  * 1. Должна быть реализована FIFO структура.
  * 2. Обработка в многопоточном режиме запросов без блокировки в начало списка
  * и в конец.
@@ -33,59 +31,37 @@ import java.util.TreeSet;
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 11.03.2018
  */
-// TODO изменить на структуру позволяющую работать с ней многим потокам
-// TODO одновременно в разных местах структуры
 public class OrderRepository<T extends TypeOrders> implements TypeOrderRepositories<T>, OrderRepositories {
     private final TypeOrdersWrapper<T> wrapper;
-    // TODO перейти на очередь FIFO.
-    private final NavigableSet<Order> orders;
-    // TODO избавиться от этой mutable переменной!
-    private int volume;
+    private final Deque<Order> orders2;
 
     public OrderRepository(TypeOrdersWrapper<T> wrapper) {
         this.wrapper = wrapper;
-        this.orders = new TreeSet<>();
-        this.volume = 0;
+        this.orders2 = new ConcurrentLinkedDeque<>();
     }
 
-    /**
-     * Добавляет простой ордер в хранилище.
-     * @param order - добавляемый ордер
-     */
     @Override
     public void addOrder(Order order) {
-        changeVolume(order.volume());
-        orders.add(order);
+        orders2.add(order);
     }
 
-    /**
-     * Удаляет из хранилища и возвращает вызывающему.
-     * @return - наименьший ордер из хранилища.
-     */
     @Override
     public Order withdrawOrder() {
-        Order result = orders.pollFirst();
+        Order result = orders2.poll();
         if (result == null) {
             result = new Order.EmptyOrder();
         }
-        changeVolume(-result.volume());
         return result;
     }
 
-    /**
-     * Удаляет ордер эквивалентный переданному, и передает дальше.
-     * @param order - ордер, на основе которого будет найден ордер в хранилище.
-     * @return - ордер из хранилища, если был найден, или пустой ордер.
-     */
     @Override
     public Order withdrawOrder(Order order) {
         Order result = null;
-        Iterator<Order> it = orders.iterator();
+        Iterator<Order> it = orders2.iterator();
         while (it.hasNext()) {
             Order o = it.next();
             if (o.equals(order)) {
                 result = o;
-                changeVolume(-result.volume());
                 it.remove();
                 break;
             }
@@ -94,6 +70,15 @@ public class OrderRepository<T extends TypeOrders> implements TypeOrderRepositor
             result = new Order.EmptyOrder();
         }
         return result;
+    }
+
+    /**
+     * Возвращает ордер в начало очереди.
+     * @param order - возвращаемый ордер.
+     */
+    @Override
+    public void returnOrder(Order order) {
+        orders2.addFirst(order);
     }
 
     /**
@@ -122,16 +107,16 @@ public class OrderRepository<T extends TypeOrders> implements TypeOrderRepositor
      */
     @Override
     public boolean isEmpty() {
-        return orders.isEmpty();
+        return orders2.isEmpty();
     }
 
-    /**
-     * Вовзвращает объем всех ордеров в хранилище.
-     * @return - объем всех ордеров в хранилище.
-     */
     @Override
     public int volume() {
-        return this.volume;
+        int result = 0;
+        for (Order order : orders2) {
+            result += order.volume();
+        }
+        return result;
     }
 
     /**
@@ -147,17 +132,9 @@ public class OrderRepository<T extends TypeOrders> implements TypeOrderRepositor
     @Override
     public String toString() {
         StringJoiner result = new StringJoiner(System.lineSeparator());
-        for (Order order : orders) {
+        for (Order order : orders2) {
             result.add(order.toString());
         }
         return result.toString();
-    }
-
-    /**
-     * Change volume.
-     * @param change - volume change.
-     */
-    private void changeVolume(int change) {
-        volume += change;
     }
 }
