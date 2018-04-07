@@ -14,7 +14,7 @@ public class ThreadPoolTest {
     public void testThreadPool() throws InterruptedException {
         List<Integer> result = new ArrayList<>(10);
         ThreadPool pool = new ThreadPool();
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             pool.add(new SimpleWork(result));
         }
         Thread.sleep(100);
