@@ -1,5 +1,8 @@
 package ru.job4j.list;
 
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
+
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -10,10 +13,14 @@ import java.util.NoSuchElementException;
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 02.02.2017
  */
+@ThreadSafe
 public class LinkedList<E> implements Iterable<E> {
-    private Node<E> first;
-    private Node<E> last;
-    private int size;
+    @GuardedBy("this")
+    private volatile Node<E> first;
+    @GuardedBy("this")
+    private volatile Node<E> last;
+    @GuardedBy("this")
+    private volatile int size;
     /**
      * Structurally modification count.
      */
@@ -30,7 +37,7 @@ public class LinkedList<E> implements Iterable<E> {
      * Add element to the end.
      * @param value - element.
      */
-    public void add(E value) {
+    public synchronized void add(E value) {
         Node<E> previous = last;
         Node<E> newNode = new Node<>(previous, value, null);
         last = newNode;
@@ -48,12 +55,12 @@ public class LinkedList<E> implements Iterable<E> {
      * @param index - position.
      * @return - element at the index position.
      */
-    public E get(int index) {
+    public synchronized E get(int index) {
         checkIndex(index);
         return node(index).item;
     }
 
-    public E remove(int index) {
+    public synchronized E remove(int index) {
         checkIndex(index);
         return removeNode(node(index));
     }
@@ -80,7 +87,7 @@ public class LinkedList<E> implements Iterable<E> {
      * Remove node and restores links between nodes.
      * @param node - removable node.
      */
-    private E removeNode(Node<E> node) {
+    private synchronized E removeNode(Node<E> node) {
         Node<E> next = node.next;
         Node<E> previous = node.previous;
 

@@ -1,5 +1,8 @@
 package ru.job4j.list;
 
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
+
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -11,15 +14,19 @@ import java.util.NoSuchElementException;
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 31.01.2017
  */
+@ThreadSafe
 public class ArrayList<E> implements Iterable<E> {
-    private Object[] objects;
+    @GuardedBy("this")
+    private volatile Object[] objects;
     private static final int DEFAULT_CAPACITY = 10;
-    private int size = 0;
+    @GuardedBy("this")
+    private volatile int size = 0;
 
     /**
      * Structurally modification count.
      */
-    private int modCount = 0;
+    @GuardedBy("this")
+    private volatile int modCount = 0;
 
     public ArrayList() {
         objects = new Object[DEFAULT_CAPACITY];
@@ -29,7 +36,7 @@ public class ArrayList<E> implements Iterable<E> {
      * Constructor with initial capacity.
      * @param capacity - initial capacity.
      */
-    ArrayList(int capacity) {
+    public ArrayList(int capacity) {
         if (capacity < 0) {
             throw new IllegalArgumentException("Capacity can not be less than 0.");
         }
@@ -41,7 +48,7 @@ public class ArrayList<E> implements Iterable<E> {
      * Add element to the end.
      * @param value - element.
      */
-    public void add(E value) {
+    public synchronized void add(E value) {
         if (size + 1 > objects.length) {
             int newCapacity = size + (size >> 1);
             objects = Arrays.copyOf(objects, newCapacity);
@@ -56,7 +63,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @return - element at the index position.
      */
     @SuppressWarnings("unchecked")
-    public E get(int index) {
+    public synchronized E get(int index) {
         if (index >= size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
         }
