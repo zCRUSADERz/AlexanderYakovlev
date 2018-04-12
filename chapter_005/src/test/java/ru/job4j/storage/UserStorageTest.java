@@ -1,9 +1,7 @@
-package ru.job4j.threads;
+package ru.job4j.storage;
 
 import org.junit.Before;
 import org.junit.Test;
-import ru.job4j.storage.User;
-import ru.job4j.storage.UserStorage;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

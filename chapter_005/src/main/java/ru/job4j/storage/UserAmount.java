@@ -11,20 +11,13 @@ import net.jcip.annotations.ThreadSafe;
  */
 @ThreadSafe
 public class UserAmount {
-    /**
-     * Id пользователя. Используется для решения проблемы DeadLock.
-     * Сначала блокируется пользователь с наименьшим Id.
-     */
-    private final int userId;
     @GuardedBy("this")
     private volatile int amount;
 
     /**
-     * @param userId - Id пользователя.
      * @param amount - количество "чего-то".
      */
-    public UserAmount(int userId, int amount) {
-        this.userId = userId;
+    public UserAmount(int amount) {
         this.amount = amount;
     }
 
@@ -38,23 +31,15 @@ public class UserAmount {
 
     /**
      * Транзакция перевода некоторого количества другому пользователю.
-     * Во избежание проблемы DeadLock, сначала блокируется пользователь с
-     * наименьшим Id.
      * @param toUser - пользователь, которому нужно перевести.
      * @param transferAmount - количество для перевода.
      * @return - true, если транзакция выполнена.
      */
     public boolean transferTo(UserAmount toUser, int transferAmount) {
         boolean result = false;
-        if (this.userId < toUser.userId) {
-            if (withdrawAmount(transferAmount)) {
-                toUser.takeAmount(transferAmount);
-                result = true;
-            }
-        } else {
-            if (toUser.takeAmountFrom(this, transferAmount)) {
-                result = true;
-            }
+        if (withdrawAmount(transferAmount)) {
+            toUser.takeAmount(transferAmount);
+            result = true;
         }
         return result;
     }
@@ -65,23 +50,6 @@ public class UserAmount {
      */
     private synchronized void takeAmount(int amount) {
         this.amount += amount;
-    }
-
-    /**
-     * Изымает количество у другого пользователя и добавляет к себе.
-     * Метод используется в случае если нужно заблокировать сначала пользователя,
-     * который должен получить некоторое количество.
-     * @param from - откуда изъять.
-     * @param amount - количество.
-     * @return - true, если транзакция выполнена.
-     */
-    private synchronized boolean takeAmountFrom(UserAmount from, int amount) {
-        boolean result = false;
-        if (from.withdrawAmount(amount)) {
-            this.amount += amount;
-            result = true;
-        }
-        return result;
     }
 
     /**

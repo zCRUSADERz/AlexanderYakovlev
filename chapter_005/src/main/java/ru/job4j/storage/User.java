@@ -21,7 +21,7 @@ public class User {
      */
     public User(int id, int amount) {
         this.id = id;
-        this.amount = new UserAmount(id, amount);
+        this.amount = new UserAmount(amount);
     }
 
     public int id() {

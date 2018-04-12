@@ -24,7 +24,8 @@ public class LinkedList<E> implements Iterable<E> {
     /**
      * Structurally modification count.
      */
-    private int modCount;
+    @GuardedBy("this")
+    private volatile int modCount;
 
     public LinkedList() {
         first = null;
