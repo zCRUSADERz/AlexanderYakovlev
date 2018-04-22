@@ -11,6 +11,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * Поиск текста в файловой системе в некольких потоках.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 14.04.2018
+ */
 @ThreadSafe
 public class ParallelSearch extends SimpleFileVisitor<Path> {
     private final String root;
@@ -27,6 +33,12 @@ public class ParallelSearch extends SimpleFileVisitor<Path> {
         this.exts = exts;
     }
 
+    /**
+     * Посещение файла.
+     * @param file - путь к файлу.
+     * @param attrs - аттрибуты файла.
+     * @return - результат посещения файла.
+     */
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
         if (attrs.isRegularFile()) {
@@ -43,6 +55,10 @@ public class ParallelSearch extends SimpleFileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
 
+    /**
+     * инициализация многопоточного поиска.
+     * @throws InterruptedException - если какой-либо из потоков был прерван.
+     */
     public void init() throws InterruptedException {
         FileVisitor<Path> visitor = this;
         new Thread(() -> {
@@ -67,6 +83,10 @@ public class ParallelSearch extends SimpleFileVisitor<Path> {
         }
     }
 
+    /**
+     * Результат поиска.
+     * @return - список путей к файлам, содержащим искомый текст.
+     */
     public List<String>  result() {
         return this.paths;
     }

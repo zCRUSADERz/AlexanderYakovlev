@@ -1,6 +1,6 @@
 package ru.job4j;
 
-import org.junit.Test;
+import org.junit.Ignore;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,9 +8,15 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
+/**
+ * Тестирование параллельного поиска текста в файловой системе.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 14.04.2018
+ */
 public class ParallelSearchTest {
 
-    @Test
+    @Ignore
     public void testAll() throws InterruptedException {
         ParallelSearch search = new ParallelSearch("D:\\Q", "123", Arrays.asList("txt", "java"));
         search.init();
