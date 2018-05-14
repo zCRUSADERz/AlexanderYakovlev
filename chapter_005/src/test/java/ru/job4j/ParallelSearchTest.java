@@ -26,7 +26,9 @@ public class ParallelSearchTest {
         search.init();
         List<String> result = search.result();
         List<String> expected = Arrays.asList(
-                root + "\\first\\text2.txt", root + "\\text.txt");
+                root + File.separator + "first" + File.separator + "text2.txt",
+                root + File.separator + "text.txt"
+        );
         assertThat(result, is(expected));
     }
 }
