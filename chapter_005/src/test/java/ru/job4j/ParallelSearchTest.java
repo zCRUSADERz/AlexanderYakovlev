@@ -1,7 +1,9 @@
 package ru.job4j;
 
 import org.junit.Ignore;
+import org.junit.Test;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,12 +18,15 @@ import static org.junit.Assert.*;
  */
 public class ParallelSearchTest {
 
-    @Ignore
+    @Test
     public void testAll() throws InterruptedException {
-        ParallelSearch search = new ParallelSearch("D:\\Q", "123", Arrays.asList("txt", "java"));
+        File file = new File(getClass().getClassLoader().getResource("parallelSearch").getFile());
+        String root = file.getAbsolutePath();
+        ParallelSearch search = new ParallelSearch(root, "123", Arrays.asList("txt", "java"));
         search.init();
         List<String> result = search.result();
-        List<String> expected = Arrays.asList("D:\\Q\\B\\text2.txt", "D:\\Q\\text.txt");
+        List<String> expected = Arrays.asList(
+                root + "\\first\\text2.txt", root + "\\text.txt");
         assertThat(result, is(expected));
     }
 }
