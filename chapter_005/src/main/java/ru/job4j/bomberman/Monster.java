@@ -3,36 +3,33 @@ package ru.job4j.bomberman;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Герой - игрок.
+ * Герой - монстр.
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 14.06.2018
  */
-public class Player implements Runnable {
+public class Monster implements Runnable {
     private final HeroPosition currentPosition;
+    private final HeroPosition playerPosition;
     private final RandomDirection randomDirection;
     private final Game game;
 
-    public Player(final HeroPosition currentPosition, final Game game) {
+    public Monster(final HeroPosition currentPosition,
+                   final HeroPosition playerPosition, final Game game) {
         this.currentPosition = currentPosition;
+        this.playerPosition = playerPosition;
         this.randomDirection = new RandomDirection();
         this.game = game;
-    }
-
-    public boolean move(DirectionOfMove direction, long timeout, TimeUnit unit) throws InterruptedException {
-        return this.currentPosition.moveInDirection(
-                direction, timeout, unit
-        );
     }
 
     @Override
     public void run() {
         try {
-            this.currentPosition.initStartPosition();
-            while (this.game.notYetStarted()) {
+            currentPosition.initStartPosition();
+            while (game.notYetStarted()) {
                 Thread.sleep(10);
             }
-            while (this.game.isNotFinished()) {
+            while (game.isNotFinished()) {
                 if (randomMove()) {
                     Thread.sleep(1000);
                 }
@@ -43,6 +40,15 @@ public class Player implements Runnable {
     }
 
     private boolean randomMove() throws InterruptedException {
-        return move(this.randomDirection.nextDirection(), 500, TimeUnit.MILLISECONDS);
+        boolean result = false;
+        DirectionOfMove direction = this.randomDirection.nextDirection();
+        if (this.currentPosition.checkOtherHeroInDirection(direction, this.playerPosition)) {
+            this.game.finish();
+        } else {
+            result = this.currentPosition.moveInDirection(
+                    direction, 500, TimeUnit.MILLISECONDS
+            );
+        }
+        return result;
     }
 }

@@ -12,10 +12,12 @@ public enum DirectionOfMove {
      * Движение вверх.
      */
     UP {
+        @Override
         public int x() {
             return 0;
         }
 
+        @Override
         public int y() {
             return 1;
         }
@@ -25,10 +27,12 @@ public enum DirectionOfMove {
      * Движение влево.
      */
     LEFT {
+        @Override
         public int x() {
             return -1;
         }
 
+        @Override
         public int y() {
             return 0;
         }
@@ -38,10 +42,12 @@ public enum DirectionOfMove {
      * Движение вправо.
      */
     RIGHT {
+        @Override
         public int x() {
             return 1;
         }
 
+        @Override
         public int y() {
             return 0;
         }
@@ -51,10 +57,12 @@ public enum DirectionOfMove {
      * Движение вниз.
      */
     DOWN {
+        @Override
         public int x() {
             return 0;
         }
 
+        @Override
         public int y() {
             return -1;
         }
@@ -62,13 +70,13 @@ public enum DirectionOfMove {
 
     /**
      * Изменение Х координаты в определенном направлении.
-     * @return - изменение X координаты.
+     * @return изменение X координаты.
      */
     public abstract int x();
 
     /**
      * Изменение Y координаты в определенном направлении.
-     * @return - изменение Y координаты.
+     * @return изменение Y координаты.
      */
     public abstract int y();
 }

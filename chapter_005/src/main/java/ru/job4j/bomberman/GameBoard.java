@@ -6,27 +6,25 @@ import java.util.concurrent.TimeUnit;
  * Игровая доска.
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
- * @since 15.05.2018
+ * @since 15.06.2018
  */
 public interface GameBoard {
 
     /**
-     * Попытаться двигаться в заданном направлении.
-     * @param identificationString идентификационная строка персонажа, который
-     *                             желает передвинуться в двругое место на доске.
-     * @param direction направление движения.
+     * Перейти в новое местоположение на игровой доске.
+     * @param current текущее местоположение.
+     * @param target желаемое местоположение.
      * @param timeout длительность попытки.
-     * @param unit timeUnit.
-     * @return - true, если удалось передвинуться.
-     * @throws InterruptedException, если поток был прерван.
+     * @param unit единица измерения времени.
+     * @return true, если перейти удалось.
+     * @throws InterruptedException если поток был прерван.
      */
-    boolean tryMove(String identificationString, DirectionOfMove direction,
-                           long timeout, TimeUnit unit) throws InterruptedException;
+    boolean move(Position current, Position target, long timeout,
+                 TimeUnit unit) throws InterruptedException;
 
     /**
-     * Инициализировать персонажа на игровой доске. Вызывается единожды, перед
-     * тем как передвинуться на игровой доске.
-     * @param identificationString - идентификационная строка персонажа.
+     * Занять местоположение.
+     * @param position занимаемое местоположение.
      */
-    void initHero(String identificationString);
+    void occupyCell(Position position);
 }
