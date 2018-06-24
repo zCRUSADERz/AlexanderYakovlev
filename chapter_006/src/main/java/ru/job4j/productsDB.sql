@@ -34,12 +34,12 @@ INSERT INTO product VALUES
   (8, 'Продукт 8', 4, '2018-09-11', 55),
   (9, 'Продукт 9', 4, '2018-08-23', 32);
 
-SELECT product.name, type.name AS type_name, expired_date, price
-FROM product INNER JOIN (SELECT * FROM type WHERE name = 'СЫР') AS type
-    ON product.type_id = type.id;
+SELECT p.name, t.name AS type_name, p.expired_date, p.price
+FROM product AS p INNER JOIN (SELECT * FROM type WHERE name = 'СЫР') AS t
+    ON p.type_id = t.id;
 
 SELECT * FROM product
-WHERE name ILIKE 'мороженное'
+WHERE name ILIKE  'мороженное'
       OR name ILIKE 'мороженное %'
       OR name ILIKE '% мороженное %'
       OR name ILIKE '% мороженное,%'
@@ -47,26 +47,27 @@ WHERE name ILIKE 'мороженное'
       OR name ILIKE '% мороженное';
 
 SELECT * FROM product
-WHERE EXTRACT(EPOCH FROM expired_date) - EXTRACT(EPOCH FROM now()) <= 2592000
-      AND EXTRACT(EPOCH FROM expired_date) - EXTRACT(EPOCH FROM now()) > 0;
+  WHERE date_trunc('month', expired_date)
+        = date_trunc('month', now() + interval '1 months');
 
 SELECT * FROM product
 WHERE (SELECT MAX(price) FROM product) = product.price;
 
-SELECT COUNT(product.name)
-FROM product INNER JOIN (SELECT * FROM type WHERE name = 'СЫР') AS type
-    ON product.type_id = type.id;
+SELECT COUNT(p.name)
+FROM product AS p INNER JOIN (SELECT * FROM type WHERE name = 'СЫР') AS t
+    ON p.type_id = t.id;
 
-SELECT product.id, product.name, type.name AS type_name, expired_date, price
-FROM product INNER JOIN (SELECT * FROM type WHERE name IN ('СЫР', 'МОЛОКО')) AS type
-    ON product.type_id = type.id;
+SELECT p.id, p.name, t.name AS type_name, p.expired_date, p.price
+FROM product AS p INNER JOIN
+  (SELECT * FROM type WHERE name IN ('СЫР', 'МОЛОКО')) AS t
+    ON p.type_id = t.id;
 
-SELECT name, p_count
-FROM (SELECT  type.name, COUNT(product.name) AS p_count
-      FROM product INNER JOIN type
-          ON product.type_id = type.id
-      GROUP BY type.id) AS count
-WHERE p_count < 10;
+SELECT  t.name, COUNT(p.name)
+FROM product AS p INNER JOIN type AS t
+    ON p.type_id = t.id
+GROUP BY t.id
+HAVING  COUNT(p.name) < 10;
 
-SELECT product.name, type.name AS type_name, product.expired_date, product.price
-FROM product INNER JOIN type ON product.type_id = type.id;
+SELECT p.name, t.name AS type_name, p.expired_date, p.price
+FROM product AS p INNER JOIN type AS t
+    ON p.type_id = t.id;
