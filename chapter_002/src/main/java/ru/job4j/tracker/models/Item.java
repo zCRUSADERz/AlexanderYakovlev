@@ -2,67 +2,29 @@ package ru.job4j.tracker.models;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+import java.util.Objects;
 
 /**
  * Item.
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 3.01.2017
- * @version 1.0
  */
 public class Item {
-    private String id;
-    private String name;
-    private String desc;
-    private long created;
-    private List<String> comments;
+    private final String id;
+    private final String name;
+    private final String desc;
+    private final long created;
 
-    /**
-     * Constructor item.
-     * @param name - name.
-     * @param desc - description.
-     */
-    public Item(String name, String desc) {
-        this.name = name;
-        this.desc = desc;
-        created = new Date().getTime();
-    }
-
-    /**
-     * Constructor item.
-     * @param name - name.
-     * @param desc - description.
-     * @param created - date of creation.
-     */
-    public Item(String name, String desc, long created) {
+    public Item(String id, String name, String desc, long created) {
+        this.id = id;
         this.name = name;
         this.desc = desc;
         this.created = created;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public Date getDateCreated() {
-        return new Date(created);
     }
 
     /**
@@ -77,5 +39,25 @@ public class Item {
                         + "-------------------------",
                 name, id, desc, format.format(new Date(created))
         );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Item item = (Item) o;
+        return created == item.created
+                && Objects.equals(id, item.id)
+                && Objects.equals(name, item.name)
+                && Objects.equals(desc, item.desc);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, desc, created);
     }
 }

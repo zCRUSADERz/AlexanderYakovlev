@@ -7,7 +7,9 @@ import ru.job4j.tracker.models.Item;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.sql.Connection;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
@@ -18,7 +20,6 @@ import static org.junit.Assert.assertThat;
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 4.01.2017
- * @version 1.0
  */
 public class StartUITest {
     private final PrintStream stdout = System.out;
@@ -35,10 +36,21 @@ public class StartUITest {
                     + "Введите пункт меню: %n"
     );
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+    private final Connection connection = new PostgresDB().getConnection();
+    private Tracker tracker;
+
+    public StartUITest() throws Exception {
+    }
 
     @Before
     public void loadOutput() {
         System.setOut(new PrintStream(out));
+    }
+
+    @Before
+    public void initTracker() throws Exception {
+        this.tracker = new Tracker(this.connection);
+        tracker.deleteAllItems();
     }
 
     @After
@@ -47,16 +59,14 @@ public class StartUITest {
     }
 
     @Test
-    public void whenUserRunProgramAndExitThenShowMenuAndExit() {
-        Tracker tracker = new Tracker();
+    public void whenUserRunProgramAndExitThenShowMenuAndExit() throws Exception {
         Input input = new StubInput(new String[]{"6"});
-        new StartUI(input, tracker).init();
+        new StartUI(input, this.tracker).init();
         assertThat(new String(out.toByteArray()), is(menu));
     }
 
     @Test
-    public void whenUserAddItemThenShowCreateItem() {
-        Tracker tracker = new Tracker();
+    public void whenUserAddItemThenShowCreateItem() throws Exception {
         Input input = new StubInput(new String[]{"0", "test name", "desc", "6"});
         new StartUI(input, tracker).init();
         String expected = String.format(
@@ -74,18 +84,16 @@ public class StartUITest {
     }
 
     @Test
-    public void whenUserAddItemThenTrackerHasNewItemWithSameName() {
-        Tracker tracker = new Tracker();
+    public void whenUserAddItemThenTrackerHasNewItemWithSameName() throws Exception {
         Input input = new StubInput(new String[]{"0", "test name", "desc", "6"});
         new StartUI(input, tracker).init();
         assertThat(tracker.findAll().get(0).getName(), is("test name"));
     }
 
     @Test
-    public void whenAddItemAndUserSelectShowAllItemThenShowAllItem() {
-        Tracker tracker = new Tracker();
-        Item item = new Item("1", "desc item");
-        tracker.add(item);
+    public void whenAddItemAndUserSelectShowAllItemThenShowAllItem() throws Exception {
+        Date created = new Date();
+        tracker.add("1", "desc item", created.getTime());
         Input input = new StubInput(new String[]{"1", "6"});
         new StartUI(input, tracker).init();
         String expected = String.format(
@@ -96,7 +104,7 @@ public class StartUITest {
                         + "-------------------------%n"
                         + "%s",
                 menu,
-                dateFormat.format(item.getDateCreated()),
+                dateFormat.format(created),
                 menu
         );
         String result = new String(out.toByteArray());
@@ -104,8 +112,7 @@ public class StartUITest {
     }
 
     @Test
-    public void whenTrackerEmptyAndUserSelectShowAllThenShow() {
-        Tracker tracker = new Tracker();
+    public void whenTrackerEmptyAndUserSelectShowAllThenShow() throws Exception {
         Input input = new StubInput(new String[]{"1", "6"});
         new StartUI(input, tracker).init();
         String expected = String.format("%s- Зарегистрированных заявок в системе нет.%n%s", menu, menu);
@@ -114,11 +121,9 @@ public class StartUITest {
     }
 
     @Test
-    public void whenAddItemAndUserEditThisItemThenShowEdit() {
-        Tracker tracker = new Tracker();
-        Item item = new Item("test name", "desc");
-        tracker.add(item);
-        Input input = new StubInput(new String[]{"2", item.getId(), "test name", "desc", "6"});
+    public void whenAddItemAndUserEditThisItemThenShowEdit() throws Exception {
+        tracker.add("test name", "desc");
+        Input input = new StubInput(new String[]{"2", "1", "test name", "desc", "6"});
         new StartUI(input, tracker).init();
         String expected = String.format(
                 "%s"
@@ -135,14 +140,15 @@ public class StartUITest {
     }
 
     @Test
-    public void whenTrackerEmptyAndUserSelectEditItemWithIdOneThenShow() {
-        Tracker tracker = new Tracker();
-        Input input = new StubInput(new String[]{"2", "1", "6"});
+    public void whenTrackerEmptyAndUserSelectEditItemWithIdOneThenShow() throws Exception {
+        Input input = new StubInput(new String[]{"2", "1", "new name", "new desc", "6"});
         new StartUI(input, tracker).init();
         String expected = String.format(
                 "%s"
                         + "---------- Редактирование заявки ----------%n"
                         + "Введите Id заявки, которую желаете отредактировать: %n"
+                        + "Введите новое название заявки: %n"
+                        + "Введите новое описание заявки: %n"
                         + "- Заявка с Id: 1 не зарегистрированна в системе.%n"
                         + "%s",
                 menu,
@@ -153,17 +159,15 @@ public class StartUITest {
     }
 
     @Test
-    public void whenUserEditItemThenTrackerHasUpdatedValue() {
-        Tracker tracker = new Tracker();
-        Item item = tracker.add(new Item("", ""));
-        Input input = new StubInput(new String[]{"2", item.getId(), "test name", "desc", "6"});
+    public void whenUserEditItemThenTrackerHasUpdatedValue() throws Exception {
+        tracker.add("new item", "new item desc");
+        Input input = new StubInput(new String[]{"2", "1", "new name", "new desc", "6"});
         new StartUI(input, tracker).init();
-        assertThat(tracker.findById(item.getId()).getName(), is("test name"));
+        assertThat(tracker.findById("1").getName(), is("new name"));
     }
 
     @Test
-    public void whenUserSelectDeleteItemThenShowDeleteItem() {
-        Tracker tracker = new Tracker();
+    public void whenUserSelectDeleteItemThenShowDeleteItem() throws Exception {
         Input input = new StubInput(new String[]{"3", "1", "6"});
         new StartUI(input, tracker).init();
         String expected = String.format(
@@ -179,36 +183,33 @@ public class StartUITest {
     }
 
     @Test
-    public void whenUserDeleteItemWithIdTwoThenTrackerRemoveThisItem() {
-        Tracker tracker = new Tracker();
-        Item item1 = tracker.add(new Item("", ""));
-        tracker.add(new Item("", ""));
-        tracker.add(new Item("", ""));
-        String itemId = item1.getId();
-        Input input = new StubInput(new String[]{"3", itemId, "6"});
+    public void whenUserDeleteItemWithIdTwoThenTrackerRemoveThisItem() throws Exception {
+        tracker.add("first", "first desc");
+        tracker.add("second", "second desc");
+        tracker.add("third", "third desc");
+        Input input = new StubInput(new String[]{"3", "2", "6"});
         new StartUI(input, tracker).init();
-        Item result = tracker.findById(itemId);
+        Item result = tracker.findById("2");
         assertThat(result, is(nullValue()));
     }
 
     @Test
-    public void whenAddItemAndUserSelectFindByIdThenShowThisItem() {
-        Tracker tracker = new Tracker();
-        Item item = tracker.add(new Item("1", "desc"));
-        String itemId = item.getId();
-        Input input = new StubInput(new String[]{"4", itemId, "6"});
+    public void whenAddItemAndUserSelectFindByIdThenShowThisItem() throws Exception {
+        Date created = new Date();
+        tracker.add("item", "item desc", created.getTime());
+        Input input = new StubInput(new String[]{"4", "1", "6"});
         new StartUI(input, tracker).init();
         String expected = String.format(
                 "%s"
                         + "---------- Поис заявки по Id ----------%n"
                         + "Введите Id заявки, которую желаете найти: %n"
-                        + "Заявка: 1, Id: 1%n"
-                        + "Описание: desc%n"
+                        + "Заявка: item, Id: 1%n"
+                        + "Описание: item desc%n"
                         + "Дата создания заявки: %s%n"
                         + "-------------------------%n"
                         + "%s",
                 menu,
-                dateFormat.format(item.getDateCreated()),
+                dateFormat.format(created),
                 menu
         );
         String result = new String(out.toByteArray());
@@ -216,8 +217,7 @@ public class StartUITest {
     }
 
     @Test
-    public void whenTrackerEmptyAndUserSelectFindItemByIdThenShow() {
-        Tracker tracker = new Tracker();
+    public void whenTrackerEmptyAndUserSelectFindItemByIdThenShow() throws Exception {
         Input input = new StubInput(new String[]{"4", "1", "6"});
         new StartUI(input, tracker).init();
         String expected = String.format(
@@ -234,23 +234,23 @@ public class StartUITest {
     }
 
     @Test
-    public void whenAddItemAndUserSelectFindByNameThisItemThenShowItem() {
-        Tracker tracker = new Tracker();
-        Item item = tracker.add(new Item("1", "desc"));
-        Input input = new StubInput(new String[]{"5", item.getName(), "6"});
+    public void whenAddItemAndUserSelectFindByNameThisItemThenShowItem() throws Exception {
+        Date created = new Date();
+        tracker.add("tracker", "tracker desc", created.getTime());
+        Input input = new StubInput(new String[]{"5", "tracker", "6"});
         new StartUI(input, tracker).init();
         String expected = String.format(
                 "%s"
                         + "---------- Поиск заявки по названию ----------%n"
                         + "Введите название заявки(ок), которую(ые) желаете найти: %n"
                         + "---------- Зарегистрированны следующие заявки: ----------%n"
-                        + "Заявка: 1, Id: 1%n"
-                        + "Описание: desc%n"
+                        + "Заявка: tracker, Id: 1%n"
+                        + "Описание: tracker desc%n"
                         + "Дата создания заявки: %s%n"
                         + "-------------------------%n"
                         + "%s",
                 menu,
-                dateFormat.format(item.getDateCreated()),
+                dateFormat.format(created),
                 menu
         );
         String result = new String(out.toByteArray());
@@ -258,8 +258,7 @@ public class StartUITest {
     }
 
     @Test
-    public void whenTrackerEmptyAndUserSelectFindItemNameThenShow() {
-        Tracker tracker = new Tracker();
+    public void whenTrackerEmptyAndUserSelectFindItemNameThenShow() throws Exception {
         Input input = new StubInput(new String[]{"5", "name", "6"});
         new StartUI(input, tracker).init();
         String expected = String.format(

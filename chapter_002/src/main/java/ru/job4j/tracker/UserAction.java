@@ -20,7 +20,7 @@ public interface UserAction {
      * @param input - user input.
      * @param tracker - tracker.
      */
-    void execute(Input input, Tracker tracker);
+    void execute(Input input, Tracker tracker) throws Exception;
 
     /**
      * Menu info.

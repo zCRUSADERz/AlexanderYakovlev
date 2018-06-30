@@ -31,24 +31,38 @@ public class StartUI implements Stop {
         this.input = input;
         menu = new MenuTracker(input, tracker);
         working = true;
-        menu.addActions(new Exit((menu.getRange().size()), "Закончить работу", this));
+        menu.addActions(
+                new Exit(
+                        (menu.getRange().size()),
+                        "Закончить работу", this
+                )
+        );
     }
 
     /**
      * Launch program.
      * @param args - args.
      */
-    public static void main(String[] args) {
-        new StartUI(new ValidateInput(new ConsoleInput()), new Tracker()).init();
+    public static void main(String[] args) throws Exception {
+        try (PostgresDB db = new PostgresDB()) {
+            try (Tracker tracker = new Tracker(db.getConnection())) {
+                new StartUI(
+                        new ValidateInput(new ConsoleInput()),
+                        tracker
+                ).init();
+            }
+        }
     }
 
     /**
      * Init console program.
      */
-    public void init() {
+    public void init() throws Exception {
         do {
             menu.show();
-            menu.select(input.ask("Введите пункт меню: ", menu.getRange()));
+            menu.select(
+                    input.ask("Введите пункт меню: ", menu.getRange())
+            );
         } while (working);
     }
 

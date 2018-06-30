@@ -3,7 +3,6 @@ package ru.job4j.tracker;
 import ru.job4j.tracker.models.Item;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -63,7 +62,7 @@ public class MenuTracker {
      * Select user actions.
      * @param key - key action.
      */
-    public void select(int key) {
+    public void select(int key) throws Exception {
         for (UserAction action : actions) {
             if (action.key() == key) {
                 action.execute(input, tracker);
@@ -85,7 +84,7 @@ public class MenuTracker {
      * Update range of key menu.
      */
     private void updateRange() {
-        range.add(range.size() - 1);
+        range.add(range.size());
     }
 
     /**
@@ -119,13 +118,12 @@ public class MenuTracker {
          * @param input - user input.
          * @param tracker - tracker.
          */
-        public void execute(Input input, Tracker tracker) {
+        public void execute(Input input, Tracker tracker) throws Exception {
             System.out.println("---------- Добавление новой заявки ----------");
             String name = input.ask("Введите название заявки: ");
             String description = input.ask("Введите описание заявки: ");
-            Item item = new Item(name, description, new Date().getTime());
-            tracker.add(item);
-            System.out.println("---------- Новая заявка с Id: " + item.getId() + " ----------");
+            int resultId = tracker.add(name, description);
+            System.out.println("---------- Новая заявка с Id: " + resultId + " ----------");
         }
     }
 
@@ -148,7 +146,7 @@ public class MenuTracker {
          * @param input - user input.
          * @param tracker - tracker.
          */
-        public void execute(Input input, Tracker tracker) {
+        public void execute(Input input, Tracker tracker) throws Exception {
             List<Item> items = tracker.findAll();
             if (items.size() != 0) {
                 System.out.println("---------- Зарегистрированны следующие заявки: ----------");
@@ -180,17 +178,12 @@ public class MenuTracker {
          * @param input - user input.
          * @param tracker - tracker.
          */
-        public void execute(Input input, Tracker tracker) {
+        public void execute(Input input, Tracker tracker) throws Exception {
             System.out.println("---------- Редактирование заявки ----------");
             String id = input.ask("Введите Id заявки, которую желаете отредактировать: ");
-            Item item = tracker.findById(id);
-            if (item != null) {
-                String name = input.ask("Введите новое название заявки: ");
-                item.setName(name);
-                String desc = input.ask("Введите новое описание заявки: ");
-                item.setDesc(desc);
-                tracker.replace(id, item);
-            } else {
+            String name = input.ask("Введите новое название заявки: ");
+            String desc = input.ask("Введите новое описание заявки: ");
+            if (!tracker.replace(id, name, desc)) {
                 System.out.println("- Заявка с Id: " + id + " не зарегистрированна в системе.");
             }
         }
@@ -215,7 +208,7 @@ public class MenuTracker {
          * @param input - user input.
          * @param tracker - tracker.
          */
-        public void execute(Input input, Tracker tracker) {
+        public void execute(Input input, Tracker tracker) throws Exception {
             System.out.println("---------- Удаление заявки ----------");
             String id = input.ask("Введите Id заявки, которую желаете удалить: ");
             tracker.delete(id);
@@ -241,7 +234,7 @@ public class MenuTracker {
          * @param input - user input.
          * @param tracker - tracker.
          */
-        public void execute(Input input, Tracker tracker) {
+        public void execute(Input input, Tracker tracker) throws Exception {
             System.out.println("---------- Поис заявки по Id ----------");
             String id = input.ask("Введите Id заявки, которую желаете найти: ");
             Item item = tracker.findById(id);
@@ -273,7 +266,7 @@ class FindByName extends BaseAction {
      * @param input - user input.
      * @param tracker - tracker.
      */
-    public void execute(Input input, Tracker tracker) {
+    public void execute(Input input, Tracker tracker) throws Exception {
         System.out.println("---------- Поиск заявки по названию ----------");
         String name = input.ask("Введите название заявки(ок), которую(ые) желаете найти: ");
         List<Item> items = tracker.findByName(name);
