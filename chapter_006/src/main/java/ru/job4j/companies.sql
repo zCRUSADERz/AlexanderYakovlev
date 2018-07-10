@@ -34,10 +34,11 @@ FROM person AS p JOIN company AS c
     ON p.company_id = c.id
 WHERE p.company_id != 5;
 
-SELECT c.name AS company_name, COUNT(p.name) AS persons
-FROM person AS p JOIN company AS c
-    ON p.company_id = c.id
-GROUP BY company_name
-ORDER BY persons DESC
-LIMIT 1;
-
+WITH persons_count AS (
+  SELECT c.name AS company_name, COUNT(p.name) AS persons
+  FROM person AS p JOIN company AS c
+      ON p.company_id = c.id
+  GROUP BY company_name)
+SELECT company_name, persons
+FROM persons_count
+WHERE persons = (SELECT MAX(persons) FROM persons_count);
