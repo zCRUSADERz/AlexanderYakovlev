@@ -22,7 +22,7 @@ public abstract class BaseAction implements UserAction {
     }
 
     @Override
-    public abstract void execute(Input input, Tracker tracker) throws Exception;
+    public abstract void execute(Input input, Tracker tracker) throws DBException;
 
     @Override
     public String info() {

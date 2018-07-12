@@ -62,7 +62,7 @@ public class MenuTracker {
      * Select user actions.
      * @param key - key action.
      */
-    public void select(int key) throws Exception {
+    public void select(int key) throws DBException {
         for (UserAction action : actions) {
             if (action.key() == key) {
                 action.execute(input, tracker);
@@ -118,12 +118,14 @@ public class MenuTracker {
          * @param input - user input.
          * @param tracker - tracker.
          */
-        public void execute(Input input, Tracker tracker) throws Exception {
+        public void execute(Input input, Tracker tracker) throws DBException {
             System.out.println("---------- Добавление новой заявки ----------");
             String name = input.ask("Введите название заявки: ");
             String description = input.ask("Введите описание заявки: ");
             int resultId = tracker.add(name, description);
-            System.out.println("---------- Новая заявка с Id: " + resultId + " ----------");
+            System.out.println(
+                    "---------- Новая заявка с Id: " + resultId + " ----------"
+            );
         }
     }
 
@@ -146,10 +148,12 @@ public class MenuTracker {
          * @param input - user input.
          * @param tracker - tracker.
          */
-        public void execute(Input input, Tracker tracker) throws Exception {
+        public void execute(Input input, Tracker tracker) throws DBException {
             List<Item> items = tracker.findAll();
             if (items.size() != 0) {
-                System.out.println("---------- Зарегистрированны следующие заявки: ----------");
+                System.out.println(
+                        "---------- Зарегистрированны следующие заявки: ----------"
+                );
                 for (Item item : items) {
                     System.out.println(item);
                 }
@@ -178,13 +182,17 @@ public class MenuTracker {
          * @param input - user input.
          * @param tracker - tracker.
          */
-        public void execute(Input input, Tracker tracker) throws Exception {
+        public void execute(Input input, Tracker tracker) throws DBException {
             System.out.println("---------- Редактирование заявки ----------");
-            String id = input.ask("Введите Id заявки, которую желаете отредактировать: ");
+            String id = input.ask(
+                    "Введите Id заявки, которую желаете отредактировать: "
+            );
             String name = input.ask("Введите новое название заявки: ");
             String desc = input.ask("Введите новое описание заявки: ");
             if (!tracker.replace(id, name, desc)) {
-                System.out.println("- Заявка с Id: " + id + " не зарегистрированна в системе.");
+                System.out.println(
+                        "- Заявка с Id: " + id + " не зарегистрированна в системе."
+                );
             }
         }
     }
@@ -208,9 +216,11 @@ public class MenuTracker {
          * @param input - user input.
          * @param tracker - tracker.
          */
-        public void execute(Input input, Tracker tracker) throws Exception {
+        public void execute(Input input, Tracker tracker) throws DBException {
             System.out.println("---------- Удаление заявки ----------");
-            String id = input.ask("Введите Id заявки, которую желаете удалить: ");
+            String id = input.ask(
+                    "Введите Id заявки, которую желаете удалить: "
+            );
             tracker.delete(id);
         }
     }
@@ -234,14 +244,18 @@ public class MenuTracker {
          * @param input - user input.
          * @param tracker - tracker.
          */
-        public void execute(Input input, Tracker tracker) throws Exception {
+        public void execute(Input input, Tracker tracker) throws DBException {
             System.out.println("---------- Поис заявки по Id ----------");
-            String id = input.ask("Введите Id заявки, которую желаете найти: ");
+            String id = input.ask(
+                    "Введите Id заявки, которую желаете найти: "
+            );
             Item item = tracker.findById(id);
             if (item != null) {
                 System.out.println(item);
             } else {
-                System.out.println("- Заявка с Id: " + id + " не зарегистрированна в системе.");
+                System.out.println(
+                        "- Заявка с Id: " + id + " не зарегистрированна в системе."
+                );
             }
         }
     }
@@ -266,17 +280,23 @@ class FindByName extends BaseAction {
      * @param input - user input.
      * @param tracker - tracker.
      */
-    public void execute(Input input, Tracker tracker) throws Exception {
+    public void execute(Input input, Tracker tracker) throws DBException {
         System.out.println("---------- Поиск заявки по названию ----------");
-        String name = input.ask("Введите название заявки(ок), которую(ые) желаете найти: ");
+        String name = input.ask(
+                "Введите название заявки(ок), которую(ые) желаете найти: "
+        );
         List<Item> items = tracker.findByName(name);
         if (items.size() != 0) {
-            System.out.println("---------- Зарегистрированны следующие заявки: ----------");
+            System.out.println(
+                    "---------- Зарегистрированны следующие заявки: ----------"
+            );
             for (Item item : items) {
                 System.out.println(item);
             }
         } else {
-            System.out.println("- Зарегистрированных заявок с названием " + name + " в системе нет.");
+            System.out.println(
+                    "- Зарегистрированных заявок с названием " + name + " в системе нет."
+            );
         }
     }
 }
@@ -288,7 +308,7 @@ class Exit extends BaseAction {
     /**
      * Object to be stopped.
      */
-    private Stop stop;
+    private final Stop stop;
 
     /**
      * Constructor.

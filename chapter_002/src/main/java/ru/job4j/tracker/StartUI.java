@@ -43,7 +43,7 @@ public class StartUI implements Stop {
      * Launch program.
      * @param args - args.
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws DBException {
         try (PostgresDB db = new PostgresDB()) {
             try (Tracker tracker = new Tracker(db.getConnection())) {
                 new StartUI(
@@ -51,13 +51,18 @@ public class StartUI implements Stop {
                         tracker
                 ).init();
             }
+        } catch (DBException e) {
+            System.out.println(
+                    "Обнаружена ошибка с доступом к БД, дальнейшая работа не возможна."
+            );
+            throw e;
         }
     }
 
     /**
      * Init console program.
      */
-    public void init() throws Exception {
+    public void init() throws DBException {
         do {
             menu.show();
             menu.select(

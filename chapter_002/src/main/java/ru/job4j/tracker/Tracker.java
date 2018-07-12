@@ -25,9 +25,9 @@ public class Tracker implements AutoCloseable {
      * @param name item name.
      * @param desc item description.
      * @return item Id.
-     * @throws Exception if throw SQLException.
+     * @throws DBException if throw SQLException.
      */
-    public int add(String name, String desc) throws Exception {
+    public int add(String name, String desc) throws DBException {
         return add(name, desc, new Date().getTime());
     }
 
@@ -37,9 +37,9 @@ public class Tracker implements AutoCloseable {
      * @param desc item description.
      * @param created create date.
      * @return item Id.
-     * @throws Exception if throw SQLException.
+     * @throws DBException if throw SQLException.
      */
-    public int add(String name, String desc, long created) throws Exception {
+    public int add(String name, String desc, long created) throws DBException {
         int result;
         String insert =
                 "INSERT INTO items (name, description, created) VALUES (?, ?, ?);";
@@ -53,9 +53,11 @@ public class Tracker implements AutoCloseable {
             try (ResultSet rs = statement.getGeneratedKeys()) {
                 rs.next();
                 result = rs.getInt(1);
+            } catch (SQLException e) {
+                throw  new DBException("Generated keys error.", e);
             }
         } catch (SQLException e) {
-            throw new Exception(e);
+            throw  new DBException("Insert operation error.", e);
         }
         return result;
     }
@@ -66,10 +68,10 @@ public class Tracker implements AutoCloseable {
      * @param name new item name.
      * @param desc new item description.
      * @return true, if replaced.
-     * @throws Exception if throw SQLException.
+     * @throws DBException if throw SQLException.
      */
     public boolean replace(String id, String name, String desc)
-            throws Exception {
+            throws DBException {
         boolean result = false;
         String update = "UPDATE items SET name = ?, description = ? WHERE id = ?;";
         try (PreparedStatement st = this.conn.prepareStatement(update)) {
@@ -81,7 +83,7 @@ public class Tracker implements AutoCloseable {
                 result = true;
             }
         } catch (SQLException e) {
-            throw new Exception(e);
+            throw  new DBException("Replace operation error.", e);
         }
         return result;
     }
@@ -89,24 +91,24 @@ public class Tracker implements AutoCloseable {
     /**
      * Delete item by id.
      * @param id - id item.
-     * @throws Exception if throw SQLException.
+     * @throws DBException if throw SQLException.
      */
-    public void delete(String id) throws Exception {
+    public void delete(String id) throws DBException {
         String delete = "DELETE FROM items WHERE id = ?;";
         try (PreparedStatement st = this.conn.prepareStatement(delete)) {
             st.setInt(1, Integer.parseInt(id));
             st.executeUpdate();
         } catch (SQLException e) {
-            throw new Exception(e);
+            throw  new DBException("Delete operation error.", e);
         }
     }
 
     /**
      * find all items.
      * @return - items in tracker.
-     * @throws Exception if throw SQLException.
+     * @throws DBException if throw SQLException.
      */
-    public List<Item> findAll() throws Exception {
+    public List<Item> findAll() throws DBException {
         List<Item> result = new ArrayList<>();
         try (Statement st = this.conn.createStatement()) {
             try (ResultSet rs = st.executeQuery("SELECT * FROM items;")) {
@@ -118,9 +120,11 @@ public class Tracker implements AutoCloseable {
                             rs.getTimestamp("created").getTime()
                     ));
                 }
+            } catch (SQLException e) {
+                throw  new DBException("Select all items error.", e);
             }
         } catch (SQLException e) {
-            throw new Exception(e);
+            throw  new DBException("Database access error.", e);
         }
         return result;
     }
@@ -129,9 +133,9 @@ public class Tracker implements AutoCloseable {
      * Find items by name.
      * @param key - name.
      * @return - items.
-     * @throws Exception if throw SQLException.
+     * @throws DBException if throw SQLException.
      */
-    public List<Item> findByName(String key) throws Exception {
+    public List<Item> findByName(String key) throws DBException {
         List<Item> result = new ArrayList<>();
         String select = "SELECT * FROM items WHERE name = ?;";
         try (PreparedStatement st = this.conn.prepareStatement(select)) {
@@ -145,9 +149,13 @@ public class Tracker implements AutoCloseable {
                             rs.getTimestamp("created").getTime()
                     ));
                 }
+            } catch (SQLException e) {
+                throw  new DBException(
+                        "Select item with name operation error.", e
+                );
             }
         } catch (SQLException e) {
-            throw new Exception(e);
+            throw  new DBException("Database access error.", e);
         }
         return result;
     }
@@ -156,9 +164,9 @@ public class Tracker implements AutoCloseable {
      * Find item by id.
      * @param id - id item.
      * @return - item or null if this id is not in tracker items.
-     * @throws Exception if throw SQLException.
+     * @throws DBException if throw SQLException.
      */
-    public Item findById(String id) throws Exception {
+    public Item findById(String id) throws DBException {
         Item result = null;
         String select = "SELECT * FROM items WHERE id = ?;";
         try (PreparedStatement st = this.conn.prepareStatement(select)) {
@@ -172,30 +180,38 @@ public class Tracker implements AutoCloseable {
                             rs.getTimestamp("created").getTime()
                     );
                 }
+            } catch (SQLException e) {
+                throw  new DBException("Select item with id operation error.", e);
             }
         } catch (SQLException e) {
-            throw new Exception(e);
+            throw  new DBException("Database access error.", e);
         }
         return result;
     }
 
     /**
      * Delete all items in database.
-     * @throws Exception if throw SQLException.
+     * @throws DBException if throw SQLException.
      */
-    public void deleteAllItems() throws Exception {
+    public void deleteAllItems() throws DBException {
         try (Statement st = this.conn.createStatement()) {
             st.execute("DELETE FROM items;");
+        } catch (SQLException e) {
+            throw  new DBException("Delete all items error.", e);
         }
         try (Statement st = this.conn.createStatement()) {
             st.execute("ALTER SEQUENCE items_id_seq RESTART WITH 1;");
         } catch (SQLException e) {
-            throw new Exception(e);
+            throw  new DBException("Restart serial key error.", e);
         }
     }
 
     @Override
-    public void close() throws Exception {
-        this.conn.close();
+    public void close() throws DBException {
+        try {
+            this.conn.close();
+        } catch (SQLException e) {
+            throw  new DBException("Close connection error.", e);
+        }
     }
 }

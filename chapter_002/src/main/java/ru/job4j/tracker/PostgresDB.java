@@ -19,27 +19,27 @@ public class PostgresDB implements AutoCloseable {
     /**
      * Return Connection with database.
      * @return connection with database.
-     * @throws Exception if throw SQLException or IOException.
+     * @throws DBException if Database access error.
      */
-    public Connection getConnection() throws Exception {
-        try {
-            if (isDataBaseExist()) {
-                dbConnect();
-            } else {
-                createDB();
-            }
-        } catch (IOException | SQLException e) {
-            throw new Exception(e);
+    public Connection getConnection() throws DBException {
+        if (isDataBaseExist()) {
+            dbConnect();
+        } else {
+            createDB();
         }
         return this.connection;
     }
 
     @Override
-    public void close() throws Exception {
-        this.connection.close();
+    public void close() throws DBException {
+        try {
+            this.connection.close();
+        } catch (SQLException e) {
+            throw new DBException("Database access error. Close error.", e);
+        }
     }
 
-    private boolean isDataBaseExist() throws IOException, SQLException {
+    private boolean isDataBaseExist() throws DBException {
         boolean result = false;
         localhostConnect();
         try (PreparedStatement statement =
@@ -50,33 +50,41 @@ public class PostgresDB implements AutoCloseable {
                 if (rs.next()) {
                     result = true;
                 }
+            } catch (SQLException e) {
+                throw  new DBException("Select all databases error.", e);
             }
+        } catch (SQLException e) {
+            throw new DBException("Database access error.", e);
         }
         return result;
     }
 
-    private void loadProperties() throws IOException {
+    private void loadProperties() throws DBException {
         if (props.isEmpty()) {
             try (InputStream in = Tracker.class.getResourceAsStream(
                     "/tracker/config.properties")) {
                 props.load(in);
+            } catch (IOException e) {
+                throw new DBException("Properties load error.", e);
             }
         }
     }
 
-    private void createDB() throws SQLException, IOException {
+    private void createDB() throws DBException {
         localhostConnect();
         try (Statement statement = this.connection.createStatement()) {
             statement.executeUpdate(String.format(
                     "CREATE DATABASE %s;", this.props.getProperty("database")
                     )
             );
+        } catch (SQLException e) {
+            throw new DBException("Create database error", e);
         }
         dbConnect();
         createTable();
     }
 
-    private void createTable() throws SQLException {
+    private void createTable() throws DBException {
         try (Statement statement = this.connection.createStatement()) {
             statement.execute(
                     "CREATE TABLE items ("
@@ -85,23 +93,25 @@ public class PostgresDB implements AutoCloseable {
                             + "description text,"
                             + "created timestamp NOT NULL DEFAULT now());"
             );
+        } catch (SQLException e) {
+            throw new DBException("Create table error", e);
         }
     }
 
-    private void localhostConnect() throws IOException, SQLException {
+    private void localhostConnect() throws DBException {
         if (this.connected) {
-            this.connection.close();
+            close();
         }
         loadProperties();
         String url = String.format("jdbc:postgresql://%s:%s/",
                 this.props.getProperty("host"), this.props.getProperty("port")
         );
-        this.connection = DriverManager.getConnection(url, this.props);
+        connect(url);
     }
 
-    private void dbConnect() throws SQLException, IOException {
+    private void dbConnect() throws DBException {
         if (this.connected) {
-            this.connection.close();
+            close();
         }
         loadProperties();
         String url = String.format("jdbc:postgresql://%s:%s/%s",
@@ -109,6 +119,14 @@ public class PostgresDB implements AutoCloseable {
                 this.props.getProperty("port"),
                 this.props.getProperty("database")
         );
-        this.connection = DriverManager.getConnection(url, this.props);
+        connect(url);
+    }
+
+    private void connect(String url) throws DBException {
+        try {
+            this.connection = DriverManager.getConnection(url, this.props);
+        } catch (SQLException e) {
+            throw new DBException("Get connection error.", e);
+        }
     }
 }
