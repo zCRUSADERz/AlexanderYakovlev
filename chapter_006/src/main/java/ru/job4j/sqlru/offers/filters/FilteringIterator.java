@@ -1,7 +1,5 @@
 package ru.job4j.sqlru.offers.filters;
 
-import ru.job4j.sqlru.offers.OfferBlank;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Predicate;
@@ -12,19 +10,19 @@ import java.util.function.Predicate;
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 04.08.2018
  */
-public class OffersFilteringIterator implements Iterator<OfferBlank> {
-    private final Iterator<OfferBlank> offerIterator;
-    private final Predicate<OfferBlank> filter;
-    private OfferBlank nextOffer;
+public class FilteringIterator<E> implements Iterator<E> {
+    private final Iterator<E> offerIterator;
+    private final Predicate<E> filter;
+    private E nextOffer;
     /**
      * true, если получена следующая вакансия
      * удовлетворяющая требованиям фильтра.
      */
     private boolean receivedNext = false;
 
-    public OffersFilteringIterator(
-            final Iterator<OfferBlank> offerIterator,
-            final Predicate<OfferBlank> filter) {
+    public FilteringIterator(
+            final Iterator<E> offerIterator,
+            final Predicate<E> filter) {
         this.offerIterator = offerIterator;
         this.filter = filter;
     }
@@ -38,7 +36,7 @@ public class OffersFilteringIterator implements Iterator<OfferBlank> {
     }
 
     @Override
-    public OfferBlank next() {
+    public E next() {
         if (!hasNext()) {
             throw new NoSuchElementException("Iteration has no more elements");
         }
@@ -48,7 +46,7 @@ public class OffersFilteringIterator implements Iterator<OfferBlank> {
 
     private void receiveNextOffer() {
         while (!this.receivedNext && this.offerIterator.hasNext()) {
-            OfferBlank offer = this.offerIterator.next();
+            E offer = this.offerIterator.next();
             if (filter.test(offer)) {
                 this.nextOffer = offer;
                 this.receivedNext = true;

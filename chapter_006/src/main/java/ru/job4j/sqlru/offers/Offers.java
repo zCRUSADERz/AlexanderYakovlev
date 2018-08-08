@@ -1,6 +1,6 @@
 package ru.job4j.sqlru.offers;
 
-import java.util.Date;
+import ru.job4j.sqlru.utils.SimpleDate;
 
 /**
  * Интерфейс для определенных вакансий(Java к примеру).
@@ -15,10 +15,10 @@ public interface Offers<E extends SpecificOffer> {
      * @param blank образец вакансии.
      * @return true, если образец подходит под критерии данной специальности.
      */
-    boolean isOffer(OfferBlank blank);
+    boolean isOffer(Offer blank);
 
     /**
-     * Создает из OfferBlank <E>Offer (JavaOffer ).
+     * Создает из Offer <E>Offer (JavaOffer ).
      * @param id offer id.
      * @param title offer title.
      * @param text offer description.
@@ -26,5 +26,5 @@ public interface Offers<E extends SpecificOffer> {
      * @param url link to offer topic.
      * @return - <E>Offer.
      */
-    E createOffer(int id, String title, String text, Date created, String url);
+    E createOffer(int id, String title, String text, SimpleDate created, String url);
 }

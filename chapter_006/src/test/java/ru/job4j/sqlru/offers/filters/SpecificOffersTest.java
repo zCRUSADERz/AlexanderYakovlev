@@ -1,8 +1,9 @@
 package ru.job4j.sqlru.offers.filters;
 
 import org.junit.Test;
+import ru.job4j.sqlru.offers.Offer;
+import ru.job4j.sqlru.utils.SimpleDate;
 import ru.job4j.sqlru.offers.JavaOffer;
-import ru.job4j.sqlru.offers.OfferBlank;
 import ru.job4j.sqlru.offers.Offers;
 import ru.job4j.sqlru.offers.SpecificOffer;
 
@@ -14,38 +15,38 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 public class SpecificOffersTest {
-    private final OfferBlank blankFirst = new OfferBlank(
-            2, "Offer2",
-            "JavaOffer", new Date(), "some site"
+    private final Offer blankFirst = new Offer(
+            2, "Offer2", "JavaOffer",
+            new SimpleDate(new Date()), "some site"
     );
-    private final OfferBlank blankSecond = new OfferBlank(
-            4, "Offer4",
-            "JavaOffer", new Date(), "some site"
+    private final Offer blankSecond = new Offer(
+            4, "Offer4", "JavaOffer",
+            new SimpleDate(new Date()), "some site"
     );
-    private final Iterable<OfferBlank> iterable = Arrays.asList(
-            new OfferBlank(
-                    1, "Offer1",
-                    "JavaOffer", new Date(), "some site"
+    private final Iterable<Offer> iterable = Arrays.asList(
+            new Offer(
+                    1, "Offer1", "JavaOffer",
+                    new SimpleDate(new Date()), "some site"
             ), blankFirst,
-            new OfferBlank(
-                    3, "Offer3",
-                    "JavaOffer", new Date(), "some site"
+            new Offer(
+                    3, "Offer3", "JavaOffer",
+                    new SimpleDate(new Date()), "some site"
             ), blankSecond,
-            new OfferBlank(
-                    5, "Offer5",
-                    "JavaOffer", new Date(), "some site"
+            new Offer(
+                    5, "Offer5", "JavaOffer",
+                    new SimpleDate(new Date()), "some site"
             )
     );
     private final Offers<SpecificOffer> offers = new Offers<SpecificOffer>() {
 
         @Override
-        public boolean isOffer(OfferBlank blank) {
+        public boolean isOffer(Offer blank) {
             return blank.equals(blankFirst) || blank.equals(blankSecond);
         }
 
         @Override
         public SpecificOffer createOffer(int id, String title,
-                                         String text, Date created, String url) {
+                                         String text, SimpleDate created, String url) {
             return new JavaOffer(id, title, text, created, url);
         }
     };

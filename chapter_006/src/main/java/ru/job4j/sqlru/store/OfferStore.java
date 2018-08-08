@@ -1,6 +1,6 @@
 package ru.job4j.sqlru.store;
 
-import java.util.Date;
+import ru.job4j.sqlru.utils.SimpleDate;
 
 /**
  * Offer store interface.
@@ -28,5 +28,5 @@ public interface OfferStore extends AutoCloseable {
      * @throws DBException if throw SQLException.
      */
     void save(int id, String title, String text,
-                  Date created, String url) throws DBException;
+              SimpleDate created, String url) throws DBException;
 }

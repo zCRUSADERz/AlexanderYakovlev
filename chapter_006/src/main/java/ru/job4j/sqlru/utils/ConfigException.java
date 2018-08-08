@@ -1,4 +1,4 @@
-package ru.job4j.sqlru;
+package ru.job4j.sqlru.utils;
 
 /**
  * App configuration exception.

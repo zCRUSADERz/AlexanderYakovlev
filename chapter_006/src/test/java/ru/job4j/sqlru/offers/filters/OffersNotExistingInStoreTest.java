@@ -1,7 +1,8 @@
 package ru.job4j.sqlru.offers.filters;
 
 import org.junit.Test;
-import ru.job4j.sqlru.offers.OfferBlank;
+import ru.job4j.sqlru.offers.Offer;
+import ru.job4j.sqlru.utils.SimpleDate;
 import ru.job4j.sqlru.store.OfferStore;
 
 import java.util.Arrays;
@@ -19,7 +20,7 @@ public class OffersNotExistingInStoreTest {
         }
 
         @Override
-        public void save(int id, String title, String text, Date created, String url) {
+        public void save(int id, String title, String text, SimpleDate created, String url) {
         }
 
         @Override
@@ -29,28 +30,28 @@ public class OffersNotExistingInStoreTest {
 
     @Test
     public void whenSomeOffersExistInStoreThenIterableHasNotThisOffers() {
-        OfferBlank expectedFirst = new OfferBlank(
-                1, "Offer1",
-                "JavaOffer", new Date(), "some site"
+        Offer expectedFirst = new Offer(
+                1, "Offer1", "JavaOffer",
+                new SimpleDate(new Date()), "some site"
         );
-        OfferBlank expectedSecond = new OfferBlank(
-                3, "Offer3",
-                "JavaOffer", new Date(), "some site"
+        Offer expectedSecond = new Offer(
+                3, "Offer3", "JavaOffer",
+                new SimpleDate(new Date()), "some site"
         );
-        OfferBlank expectedThird = new OfferBlank(
-                5, "Offer5",
-                "JavaOffer", new Date(), "some site"
+        Offer expectedThird = new Offer(
+                5, "Offer5", "JavaOffer",
+                new SimpleDate(new Date()), "some site"
         );
-        Iterator<OfferBlank> iterator = new OffersNotExistingInStore(
+        Iterator<Offer> iterator = new OffersNotExistingInStore(
                 Arrays.asList(
                         expectedFirst,
-                        new OfferBlank(
-                                2, "Offer2",
-                                "JavaOffer", new Date(), "some site"
+                        new Offer(
+                                2, "Offer2", "JavaOffer",
+                                new SimpleDate(new Date()), "some site"
                         ), expectedSecond,
-                        new OfferBlank(
-                                4, "Offer4",
-                                "JavaOffer", new Date(), "some site"
+                        new Offer(
+                                4, "Offer4", "JavaOffer",
+                                new SimpleDate(new Date()), "some site"
                         ), expectedThird
                 ), this.store
         ).iterator();

@@ -1,6 +1,8 @@
 package ru.job4j.sqlru.store;
 
 import org.apache.log4j.Logger;
+import ru.job4j.sqlru.utils.Config;
+import ru.job4j.sqlru.utils.ConfigException;
 
 import java.sql.*;
 import java.util.Properties;
@@ -12,30 +14,29 @@ import java.util.Properties;
  * @since 04.08.2018
  */
 public class SqlRuAppDB {
-    private final Properties properties;
+    private final Config config;
     private final Logger logger = Logger.getLogger(SqlRuAppDB.class);
 
-    public SqlRuAppDB(final Properties properties) {
-        this.properties = properties;
+    public SqlRuAppDB(final Config config) {
+        this.config = config;
     }
 
     public Connection getConnection() throws DBException {
         Connection result;
         try {
-            Class.forName(this.properties.getProperty("jdbc.driver"));
-        } catch (ClassNotFoundException e) {
-            this.logger.fatal("JDBC driver not found.", e);
-            throw new DBException("JDBC driver not found.", e);
-        }
-        try {
+            Properties properties = this.config.getConfig();
+            Class.forName(properties.getProperty("jdbc.driver"));
             result = DriverManager.getConnection(
-                    this.properties.getProperty("jdbc.url"),
-                    this.properties.getProperty("jdbc.username"),
-                    this.properties.getProperty("jdbc.password")
+                    properties.getProperty("jdbc.url"),
+                    properties.getProperty("jdbc.username"),
+                    properties.getProperty("jdbc.password")
             );
+        } catch (ClassNotFoundException e) {
+            throw new DBException("JDBC driver not found.", e);
         } catch (SQLException e) {
-            this.logger.fatal("Get connection error.", e);
             throw new DBException("Get connection error.", e);
+        } catch (ConfigException e) {
+            throw new DBException("Configuration error.", e);
         }
         return result;
     }
@@ -51,7 +52,6 @@ public class SqlRuAppDB {
                 createTable(conn);
             }
         } catch (SQLException e) {
-            this.logger.fatal("Close connection error.", e);
             throw new DBException("Close connection error.", e);
         }
     }

@@ -1,6 +1,7 @@
 package ru.job4j.sqlru.offers;
 
 import org.junit.Test;
+import ru.job4j.sqlru.utils.SimpleDate;
 
 import java.util.Date;
 
@@ -12,8 +13,8 @@ public class JavaOffersTest {
     @Test
     public void whenTitleNotContainsJavaThenIsOfferReturnFalse() {
         JavaOffers offers = new JavaOffers();
-        OfferBlank blank = new OfferBlank(1, "Offer",
-                "description", new Date(), "url"
+        Offer blank = new Offer(1, "Offer",
+                "description", new SimpleDate(new Date()), "url"
         );
         assertThat(offers.isOffer(blank), is(false));
     }
@@ -21,8 +22,8 @@ public class JavaOffersTest {
     @Test
     public void whenTitleContainsJavaScriptThenIsOfferReturnTrue() {
         JavaOffers offers = new JavaOffers();
-        OfferBlank blank = new OfferBlank(1, "JavaScript Offer",
-                "description", new Date(), "url"
+        Offer blank = new Offer(1, "JavaScript Offer",
+                "description", new SimpleDate(new Date()), "url"
         );
         assertThat(offers.isOffer(blank), is(false));
     }
@@ -30,8 +31,8 @@ public class JavaOffersTest {
     @Test
     public void whenTitleContainsJavaSpaceScriptThenIsOfferReturnTrue() {
         JavaOffers offers = new JavaOffers();
-        OfferBlank blank = new OfferBlank(1, "Java Script Offer",
-                "description", new Date(), "url"
+        Offer blank = new Offer(1, "Java Script Offer",
+                "description", new SimpleDate(new Date()), "url"
         );
         assertThat(offers.isOffer(blank), is(false));
     }
@@ -39,8 +40,8 @@ public class JavaOffersTest {
     @Test
     public void whenTitleContainsJavaThenIsOfferReturnTrue() {
         JavaOffers offers = new JavaOffers();
-        OfferBlank blank = new OfferBlank(1, "Java Offer",
-                "description", new Date(), "url"
+        Offer blank = new Offer(1, "Java Offer",
+                "description", new SimpleDate(new Date()), "url"
         );
         assertThat(offers.isOffer(blank), is(true));
     }
@@ -48,8 +49,8 @@ public class JavaOffersTest {
     @Test
     public void whenTitleContainsJavaAndJavaScriptThenIsOfferReturnTrue() {
         JavaOffers offers = new JavaOffers();
-        OfferBlank blank = new OfferBlank(1, "Java/JavaScript Offer",
-                "description", new Date(), "url"
+        Offer blank = new Offer(1, "Java/JavaScript Offer",
+                "description", new SimpleDate(new Date()), "url"
         );
         assertThat(offers.isOffer(blank), is(true));
     }
@@ -57,7 +58,8 @@ public class JavaOffersTest {
     @Test (expected = IllegalArgumentException.class)
     public void whenOfferIsNotJavaThenCreateOfferThrowIllegalArgumentException() {
         new JavaOffers().createOffer(
-                1, "Offer", "description", new Date(), "url"
+                1, "Offer", "description",
+                new SimpleDate(new Date()), "url"
         );
     }
 }

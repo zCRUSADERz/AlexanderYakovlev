@@ -1,8 +1,8 @@
 package ru.job4j.sqlru.offers;
 
 import org.apache.log4j.Logger;
+import ru.job4j.sqlru.utils.SimpleDate;
 
-import java.util.Date;
 import java.util.function.Predicate;
 
 /**
@@ -19,7 +19,7 @@ public class JavaOffers implements Offers<JavaOffer> {
      * @param blank образец вакансии.
      * @return true, если является.
      */
-    public boolean isOffer(OfferBlank blank) {
+    public boolean isOffer(Offer blank) {
         return blank.validateTitle(validator());
     }
 
@@ -33,7 +33,7 @@ public class JavaOffers implements Offers<JavaOffer> {
      * @return JavaOffer.
      */
     @Override
-    public JavaOffer createOffer(int id, String title, String text, Date created, String url) {
+    public JavaOffer createOffer(int id, String title, String text, SimpleDate created, String url) {
         if (!validator().test(title)) {
             this.logger.fatal("Is not java offer title.");
             throw new IllegalArgumentException("Is not java offer title.");

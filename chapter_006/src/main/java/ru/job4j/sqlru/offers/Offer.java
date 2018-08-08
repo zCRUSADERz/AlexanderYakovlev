@@ -1,6 +1,7 @@
 package ru.job4j.sqlru.offers;
 
 import org.apache.log4j.Logger;
+import ru.job4j.sqlru.utils.SimpleDate;
 import ru.job4j.sqlru.store.DBException;
 import ru.job4j.sqlru.store.OfferStore;
 
@@ -8,21 +9,21 @@ import java.util.Date;
 import java.util.function.Predicate;
 
 /**
- * Неопределенная(образец) вакансия.
+ * Вакансия.
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 04.08.2018
  */
-public class OfferBlank {
+public class Offer {
     private final int offerId;
     private final String title;
     private final String text;
-    private final Date created;
+    private final SimpleDate created;
     private final String url;
-    private final Logger logger = Logger.getLogger(OfferBlank.class);
+    private final Logger logger = Logger.getLogger(Offer.class);
 
-    public OfferBlank(int offerId, String title,
-                      String text, Date created, String url) {
+    public Offer(int offerId, String title,
+                 String text, SimpleDate created, String url) {
         this.offerId = offerId;
         this.title = title;
         this.text = text;
@@ -54,15 +55,9 @@ public class OfferBlank {
      * @return true, если вакансия создана позже date.
      */
     public boolean isCreatedLaterThan(Date date) {
-        boolean result = this.created.compareTo(date) > 0;
-        if (!result) {
-            this.logger.info(String.format(
-                    "Вакансия была создана: %s, это раньше чем год назад: %s.",
-                    this.created, date
-                    )
-            );
-        }
-        return result;
+        return this.created.isLaterThan(
+                date, "Вакансия создана позднее допустимой даты."
+        );
     }
 
     /**
@@ -102,7 +97,7 @@ public class OfferBlank {
     @Override
     public String toString() {
         return String.format(
-                "Offer blank.%n"
+                "Offer.%n"
                         + "OfferId: %d.%n"
                         + "Title: %s.%n"
                         + "Description: %s.%n"

@@ -5,40 +5,46 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import ru.job4j.sqlru.utils.SimpleDate;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-/**
- * Парсер ссылок на страницу с вакансией.
- *
- * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
- * @since 04.08.2018
- */
-public class SqlRuOfferLinksParser implements Iterable<String> {
-    private final Logger logger = Logger.getLogger(SqlRuOfferLinksParser.class);
+public class SqlRuTopicParser implements Iterable<OfferTopic> {
+    private final Logger logger = Logger.getLogger(SqlRuTopicParser.class);
 
-    /**
-     * Iterator URL links as String.
-     * @return iterator.
-     */
     @Override
-    public Iterator<String> iterator() {
-        return new OffersLinkIterator(new PagesIterator());
+    public Iterator<OfferTopic> iterator() {
+        return new OfferTopicsIterator(new PagesIterator());
     }
 
     private Elements parseNextPage(String url) throws ParseException {
         try {
             Document doc = Jsoup.connect(url).get();
-            return doc.select(
-                    "td.postslisttopic > a[href^=\"http\"]"
-            );
+            Elements allTopic = doc.select(
+                    "table.forumTable > tbody > tr"
+            ).next();
+            return justOfferTopics(allTopic);
         } catch (IOException e) {
             String msg = String.format("Can't load sql.ru site. Url: %s", url);
             logger.fatal(msg, e);
             throw new ParseException(msg, e);
         }
+    }
+
+    private static Elements justOfferTopics(Elements allTopic) {
+        Boolean offersWithInfoTopics = true;
+        do {
+            Element nextTopic = allTopic.first();
+            String topicTitle = nextTopic.selectFirst("td.postslisttopic").text();
+            if (topicTitle.contains("Важно:")) {
+                allTopic = allTopic.next();
+            } else {
+                offersWithInfoTopics = false;
+            }
+        } while (offersWithInfoTopics);
+        return allTopic;
     }
 
     /**
@@ -52,8 +58,7 @@ public class SqlRuOfferLinksParser implements Iterable<String> {
          * Ссылка на результаты поисковой системы форума sql.ru.
          */
         private static final String URL
-                = "http://www.sql.ru/forum/actualsearch.aspx?"
-                + "search=java&sin=1&bid=66&a=&ma=0&dt=-1&s=4&so=1&pg=";
+                = "http://www.sql.ru/forum/job-offers/";
         private int page = 1;
         /**
          * Next page HTML-elements.
@@ -85,11 +90,6 @@ public class SqlRuOfferLinksParser implements Iterable<String> {
             this.loaded = false;
             return this.loadedElements;
         }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException("Remove operation unsupported.");
-        }
     }
 
     /**
@@ -99,7 +99,7 @@ public class SqlRuOfferLinksParser implements Iterable<String> {
      * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
      * @since 04.08.2018
      */
-    private class OffersLinkIterator implements Iterator<String> {
+    private class OfferTopicsIterator implements Iterator<OfferTopic> {
         /**
          * Pages iterator.
          */
@@ -107,13 +107,13 @@ public class SqlRuOfferLinksParser implements Iterable<String> {
         /**
          * Links elements on page iterator.
          */
-        private Iterator<Element> offerLinks;
+        private Iterator<Element> offerTopics;
         /**
          * true, if loaded next page.
          */
         private boolean loaded = false;
 
-        public OffersLinkIterator(final Iterator<Elements> pagesIterator) {
+        public OfferTopicsIterator(final Iterator<Elements> pagesIterator) {
             this.pagesIterator = pagesIterator;
         }
 
@@ -122,24 +122,27 @@ public class SqlRuOfferLinksParser implements Iterable<String> {
             if (!loaded) {
                 loadNextLinks();
             }
-            return this.offerLinks.hasNext();
+            return this.offerTopics.hasNext();
         }
 
         @Override
-        public String next() {
+        public OfferTopic next() {
             if (!hasNext()) {
                 throw new NoSuchElementException("Iteration has no more elements");
             }
-            String result = this.offerLinks.next().attr("href");
-            if (!this.offerLinks.hasNext()) {
+            Element topicElements = this.offerTopics.next();
+            String url = topicElements.selectFirst("a").attr("href");
+            String updated = topicElements.select("td[style].altCol").text();
+            if (!this.offerTopics.hasNext()) {
                 this.loaded = false;
             }
-            return result;
+            return new OfferTopic(
+                    url, new SimpleDate(new DateParser(updated).parse()));
         }
 
         private void loadNextLinks() {
             if (this.pagesIterator.hasNext()) {
-                this.offerLinks = this.pagesIterator.next().iterator();
+                this.offerTopics = this.pagesIterator.next().iterator();
                 this.loaded = true;
             }
         }

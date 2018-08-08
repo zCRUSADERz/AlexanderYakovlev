@@ -2,11 +2,10 @@ package ru.job4j.sqlru.store;
 
 import net.jcip.annotations.NotThreadSafe;
 import org.apache.log4j.Logger;
-import ru.job4j.sqlru.offers.JavaOffer;
+import ru.job4j.sqlru.utils.SimpleDate;
 import ru.job4j.sqlru.offers.JavaOffers;
 
 import java.sql.*;
-import java.util.Date;
 
 /**
  * Java offer store.
@@ -15,11 +14,11 @@ import java.util.Date;
  * @since 04.08.2018
  */
 @NotThreadSafe
-public class JavaOfferStore implements OfferStore {
+public class SimpleOfferStore implements OfferStore {
     private final Connection connection;
     private final Logger logger = Logger.getLogger(JavaOffers.class);
 
-    public JavaOfferStore(final Connection connection) {
+    public SimpleOfferStore(final Connection connection) {
         this.connection = connection;
     }
 
@@ -36,7 +35,6 @@ public class JavaOfferStore implements OfferStore {
             ResultSet resultSet = statement.executeQuery();
             return resultSet.next();
         } catch (SQLException e) {
-            this.logger.fatal("Find by Id error.", e);
             throw new DBException("Find by Id error.", e);
         }
     }
@@ -51,7 +49,7 @@ public class JavaOfferStore implements OfferStore {
      * @throws DBException if throw SQLException.
      */
     public void save(int id, String title, String text,
-                        Date created, String url) throws DBException {
+                     SimpleDate created, String url) throws DBException {
         String insertQuery =
                 "INSERT INTO offers (id, title, description, created, url)"
                 + " VALUES (?, ?, ?, ?, ?);";
@@ -60,7 +58,7 @@ public class JavaOfferStore implements OfferStore {
             statement.setInt(1, id);
             statement.setString(2, title);
             statement.setString(3, text);
-            statement.setDate(4, new java.sql.Date(created.getTime()));
+            statement.setDate(4, created.sqlDate());
             statement.setString(5, url);
             statement.execute();
             this.logger.info(String.format(
@@ -68,7 +66,6 @@ public class JavaOfferStore implements OfferStore {
                     )
             );
         } catch (SQLException e) {
-            this.logger.fatal("Insert error.", e);
             throw new DBException("Insert error.", e);
         }
     }
@@ -78,7 +75,6 @@ public class JavaOfferStore implements OfferStore {
         try {
             this.connection.close();
         } catch (SQLException e) {
-            this.logger.fatal("Close connection error.", e);
             throw new DBException("Close connection error.", e);
         }
     }

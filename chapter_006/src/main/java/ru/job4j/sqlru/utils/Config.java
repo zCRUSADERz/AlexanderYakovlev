@@ -1,4 +1,4 @@
-package ru.job4j.sqlru;
+package ru.job4j.sqlru.utils;
 
 import org.apache.log4j.Logger;
 
@@ -14,7 +14,6 @@ import java.util.Properties;
  */
 public class Config {
     private final String propertiesPath;
-    private final Logger logger = Logger.getLogger(Config.class);
 
     public Config(final String propertiesPath) {
         this.propertiesPath = propertiesPath;
@@ -29,7 +28,6 @@ public class Config {
         try {
             properties.load(new FileInputStream(this.propertiesPath));
         } catch (IOException e) {
-            this.logger.fatal("File with properties not found.", e);
             throw new ConfigException("File with properties not found.", e);
         }
         return properties;

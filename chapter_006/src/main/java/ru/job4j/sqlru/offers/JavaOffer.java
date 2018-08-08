@@ -1,9 +1,9 @@
 package ru.job4j.sqlru.offers;
 
+import ru.job4j.sqlru.utils.SimpleDate;
 import ru.job4j.sqlru.store.DBException;
 import ru.job4j.sqlru.store.OfferStore;
 
-import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -16,11 +16,11 @@ public class JavaOffer implements SpecificOffer {
     private final int id;
     private final String title;
     private final String text;
-    private final Date created;
+    private final SimpleDate created;
     private final String url;
 
     public JavaOffer(int id, String title,
-                     String text, Date created, String url) {
+                     String text, SimpleDate created, String url) {
 
         this.id = id;
         this.title = title;
