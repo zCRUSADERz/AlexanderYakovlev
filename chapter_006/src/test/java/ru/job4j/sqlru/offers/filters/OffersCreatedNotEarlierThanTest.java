@@ -23,7 +23,7 @@ public class OffersCreatedNotEarlierThanTest {
     @Test
     public void whenOneOfferCreatedEarlierThenResultIterableEmpty() {
         Iterable<Offer> filter = new OffersCreatedNotEarlierThan(
-                Arrays.asList(
+                Collections.singletonList(
                         new Offer(
                                 1, "Offer", "JavaOffer",
                                 new SimpleDate(new Date(1)), "some site"
@@ -76,7 +76,7 @@ public class OffersCreatedNotEarlierThanTest {
     }
 
     @Test
-    public void whenFewOfferCreatedLaterThenIterableHaveThisOffer() {
+    public void whenFewOfferCreatedLaterThenIterableHaveOnlyTheseOffer() {
         Offer expectedFirst = new Offer(
                 1, "Offer1", "JavaOffer",
                 new SimpleDate(new Date(20)), "some site"
@@ -92,6 +92,9 @@ public class OffersCreatedNotEarlierThanTest {
                         new Offer(
                                 3, "Offer3", "JavaOffer",
                                 new SimpleDate(new Date(1)), "some site"
+                        ), new Offer(
+                                4, "Offer4", "JavaOffer",
+                                new SimpleDate(new Date(1)), "some site"
                         )
                 ), new Date(15));
         Iterator<Offer> iterator = filter.iterator();
@@ -99,32 +102,5 @@ public class OffersCreatedNotEarlierThanTest {
         assertThat(iterator.next(), is(expectedFirst));
         assertThat(iterator.next(), is(expectedSecond));
         assertThat(iterator.hasNext(), is(false));
-    }
-
-    @Test
-    public void whenOfferCreatedEarlierThenIteratorHasNotOtherOffer() {
-        Iterable<Offer> filter = new OffersCreatedNotEarlierThan(
-                Arrays.asList(
-                        new Offer(
-                                1, "Offer", "JavaOffer",
-                                new SimpleDate(new Date(1)), "some site"
-                        ), new Offer(
-                                2, "Offer2", "JavaOffer",
-                                new SimpleDate(new Date(12)), "some site"
-                        ), new Offer(
-                                3, "Offer3", "JavaOffer",
-                                new SimpleDate(new Date(13)), "some site"
-                        )
-                ), new Date(10));
-        Iterator<Offer> iterator = filter.iterator();
-        assertThat(iterator.hasNext(), is(false));
-    }
-
-    @Test (expected = NoSuchElementException.class)
-    public void whenIterableEmptyThenIteratorNextThrowNoSuchElementException() {
-        Iterable<Offer> filter = new OffersCreatedNotEarlierThan(
-                new ArrayList<>(), new Date()
-        );
-        filter.iterator().next();
     }
 }

@@ -26,7 +26,7 @@ public class OffersCreatedNotEarlierThan implements Iterable<Offer> {
     public Iterator<Offer> iterator() {
         return new FilteringIterator<>(
                 this.offers.iterator(),
-                offerBlank -> offerBlank.isCreatedLaterThan(this.notEarlierThan)
+                offer -> offer.isCreatedLaterThan(this.notEarlierThan)
         );
     }
 }
