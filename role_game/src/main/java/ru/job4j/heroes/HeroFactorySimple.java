@@ -1,6 +1,5 @@
 package ru.job4j.heroes;
 
-import ru.job4j.HeroSimple;
 import ru.job4j.actions.HeroAction;
 import ru.job4j.utils.RandomElementFromList;
 

@@ -1,8 +1,7 @@
-package ru.job4j;
+package ru.job4j.heroes;
 
 import org.apache.log4j.Logger;
 import ru.job4j.actions.HeroAction;
-import ru.job4j.heroes.Hero;
 import ru.job4j.utils.RandomElementFromList;
 
 import java.util.List;
@@ -29,7 +28,7 @@ public class HeroSimple implements Hero {
                         this.name, action
                 )
         );
-        action.act();
+        action.act(this);
     }
 
     @Override

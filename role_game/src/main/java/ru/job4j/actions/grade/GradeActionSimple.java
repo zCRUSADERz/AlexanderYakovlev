@@ -28,11 +28,11 @@ public class GradeActionSimple implements HeroAction {
     }
 
     @Override
-    public void act() {
+    public void act(Hero heroActor) {
         final Collection<Hero> gradedHeroes
                 = this.gradeAction.gradedHeroes(this.squadHeroes);
         if (gradedHeroes.isEmpty()) {
-            this.defaultAction.act();
+            this.defaultAction.act(heroActor);
         } else {
             final Hero gradedHero
                     = this.random.randomElement(

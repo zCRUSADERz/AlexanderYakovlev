@@ -2,7 +2,7 @@ package ru.job4j;
 
 import org.apache.log4j.Logger;
 import ru.job4j.heroes.Hero;
-import ru.job4j.observable.upgrade.HeroUpgradeObservable;
+import ru.job4j.observable.gradechange.GradeChangeObservable;
 import ru.job4j.utils.RandomElementFromList;
 
 import java.util.*;
@@ -12,13 +12,13 @@ public class SquadSimple implements SquadHeroes {
     private final Set<Hero> squad;
     private final Set<Hero> regularHeroes;
     private final Set<Hero> upgradedHeroes = new HashSet<>();
-    private final HeroUpgradeObservable observable;
+    private final GradeChangeObservable observable;
     private final RandomElementFromList random;
     private final Stop stopGame;
     private final Logger logger = Logger.getLogger(SquadSimple.class);
 
     public SquadSimple(String squadName, Set<Hero> squad, Set<Hero> regularHeroes,
-                       HeroUpgradeObservable observable,
+                       GradeChangeObservable observable,
                        RandomElementFromList random, Stop stopGame) {
         this.squadName = squadName;
         this.squad = squad;
@@ -82,8 +82,8 @@ public class SquadSimple implements SquadHeroes {
         if (this.squad.remove(hero)) {
             this.logger.info(
                     String.format(
-                            "%s, was removed from squad - %s. " +
-                                    "Heroes in squad: %s",
+                            "%s, was removed from squad - %s. "
+                                    + "Heroes in squad: %s",
                             hero, this.squadName, this.squad
                     )
             );

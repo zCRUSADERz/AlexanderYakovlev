@@ -5,11 +5,11 @@ import ru.job4j.Stop;
 import ru.job4j.observable.die.DieObserver;
 import ru.job4j.heroes.Hero;
 import ru.job4j.observable.move.HeroMovedObservable;
-import ru.job4j.observable.upgrade.UpgradeObserver;
+import ru.job4j.observable.gradechange.GradeChangeObserver;
 
 import java.util.*;
 
-public class HeroMoveSequence implements DieObserver, UpgradeObserver {
+public class HeroMoveSequence implements DieObserver, GradeChangeObserver {
     private final Collection<Hero> movedHeroes = new HashSet<>();
     private final Collection<Hero> upgradedHeroes;
     private final Collection<Hero> regularHeroes;

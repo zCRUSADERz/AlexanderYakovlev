@@ -1,8 +1,8 @@
-package ru.job4j.observable.upgrade;
+package ru.job4j.observable.gradechange;
 
 import ru.job4j.heroes.Hero;
 
-public interface UpgradeObserver {
+public interface GradeChangeObserver {
 
     void upgraded(Hero hero);
 

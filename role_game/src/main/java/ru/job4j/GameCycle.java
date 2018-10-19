@@ -2,8 +2,9 @@ package ru.job4j;
 
 import org.apache.log4j.Logger;
 import ru.job4j.heroes.Hero;
+import ru.job4j.observable.die.HeroDieObservable;
 import ru.job4j.observable.move.HeroMovedObservable;
-import ru.job4j.observable.upgrade.HeroUpgradeObservable;
+import ru.job4j.observable.gradechange.GradeChangeObservable;
 import ru.job4j.sequences.HeroMoveSequence;
 
 import java.util.*;
@@ -18,7 +19,8 @@ public class GameCycle {
         this.stop = stop;
     }
 
-    public void start(HeroUpgradeObservable upgradeObservable,
+    public void start(GradeChangeObservable upgradeObservable,
+                      HeroDieObservable dieObservable,
                       HeroMovedObservable movedObservable) {
         this.logger.info("Game starting!");
         while (!this.stop.gameIsStopped()) {
@@ -28,8 +30,10 @@ public class GameCycle {
                     movedObservable, this.stop
             );
             upgradeObservable.addObserver(sequence);
+            dieObservable.addObserver(sequence);
             sequence.start();
             upgradeObservable.removeObserver(sequence);
+            dieObservable.removeObserver(sequence);
         }
         this.logger.info("Game finished!");
     }

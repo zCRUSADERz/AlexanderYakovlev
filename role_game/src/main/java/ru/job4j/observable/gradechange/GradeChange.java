@@ -1,23 +1,23 @@
-package ru.job4j.observable.upgrade;
+package ru.job4j.observable.gradechange;
 
 import ru.job4j.heroes.Hero;
 
 import java.util.Collection;
 
-public class HeroUpgrade implements HeroUpgradeObservable {
-    private final Collection<UpgradeObserver> observers;
+public class GradeChange implements GradeChangeObservable {
+    private final Collection<GradeChangeObserver> observers;
 
-    public HeroUpgrade(Collection<UpgradeObserver> observers) {
+    public GradeChange(Collection<GradeChangeObserver> observers) {
         this.observers = observers;
     }
 
     @Override
-    public void addObserver(UpgradeObserver observer) {
+    public void addObserver(GradeChangeObserver observer) {
         this.observers.add(observer);
     }
 
     @Override
-    public void removeObserver(UpgradeObserver observer) {
+    public void removeObserver(GradeChangeObserver observer) {
         this.observers.remove(observer);
     }
 
