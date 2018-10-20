@@ -2,16 +2,16 @@ package ru.job4j.heroes.health;
 
 import org.apache.log4j.Logger;
 import ru.job4j.heroes.Hero;
-import ru.job4j.observable.die.HeroDieObservable;
+import ru.job4j.observable.die.HeroDiedObservable;
 
 public class HealthSimple implements HeroHealth {
     private final static int MAX_HEALTH = 100;
-    private final HeroDieObservable dieObservable;
+    private final HeroDiedObservable dieObservable;
     private final Hero heroOwner;
     private int health = MAX_HEALTH;
     private final Logger logger = Logger.getLogger(HealthSimple.class);
 
-    public HealthSimple(HeroDieObservable dieObservable, Hero heroOwner) {
+    public HealthSimple(HeroDiedObservable dieObservable, Hero heroOwner) {
         this.dieObservable = dieObservable;
         this.heroOwner = heroOwner;
     }

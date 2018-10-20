@@ -4,10 +4,10 @@ import ru.job4j.heroes.Hero;
 
 import java.util.Collection;
 
-public class GradeChange implements GradeChangeObservable {
+public class GradeChanged implements GradeChangeObservable {
     private final Collection<GradeChangeObserver> observers;
 
-    public GradeChange(Collection<GradeChangeObserver> observers) {
+    public GradeChanged(Collection<GradeChangeObserver> observers) {
         this.observers = observers;
     }
 

@@ -12,18 +12,18 @@ import ru.job4j.heroes.attack.AttackStrengthModifier;
 import ru.job4j.heroes.attack.AttackStrengthModifierSimple;
 import ru.job4j.heroes.attack.AttackStrengthModifiers;
 import ru.job4j.heroes.health.HealthHeroes;
-import ru.job4j.heroes.health.HealthSimple;
-import ru.job4j.heroes.health.HeroHealth;
 import ru.job4j.heroes.Hero;
 import ru.job4j.heroes.HeroFactorySimple;
 import ru.job4j.heroes.Race;
 import ru.job4j.heroes.RaceSimple;
 import ru.job4j.observable.die.HeroDied;
-import ru.job4j.observable.die.HeroDieObservable;
+import ru.job4j.observable.die.HeroDiedObservable;
 import ru.job4j.observable.move.HeroMoved;
 import ru.job4j.observable.move.HeroMovedObservable;
-import ru.job4j.observable.gradechange.GradeChange;
+import ru.job4j.observable.gradechange.GradeChanged;
 import ru.job4j.observable.gradechange.GradeChangeObservable;
+import ru.job4j.observable.newhero.HeroCreated;
+import ru.job4j.observable.newhero.HeroCreatedObservable;
 import ru.job4j.squad.SquadHeroes;
 import ru.job4j.squad.SquadSimple;
 import ru.job4j.squad.Squads;
@@ -39,12 +39,12 @@ public class Game {
 
         final StopSimple stopGame = new StopSimple();
 
-        final Map<Hero, HeroHealth> heroHealthMap = new HashMap<>();
-        final HealthHeroes healthHeroes = new HealthHeroes(heroHealthMap);
-
-        final HeroDieObservable dieObservable = new HeroDied(new ArrayList<>());
-        final GradeChangeObservable upgradeObservable = new GradeChange(new ArrayList<>());
+        final HeroDiedObservable dieObservable = new HeroDied(new ArrayList<>());
+        final GradeChangeObservable upgradeObservable = new GradeChanged(new ArrayList<>());
         final HeroMovedObservable movedObservable = new HeroMoved(new ArrayList<>());
+        final HeroCreatedObservable heroCreatedObservable = new HeroCreated(new ArrayList<>());
+
+        final HealthHeroes healthHeroes = new HealthHeroes(new HashMap<>(), dieObservable);
 
         final Set<Hero> squad1Heroes = new HashSet<>();
         final Set<Hero> squad1RegularHeroes = new HashSet<>();
@@ -167,22 +167,7 @@ public class Game {
                         ), random
                 )
         );
-        squad1Heroes.addAll(humans.squadHeroes(1, 3, 4, firstSquadName));
-        squad1RegularHeroes.addAll(squad1Heroes);
-        squad1Heroes.forEach(hero -> {
-            heroHealthMap.put(hero, new HealthSimple(dieObservable, hero));
-            modifiersMap.put(hero, new ArrayList<>());
-            ownSquads.put(hero, squad1);
-            enemySquads.put(hero, squad2);
-        });
-        squad2Heroes.addAll(orcs.squadHeroes(1, 3, 4, secondSquadName));
-        squad2RegularHeroes.addAll(squad2Heroes);
-        squad2Heroes.forEach(hero -> {
-            heroHealthMap.put(hero, new HealthSimple(dieObservable, hero));
-            modifiersMap.put(hero, new ArrayList<>());
-            ownSquads.put(hero, squad2);
-            enemySquads.put(hero, squad1);
-        });
+
         dieObservable.addObserver(squad1);
         dieObservable.addObserver(squad2);
         dieObservable.addObserver(healthHeroes);
@@ -192,6 +177,25 @@ public class Game {
         movedObservable.addObserver(squad2);
         movedObservable.addObserver(attackStrengthModifiers);
         upgradeObservable.addObserver(attackModifierChangeByGrade);
+        heroCreatedObservable.addObserver(healthHeroes);
+
+        squad1Heroes.addAll(humans.squadHeroes(1, 3, 4, firstSquadName));
+        squad1RegularHeroes.addAll(squad1Heroes);
+        squad1Heroes.forEach(hero -> {
+            heroCreatedObservable.heroCreated(hero, squad1, squad2);
+            modifiersMap.put(hero, new ArrayList<>());
+            ownSquads.put(hero, squad1);
+            enemySquads.put(hero, squad2);
+        });
+        squad2Heroes.addAll(orcs.squadHeroes(1, 3, 4, secondSquadName));
+        squad2RegularHeroes.addAll(squad2Heroes);
+        squad2Heroes.forEach(hero -> {
+            heroCreatedObservable.heroCreated(hero, squad1, squad2);
+            modifiersMap.put(hero, new ArrayList<>());
+            ownSquads.put(hero, squad2);
+            enemySquads.put(hero, squad1);
+        });
+
         gameCycle.start(upgradeObservable, dieObservable, movedObservable);
     }
 

@@ -1,13 +1,13 @@
 package ru.job4j.heroes.attack;
 
 import ru.job4j.heroes.Hero;
-import ru.job4j.observable.die.DieObserver;
+import ru.job4j.observable.die.HeroDiedObserver;
 import ru.job4j.observable.move.HeroMovedObserver;
 
 import java.util.Collection;
 import java.util.Map;
 
-public class AttackStrengthModifiers implements DieObserver, HeroMovedObserver {
+public class AttackStrengthModifiers implements HeroDiedObserver, HeroMovedObserver {
     private final Map<Hero, Collection<AttackStrengthModifier>> modifiersMap;
 
     public AttackStrengthModifiers(

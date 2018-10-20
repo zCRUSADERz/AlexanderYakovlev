@@ -4,20 +4,20 @@ import ru.job4j.heroes.Hero;
 
 import java.util.Collection;
 
-public class HeroDied implements HeroDieObservable {
-    private final Collection<DieObserver> observers;
+public class HeroDied implements HeroDiedObservable {
+    private final Collection<HeroDiedObserver> observers;
 
-    public HeroDied(Collection<DieObserver> observers) {
+    public HeroDied(Collection<HeroDiedObserver> observers) {
         this.observers = observers;
     }
 
     @Override
-    public void addObserver(DieObserver observer) {
+    public void addObserver(HeroDiedObserver observer) {
         this.observers.add(observer);
     }
 
     @Override
-    public void removeObserver(DieObserver observer) {
+    public void removeObserver(HeroDiedObserver observer) {
         this.observers.remove(observer);
     }
 

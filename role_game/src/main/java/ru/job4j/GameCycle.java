@@ -2,7 +2,7 @@ package ru.job4j;
 
 import org.apache.log4j.Logger;
 import ru.job4j.heroes.Hero;
-import ru.job4j.observable.die.HeroDieObservable;
+import ru.job4j.observable.die.HeroDiedObservable;
 import ru.job4j.observable.move.HeroMovedObservable;
 import ru.job4j.observable.gradechange.GradeChangeObservable;
 import ru.job4j.squad.SquadHeroes;
@@ -22,7 +22,7 @@ public class GameCycle {
     }
 
     public void start(GradeChangeObservable upgradeObservable,
-                      HeroDieObservable dieObservable,
+                      HeroDiedObservable dieObservable,
                       HeroMovedObservable movedObservable) {
         this.logger.info("Game starting!");
         while (!this.stop.gameIsStopped()) {

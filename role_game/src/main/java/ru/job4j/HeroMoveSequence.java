@@ -1,14 +1,14 @@
 package ru.job4j;
 
 import org.apache.log4j.Logger;
-import ru.job4j.observable.die.DieObserver;
+import ru.job4j.observable.die.HeroDiedObserver;
 import ru.job4j.heroes.Hero;
 import ru.job4j.observable.move.HeroMovedObservable;
 import ru.job4j.observable.gradechange.GradeChangeObserver;
 
 import java.util.*;
 
-public class HeroMoveSequence implements DieObserver, GradeChangeObserver {
+public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
     private final Collection<Hero> movedHeroes = new HashSet<>();
     private final Collection<Hero> upgradedHeroes;
     private final Collection<Hero> regularHeroes;
