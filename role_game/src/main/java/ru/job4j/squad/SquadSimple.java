@@ -1,6 +1,7 @@
-package ru.job4j;
+package ru.job4j.squad;
 
 import org.apache.log4j.Logger;
+import ru.job4j.Stop;
 import ru.job4j.heroes.Hero;
 import ru.job4j.observable.gradechange.GradeChangeObservable;
 import ru.job4j.utils.RandomElementFromList;
@@ -103,5 +104,30 @@ public class SquadSimple implements SquadHeroes {
         if (this.upgradedHeroes.remove(hero)) {
             this.regularHeroes.add(hero);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SquadSimple that = (SquadSimple) o;
+        return Objects.equals(squadName, that.squadName)
+                && Objects.equals(squad, that.squad)
+                && Objects.equals(regularHeroes, that.regularHeroes)
+                && Objects.equals(upgradedHeroes, that.upgradedHeroes)
+                && Objects.equals(observable, that.observable)
+                && Objects.equals(random, that.random)
+                && Objects.equals(stopGame, that.stopGame)
+                && Objects.equals(logger, that.logger);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(squadName, squad, regularHeroes, upgradedHeroes, observable, random, stopGame, logger);
     }
 }

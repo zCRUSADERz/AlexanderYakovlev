@@ -1,4 +1,4 @@
-package ru.job4j;
+package ru.job4j.squad;
 
 import ru.job4j.observable.die.DieObserver;
 import ru.job4j.heroes.Hero;

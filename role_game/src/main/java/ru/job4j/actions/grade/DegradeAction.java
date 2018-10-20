@@ -1,20 +1,25 @@
 package ru.job4j.actions.grade;
 
-import ru.job4j.SquadHeroes;
 import ru.job4j.heroes.Hero;
+import ru.job4j.squad.Squads;
 
 import java.util.Collection;
 
 public class DegradeAction implements GradeAction {
+    private final Squads squads;
 
-    @Override
-    public Collection<Hero> gradedHeroes(SquadHeroes squadHeroes) {
-        return squadHeroes.upgradedHeroes();
+    public DegradeAction(Squads squads) {
+        this.squads = squads;
     }
 
     @Override
-    public void grade(SquadHeroes squadHeroes, Hero hero) {
-        squadHeroes.degradeHero(hero);
+    public Collection<Hero> gradedHeroes(Hero heroActor) {
+         return this.squads.enemySquadFor(heroActor).upgradedHeroes();
+    }
+
+    @Override
+    public void grade(Hero gradedHero) {
+        this.squads.ownSquadFor(gradedHero).degradeHero(gradedHero);
     }
 
     @Override

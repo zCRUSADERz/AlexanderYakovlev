@@ -1,7 +1,6 @@
-package ru.job4j.sequences;
+package ru.job4j;
 
 import org.apache.log4j.Logger;
-import ru.job4j.Stop;
 import ru.job4j.observable.die.DieObserver;
 import ru.job4j.heroes.Hero;
 import ru.job4j.observable.move.HeroMovedObservable;

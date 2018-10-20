@@ -24,6 +24,10 @@ import ru.job4j.observable.move.HeroMoved;
 import ru.job4j.observable.move.HeroMovedObservable;
 import ru.job4j.observable.gradechange.GradeChange;
 import ru.job4j.observable.gradechange.GradeChangeObservable;
+import ru.job4j.squad.SquadHeroes;
+import ru.job4j.squad.SquadSimple;
+import ru.job4j.squad.Squads;
+import ru.job4j.squad.SquadsSimple;
 import ru.job4j.utils.RandomElementFromList;
 
 import java.util.*;
@@ -32,12 +36,16 @@ public class Game {
 
     public void start() {
         final RandomElementFromList random = new RandomElementFromList(new Random());
+
         final StopSimple stopGame = new StopSimple();
+
         final Map<Hero, HeroHealth> heroHealthMap = new HashMap<>();
         final HealthHeroes healthHeroes = new HealthHeroes(heroHealthMap);
+
         final HeroDieObservable dieObservable = new HeroDied(new ArrayList<>());
         final GradeChangeObservable upgradeObservable = new GradeChange(new ArrayList<>());
         final HeroMovedObservable movedObservable = new HeroMoved(new ArrayList<>());
+
         final Set<Hero> squad1Heroes = new HashSet<>();
         final Set<Hero> squad1RegularHeroes = new HashSet<>();
         final String firstSquadName = "Красные";
@@ -49,6 +57,7 @@ public class Game {
                 random,
                 stopGame
         );
+
         final Set<Hero> squad2Heroes = new HashSet<>();
         final Set<Hero> squad2RegularHeroes = new HashSet<>();
         final String secondSquadName = "Синие";
@@ -60,7 +69,14 @@ public class Game {
                 random,
                 stopGame
         );
-        final Collection<SquadHeroes> squads = Arrays.asList(squad1, squad2);
+
+        final Set<SquadHeroes> allSquads = new HashSet<>();
+        allSquads.add(squad1);
+        allSquads.add(squad2);
+        final Map<Hero, SquadHeroes> ownSquads = new HashMap<>();
+        final Map<Hero, SquadHeroes> enemySquads = new HashMap<>();
+        final Squads squads = new SquadsSimple(allSquads, ownSquads, enemySquads);
+
         final GameCycle gameCycle = new GameCycle(squads, stopGame);
         final Map<Hero, Collection<AttackStrengthModifier>> modifiersMap = new HashMap<>();
         final AttackStrengthModifiers attackStrengthModifiers
@@ -72,16 +88,16 @@ public class Game {
         final HeroAction defaultAction = new DefaultAction();
         final HeroAction mageActionDefault = new AttackEnemy(
                 "Атаковать магией ", 4,
-                attackStrengthModifiers, squad2, healthHeroes
+                attackStrengthModifiers, squads, healthHeroes
         );
         final Race humans = new RaceSimple(
                 new HeroFactorySimple(
                         "маг",
                         Arrays.asList(
                                 new GradeActionSimple(
-                                        squad1, random,
+                                        random,
                                         mageActionDefault,
-                                        new UpgradeAction()
+                                        new UpgradeAction(squads)
                                 ),
                                 mageActionDefault
                         ), random
@@ -91,10 +107,10 @@ public class Game {
                         Arrays.asList(
                                 new AttackEnemy(
                                         "Стрелять из арбалета в ", 5,
-                                        attackStrengthModifiers, squad2, healthHeroes
+                                        attackStrengthModifiers, squads, healthHeroes
                                 ), new AttackEnemy(
                                         "Атаковать ", 3,
-                                        attackStrengthModifiers, squad2, healthHeroes
+                                        attackStrengthModifiers, squads, healthHeroes
                                 )
                         ), random
                 ),
@@ -103,7 +119,7 @@ public class Game {
                         Collections.singletonList(
                                 new AttackEnemy(
                                         "Атаковать мечом ", 18,
-                                        attackStrengthModifiers, squad2, healthHeroes
+                                        attackStrengthModifiers, squads, healthHeroes
                                 )
                         ), random
                 )
@@ -113,17 +129,17 @@ public class Game {
                         "шаман",
                         Arrays.asList(
                                 new GradeActionSimple(
-                                        squad2, random,
+                                        random,
                                         defaultAction,
-                                        new UpgradeAction()
+                                        new UpgradeAction(squads)
                                 ),
                                 new GradeActionSimple(
-                                        squad1, random,
+                                        random,
                                         defaultAction,
-                                        new DegradeAction()
+                                        new DegradeAction(squads)
                                 ),
                                 new SendAilment(
-                                        squad1,
+                                        squads,
                                         new AttackStrengthModifierSimple(0.5d),
                                         attackStrengthModifiers
                                 )
@@ -134,10 +150,10 @@ public class Game {
                         Arrays.asList(
                                 new AttackEnemy(
                                         "Стрелять из лука в ", 3,
-                                        attackStrengthModifiers, squad1, healthHeroes
+                                        attackStrengthModifiers, squads, healthHeroes
                                 ), new AttackEnemy(
                                         "Удар клинком по ", 2,
-                                        attackStrengthModifiers, squad1, healthHeroes
+                                        attackStrengthModifiers, squads, healthHeroes
                                 )
                         ), random
                 ),
@@ -146,7 +162,7 @@ public class Game {
                         Collections.singletonList(
                                 new AttackEnemy(
                                         "Атака дубиной по ", 20,
-                                        attackStrengthModifiers, squad1, healthHeroes
+                                        attackStrengthModifiers, squads, healthHeroes
                                 )
                         ), random
                 )
@@ -156,17 +172,22 @@ public class Game {
         squad1Heroes.forEach(hero -> {
             heroHealthMap.put(hero, new HealthSimple(dieObservable, hero));
             modifiersMap.put(hero, new ArrayList<>());
+            ownSquads.put(hero, squad1);
+            enemySquads.put(hero, squad2);
         });
         squad2Heroes.addAll(orcs.squadHeroes(1, 3, 4, secondSquadName));
         squad2RegularHeroes.addAll(squad2Heroes);
         squad2Heroes.forEach(hero -> {
             heroHealthMap.put(hero, new HealthSimple(dieObservable, hero));
             modifiersMap.put(hero, new ArrayList<>());
+            ownSquads.put(hero, squad2);
+            enemySquads.put(hero, squad1);
         });
         dieObservable.addObserver(squad1);
         dieObservable.addObserver(squad2);
         dieObservable.addObserver(healthHeroes);
         dieObservable.addObserver(attackStrengthModifiers);
+        dieObservable.addObserver(squads);
         movedObservable.addObserver(squad1);
         movedObservable.addObserver(squad2);
         movedObservable.addObserver(attackStrengthModifiers);
