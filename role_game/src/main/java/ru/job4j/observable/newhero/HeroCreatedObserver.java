@@ -5,5 +5,5 @@ import ru.job4j.squad.SquadHeroes;
 
 public interface HeroCreatedObserver {
 
-    void heroCreated(Hero hero, SquadHeroes ownSquad, SquadHeroes enemySquad);
+    void heroCreated(Hero hero);
 }

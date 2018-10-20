@@ -107,6 +107,17 @@ public class SquadSimple implements SquadHeroes {
     }
 
     @Override
+    public void heroCreated(Hero hero) {
+        this.squad.add(hero);
+        this.regularHeroes.add(hero);
+    }
+
+    @Override
+    public String toString() {
+        return this.squadName;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

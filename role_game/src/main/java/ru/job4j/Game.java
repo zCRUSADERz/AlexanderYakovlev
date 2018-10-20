@@ -8,11 +8,9 @@ import ru.job4j.actions.grade.DegradeAction;
 import ru.job4j.actions.grade.GradeActionSimple;
 import ru.job4j.actions.grade.UpgradeAction;
 import ru.job4j.heroes.attack.AttackModifierChangeByGrade;
-import ru.job4j.heroes.attack.AttackStrengthModifier;
 import ru.job4j.heroes.attack.AttackStrengthModifierSimple;
 import ru.job4j.heroes.attack.AttackStrengthModifiers;
 import ru.job4j.heroes.health.HealthHeroes;
-import ru.job4j.heroes.Hero;
 import ru.job4j.heroes.HeroFactorySimple;
 import ru.job4j.heroes.Race;
 import ru.job4j.heroes.RaceSimple;
@@ -46,41 +44,33 @@ public class Game {
 
         final HealthHeroes healthHeroes = new HealthHeroes(new HashMap<>(), dieObservable);
 
-        final Set<Hero> squad1Heroes = new HashSet<>();
-        final Set<Hero> squad1RegularHeroes = new HashSet<>();
-        final String firstSquadName = "Красные";
         final SquadHeroes squad1 = new SquadSimple(
-                firstSquadName,
-                squad1Heroes,
-                squad1RegularHeroes,
+                "Красные",
+                new HashSet<>(),
+                new HashSet<>(),
                 upgradeObservable,
                 random,
                 stopGame
         );
 
-        final Set<Hero> squad2Heroes = new HashSet<>();
-        final Set<Hero> squad2RegularHeroes = new HashSet<>();
-        final String secondSquadName = "Синие";
         final SquadHeroes squad2 = new SquadSimple(
-                secondSquadName,
-                squad2Heroes,
-                squad2RegularHeroes,
+                "Синие",
+                new HashSet<>(),
+                new HashSet<>(),
                 upgradeObservable,
                 random,
                 stopGame
         );
 
-        final Set<SquadHeroes> allSquads = new HashSet<>();
-        allSquads.add(squad1);
-        allSquads.add(squad2);
-        final Map<Hero, SquadHeroes> ownSquads = new HashMap<>();
-        final Map<Hero, SquadHeroes> enemySquads = new HashMap<>();
-        final Squads squads = new SquadsSimple(allSquads, ownSquads, enemySquads);
+        final Squads squads = new SquadsSimple(
+                new HashSet<>(), new HashMap<>(),
+                new HashMap<>(),
+                heroCreatedObservable
+        );
 
         final GameCycle gameCycle = new GameCycle(squads, stopGame);
-        final Map<Hero, Collection<AttackStrengthModifier>> modifiersMap = new HashMap<>();
         final AttackStrengthModifiers attackStrengthModifiers
-                = new AttackStrengthModifiers(modifiersMap);
+                = new AttackStrengthModifiers(new HashMap<>());
         final AttackModifierChangeByGrade attackModifierChangeByGrade
                 = new AttackModifierChangeByGrade(
                         attackStrengthModifiers, new AttackStrengthModifierSimple(1.5d)
@@ -122,7 +112,8 @@ public class Game {
                                         attackStrengthModifiers, squads, healthHeroes
                                 )
                         ), random
-                )
+                ),
+                squads
         );
         final Race orcs = new RaceSimple(
                 new HeroFactorySimple(
@@ -165,36 +156,26 @@ public class Game {
                                         attackStrengthModifiers, squads, healthHeroes
                                 )
                         ), random
-                )
+                ),
+                squads
         );
 
-        dieObservable.addObserver(squad1);
-        dieObservable.addObserver(squad2);
         dieObservable.addObserver(healthHeroes);
         dieObservable.addObserver(attackStrengthModifiers);
         dieObservable.addObserver(squads);
-        movedObservable.addObserver(squad1);
-        movedObservable.addObserver(squad2);
         movedObservable.addObserver(attackStrengthModifiers);
+        movedObservable.addObserver(squads);
         upgradeObservable.addObserver(attackModifierChangeByGrade);
         heroCreatedObservable.addObserver(healthHeroes);
+        heroCreatedObservable.addObserver(attackStrengthModifiers);
 
-        squad1Heroes.addAll(humans.squadHeroes(1, 3, 4, firstSquadName));
-        squad1RegularHeroes.addAll(squad1Heroes);
-        squad1Heroes.forEach(hero -> {
-            heroCreatedObservable.heroCreated(hero, squad1, squad2);
-            modifiersMap.put(hero, new ArrayList<>());
-            ownSquads.put(hero, squad1);
-            enemySquads.put(hero, squad2);
-        });
-        squad2Heroes.addAll(orcs.squadHeroes(1, 3, 4, secondSquadName));
-        squad2RegularHeroes.addAll(squad2Heroes);
-        squad2Heroes.forEach(hero -> {
-            heroCreatedObservable.heroCreated(hero, squad1, squad2);
-            modifiersMap.put(hero, new ArrayList<>());
-            ownSquads.put(hero, squad2);
-            enemySquads.put(hero, squad1);
-        });
+        humans.createMagiciansHeroes(1, squad1, squad2);
+        humans.createArchersHeroes(3, squad1, squad2);
+        humans.createWarriorsHeroes(4, squad1, squad2);
+
+        orcs.createMagiciansHeroes(1, squad2, squad1);
+        orcs.createArchersHeroes(3, squad2, squad1);
+        orcs.createWarriorsHeroes(4, squad2, squad1);
 
         gameCycle.start(upgradeObservable, dieObservable, movedObservable);
     }

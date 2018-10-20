@@ -1,41 +1,59 @@
 package ru.job4j.heroes;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import ru.job4j.squad.SquadHeroes;
+import ru.job4j.squad.Squads;
+
 import java.util.stream.Stream;
 
 public class RaceSimple implements Race {
     private final HeroFactory magiciansFactory;
     private final HeroFactory archersFactory;
     private final HeroFactory warriorsFactory;
+    private final Squads squads;
 
-    public RaceSimple(HeroFactory magiciansFactory, HeroFactory archersFactory, HeroFactory warriorsFactory) {
+    public RaceSimple(HeroFactory magiciansFactory, HeroFactory archersFactory,
+                      HeroFactory warriorsFactory, Squads squads) {
         this.magiciansFactory = magiciansFactory;
         this.archersFactory = archersFactory;
         this.warriorsFactory = warriorsFactory;
+        this.squads = squads;
     }
 
     @Override
-    public List<Hero> squadHeroes(int magicians, int archers,
-                                  int warriors, String squadName) {
-        final List<Hero> result = new ArrayList<>();
-        result.addAll(
-                this.heroes(magicians, squadName, this.magiciansFactory)
+    public void createMagiciansHeroes(int numberOfHeroes, SquadHeroes ownSquad, SquadHeroes enemySquad) {
+        createHeroes(
+                numberOfHeroes,
+                this.magiciansFactory,
+                ownSquad,
+                enemySquad
         );
-        result.addAll(
-                this.heroes(archers, squadName, this.archersFactory)
-        );
-        result.addAll(
-                this.heroes(warriors, squadName, this.warriorsFactory)
-        );
-        return result;
     }
 
-    private List<Hero> heroes(int numOfHeroes, String squadName, HeroFactory heroFactory) {
-        return Stream.iterate(1, n -> n + 1)
+    @Override
+    public void createArchersHeroes(int numberOfHeroes, SquadHeroes ownSquad, SquadHeroes enemySquad) {
+        createHeroes(
+                numberOfHeroes,
+                this.archersFactory,
+                ownSquad,
+                enemySquad
+        );
+    }
+
+    @Override
+    public void createWarriorsHeroes(int numberOfHeroes, SquadHeroes ownSquad, SquadHeroes enemySquad) {
+        createHeroes(
+                numberOfHeroes,
+                this.warriorsFactory,
+                ownSquad,
+                enemySquad
+        );
+    }
+
+    private void createHeroes(int numOfHeroes, HeroFactory heroFactory,
+                              SquadHeroes ownSquad, SquadHeroes enemySquad) {
+        Stream.iterate(1, n -> n + 1)
                 .limit(numOfHeroes)
-                .map(n -> heroFactory.hero(String.valueOf(n), squadName))
-                .collect(Collectors.toList());
+                .map(n -> heroFactory.hero(ownSquad.toString()))
+                .forEach(hero -> squads.newHeroCreated(hero, ownSquad, enemySquad));
     }
 }

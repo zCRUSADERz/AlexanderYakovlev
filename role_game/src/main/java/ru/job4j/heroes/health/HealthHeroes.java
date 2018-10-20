@@ -40,7 +40,7 @@ public class HealthHeroes implements HeroDiedObserver, HeroCreatedObserver {
 
 
     @Override
-    public void heroCreated(Hero hero, SquadHeroes ownSquad, SquadHeroes enemySquad) {
+    public void heroCreated(Hero hero) {
         this.heroHealthMap.put(hero, new HealthSimple(this.dieObservable, hero));
     }
 }

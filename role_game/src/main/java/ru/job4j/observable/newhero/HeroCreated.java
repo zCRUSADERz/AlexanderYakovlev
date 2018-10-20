@@ -1,7 +1,6 @@
 package ru.job4j.observable.newhero;
 
 import ru.job4j.heroes.Hero;
-import ru.job4j.squad.SquadHeroes;
 
 import java.util.Collection;
 
@@ -23,7 +22,7 @@ public class HeroCreated implements HeroCreatedObservable {
     }
 
     @Override
-    public void heroCreated(Hero hero, SquadHeroes ownSquad, SquadHeroes enemySquad) {
-        this.observers.forEach(observer -> observer.heroCreated(hero, ownSquad, enemySquad));
+    public void heroCreated(Hero hero) {
+        this.observers.forEach(observer -> observer.heroCreated(hero));
     }
 }

@@ -1,8 +1,12 @@
 package ru.job4j.heroes;
 
-import java.util.List;
+import ru.job4j.squad.SquadHeroes;
 
 public interface Race {
 
-    List<Hero> squadHeroes(int magicians, int archers, int warriors, String squadName);
+    void createMagiciansHeroes(int numberOfHeroes, SquadHeroes ownSquad, SquadHeroes enemySquad);
+
+    void createArchersHeroes(int numberOfHeroes, SquadHeroes ownSquad, SquadHeroes enemySquad);
+
+    void createWarriorsHeroes(int numberOfHeroes, SquadHeroes ownSquad, SquadHeroes enemySquad);
 }

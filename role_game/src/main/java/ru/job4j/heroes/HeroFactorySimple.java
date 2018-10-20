@@ -9,6 +9,7 @@ public class HeroFactorySimple implements HeroFactory {
     private final String desc;
     private final List<HeroAction> actions;
     private final RandomElementFromList random;
+    private int counter = 1;
 
     public HeroFactorySimple(String desc, List<HeroAction> actions, RandomElementFromList random) {
         this.desc = desc;
@@ -16,9 +17,9 @@ public class HeroFactorySimple implements HeroFactory {
         this.random = random;
     }
 
-    public Hero hero(String name, String squadName) {
+    public Hero hero(String squadName) {
         return new HeroSimple(
-                String.format("Hero-%s (%s)[%s]", name, this.desc, squadName),
+                String.format("Hero-%s (%s)[%s]", this.counter++, this.desc, squadName),
                 this.actions,
                 random
         );

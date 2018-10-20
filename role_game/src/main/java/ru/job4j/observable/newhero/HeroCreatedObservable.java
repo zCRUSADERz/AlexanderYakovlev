@@ -9,5 +9,5 @@ public interface HeroCreatedObservable {
 
     void removeObserver(HeroCreatedObserver observer);
 
-    void heroCreated(Hero hero, SquadHeroes ownSquad, SquadHeroes enemySquad);
+    void heroCreated(Hero hero);
 }
