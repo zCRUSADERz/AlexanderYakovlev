@@ -37,7 +37,8 @@ public class AttackEnemy implements HeroAction {
         }
         this.logger.info(
                 String.format(
-                        "%s%s. Damage: %d HP.(Modifiers: %s)",
+                        "%s, %s%s. Damage: %d HP.(Modifiers: %s)",
+                        heroActor,
                         this.actionName, enemyHero,
                         resultDamage,
                         attackModifiers

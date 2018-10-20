@@ -11,12 +11,12 @@ public class AttackStrengthModifierSimple implements AttackStrengthModifier {
 
     @Override
     public int resultDamage(int initialDamage) {
-        return 0;
+        return (int) (this.modifier * initialDamage);
     }
 
     @Override
     public String toString() {
-        return (this.modifier * 100) + "%";
+        return (int) (this.modifier * 100) + "%";
     }
 
     @Override

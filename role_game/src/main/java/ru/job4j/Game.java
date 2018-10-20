@@ -1,7 +1,9 @@
 package ru.job4j;
 
 import ru.job4j.actions.AttackEnemy;
+import ru.job4j.actions.DefaultAction;
 import ru.job4j.actions.HeroAction;
+import ru.job4j.actions.SendAilment;
 import ru.job4j.actions.grade.DegradeAction;
 import ru.job4j.actions.grade.GradeActionSimple;
 import ru.job4j.actions.grade.UpgradeAction;
@@ -60,34 +62,23 @@ public class Game {
         );
         final Collection<SquadHeroes> squads = Arrays.asList(squad1, squad2);
         final GameCycle gameCycle = new GameCycle(squads, stopGame);
-        final Map<Hero, Set<AttackStrengthModifier>> modifiersMap = new HashMap<>();
+        final Map<Hero, Collection<AttackStrengthModifier>> modifiersMap = new HashMap<>();
         final AttackStrengthModifiers attackStrengthModifiers
                 = new AttackStrengthModifiers(modifiersMap);
         final AttackModifierChangeByGrade attackModifierChangeByGrade
                 = new AttackModifierChangeByGrade(
                         attackStrengthModifiers, new AttackStrengthModifierSimple(1.5d)
         );
+        final HeroAction defaultAction = new DefaultAction();
         final HeroAction mageActionDefault = new AttackEnemy(
                 "Атаковать магией ", 4,
                 attackStrengthModifiers, squad2, healthHeroes
         );
-        final HeroAction defaultAction = new HeroAction() {
-            @Override
-            public void act(Hero heroActor) {
-
-            }
-
-            @Override
-            public String toString() {
-                return "defaultAction";
-            }
-        };
         final Race humans = new RaceSimple(
                 new HeroFactorySimple(
                         "маг",
                         Arrays.asList(
                                 new GradeActionSimple(
-                                        "Наложение улучшения на персонажа своего отряда",
                                         squad1, random,
                                         mageActionDefault,
                                         new UpgradeAction()
@@ -117,21 +108,24 @@ public class Game {
                         ), random
                 )
         );
-        Race orcs = new RaceSimple(
+        final Race orcs = new RaceSimple(
                 new HeroFactorySimple(
                         "шаман",
                         Arrays.asList(
                                 new GradeActionSimple(
-                                        "Наложение улучшения на персонажа своего отряда",
                                         squad2, random,
                                         defaultAction,
                                         new UpgradeAction()
                                 ),
                                 new GradeActionSimple(
-                                        "Наложение проклятия (снятие улучшения с персонажа противника для следующего хода)",
                                         squad1, random,
                                         defaultAction,
                                         new DegradeAction()
+                                ),
+                                new SendAilment(
+                                        squad1,
+                                        new AttackStrengthModifierSimple(0.5d),
+                                        attackStrengthModifiers
                                 )
                         ), random
                 ),
@@ -161,13 +155,13 @@ public class Game {
         squad1RegularHeroes.addAll(squad1Heroes);
         squad1Heroes.forEach(hero -> {
             heroHealthMap.put(hero, new HealthSimple(dieObservable, hero));
-            modifiersMap.put(hero, new HashSet<>());
+            modifiersMap.put(hero, new ArrayList<>());
         });
         squad2Heroes.addAll(orcs.squadHeroes(1, 3, 4, secondSquadName));
         squad2RegularHeroes.addAll(squad2Heroes);
         squad2Heroes.forEach(hero -> {
             heroHealthMap.put(hero, new HealthSimple(dieObservable, hero));
-            modifiersMap.put(hero, new HashSet<>());
+            modifiersMap.put(hero, new ArrayList<>());
         });
         dieObservable.addObserver(squad1);
         dieObservable.addObserver(squad2);

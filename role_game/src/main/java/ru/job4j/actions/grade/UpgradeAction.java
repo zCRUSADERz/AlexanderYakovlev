@@ -16,4 +16,9 @@ public class UpgradeAction implements GradeAction {
     public void grade(SquadHeroes squadHeroes, Hero hero) {
         squadHeroes.upgradeHero(hero);
     }
+
+    @Override
+    public String actionName() {
+        return "Наложение улучшения на персонажа своего отряда";
+    }
 }

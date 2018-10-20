@@ -6,13 +6,12 @@ import ru.job4j.observable.move.HeroMovedObserver;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 public class AttackStrengthModifiers implements DieObserver, HeroMovedObserver {
-    private final Map<Hero, Set<AttackStrengthModifier>> modifiersMap;
+    private final Map<Hero, Collection<AttackStrengthModifier>> modifiersMap;
 
     public AttackStrengthModifiers(
-            Map<Hero, Set<AttackStrengthModifier>> modifiersMap) {
+            Map<Hero, Collection<AttackStrengthModifier>> modifiersMap) {
         this.modifiersMap = modifiersMap;
     }
 

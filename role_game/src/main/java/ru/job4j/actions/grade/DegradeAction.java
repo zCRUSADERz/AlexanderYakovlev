@@ -16,4 +16,10 @@ public class DegradeAction implements GradeAction {
     public void grade(SquadHeroes squadHeroes, Hero hero) {
         squadHeroes.degradeHero(hero);
     }
+
+    @Override
+    public String actionName() {
+        return "Наложение проклятия "
+                + "(снятие улучшения с персонажа противника для следующего хода)";
+    }
 }

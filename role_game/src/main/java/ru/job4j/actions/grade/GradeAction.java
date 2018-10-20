@@ -10,4 +10,6 @@ public interface GradeAction {
     Collection<Hero> gradedHeroes(SquadHeroes squadHeroes);
 
     void grade(SquadHeroes squadHeroes, Hero hero);
+
+    String actionName();
 }
