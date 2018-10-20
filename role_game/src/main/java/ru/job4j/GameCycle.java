@@ -13,29 +13,35 @@ import java.util.function.Function;
 
 public class GameCycle {
     private final Squads squads;
+    private final HeroDiedObservable dieObservable;
+    private final GradeChangeObservable upgradeObservable;
+    private final HeroMovedObservable movedObservable;
     private final Stop stop;
     private final Logger logger = Logger.getLogger(GameCycle.class);
 
-    public GameCycle(Squads squads, Stop stop) {
+    public GameCycle(Squads squads, HeroDiedObservable dieObservable,
+                     GradeChangeObservable upgradeObservable,
+                     HeroMovedObservable movedObservable, Stop stop) {
         this.squads = squads;
+        this.dieObservable = dieObservable;
+        this.upgradeObservable = upgradeObservable;
+        this.movedObservable = movedObservable;
         this.stop = stop;
     }
 
-    public void start(GradeChangeObservable upgradeObservable,
-                      HeroDiedObservable dieObservable,
-                      HeroMovedObservable movedObservable) {
+    public void start() {
         this.logger.info("Game starting!");
         while (!this.stop.gameIsStopped()) {
             final HeroMoveSequence sequence = new HeroMoveSequence(
                     heroesInRandomOrder(SquadHeroes::upgradedHeroes),
                     heroesInRandomOrder(SquadHeroes::regularHeroes),
-                    movedObservable, this.stop
+                    this.movedObservable, this.stop
             );
-            upgradeObservable.addObserver(sequence);
-            dieObservable.addObserver(sequence);
+            this.upgradeObservable.addObserver(sequence);
+            this.dieObservable.addObserver(sequence);
             sequence.start();
-            upgradeObservable.removeObserver(sequence);
-            dieObservable.removeObserver(sequence);
+            this.upgradeObservable.removeObserver(sequence);
+            this.dieObservable.removeObserver(sequence);
         }
         this.logger.info("Game finished!");
     }

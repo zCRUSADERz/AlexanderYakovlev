@@ -6,6 +6,10 @@ import java.util.Random;
 public class RandomElementFromList {
     private final Random random;
 
+    public RandomElementFromList() {
+        this(new Random());
+    }
+
     public RandomElementFromList(Random random) {
         this.random = random;
     }

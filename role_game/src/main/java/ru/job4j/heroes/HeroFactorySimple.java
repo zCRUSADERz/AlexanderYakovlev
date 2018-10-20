@@ -11,17 +11,21 @@ public class HeroFactorySimple implements HeroFactory {
     private final RandomElementFromList random;
     private int counter = 1;
 
-    public HeroFactorySimple(String desc, List<HeroAction> actions, RandomElementFromList random) {
+    public HeroFactorySimple(String desc, List<HeroAction> actions,
+                             RandomElementFromList random) {
         this.desc = desc;
         this.actions = actions;
         this.random = random;
     }
 
-    public Hero hero(String squadName) {
+    public Hero hero(String squadName, String raceName) {
         return new HeroSimple(
-                String.format("Hero-%s (%s)[%s]", this.counter++, this.desc, squadName),
-                this.actions,
-                random
+                String.format(
+                        "Hero-%s(%s)[%s]<%s>",
+                        this.counter++, this.desc,
+                        squadName, raceName
+                ), this.actions,
+                this.random
         );
     }
 }

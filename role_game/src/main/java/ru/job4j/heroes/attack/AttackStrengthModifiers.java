@@ -7,10 +7,15 @@ import ru.job4j.observable.newhero.HeroCreatedObserver;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 public class AttackStrengthModifiers implements HeroDiedObserver, HeroMovedObserver, HeroCreatedObserver {
     private final Map<Hero, Collection<AttackStrengthModifier>> modifiersMap;
+
+    public AttackStrengthModifiers() {
+        this(new HashMap<>());
+    }
 
     public AttackStrengthModifiers(
             Map<Hero, Collection<AttackStrengthModifier>> modifiersMap) {

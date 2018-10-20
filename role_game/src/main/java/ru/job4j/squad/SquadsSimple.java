@@ -3,15 +3,22 @@ package ru.job4j.squad;
 import ru.job4j.heroes.Hero;
 import ru.job4j.observable.newhero.HeroCreatedObservable;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class SquadsSimple implements Squads {
     private final Set<SquadHeroes> squads;
     private final Map<Hero, SquadHeroes> ownSquads;
     private final Map<Hero, SquadHeroes> enemySquads;
     private final HeroCreatedObservable heroCreatedObservable;
+
+    public SquadsSimple(HeroCreatedObservable heroCreatedObservable) {
+        this(
+                new HashSet<>(),
+                new HashMap<>(),
+                new HashMap<>(),
+                heroCreatedObservable
+        );
+    }
 
     public SquadsSimple(Set<SquadHeroes> squads,
                         Map<Hero, SquadHeroes> ownSquads,

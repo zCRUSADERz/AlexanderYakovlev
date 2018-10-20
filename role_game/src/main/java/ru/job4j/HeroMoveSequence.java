@@ -37,14 +37,15 @@ public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
             } else if (!this.regularHeroes.isEmpty()) {
                 iterator = this.regularHeroes.iterator();
             } else {
+                this.logger.info("Round is over.");
                 break;
             }
             final Hero hero = iterator.next();
             iterator.remove();
             this.logger.info(String.format("%s turn.", hero));
-            hero.doAction();
             this.movedHeroes.add(hero);
             this.heroMovedObservable.heroMoved(hero);
+            hero.doAction();
             this.logger.info(String.format("%s completed his turn.", hero));
             this.logger.info("------------------------------------");
         }
@@ -54,12 +55,17 @@ public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
     public void heroDied(Hero hero) {
         this.upgradedHeroes.remove(hero);
         this.regularHeroes.remove(hero);
+        this.movedHeroes.remove(hero);
     }
 
     @Override
     public void upgraded(Hero hero) {
         if (!this.movedHeroes.contains(hero)) {
-            this.regularHeroes.remove(hero);
+            if (!this.regularHeroes.remove(hero)) {
+                throw new IllegalStateException(
+                        String.format("%s not in regular group", hero)
+                );
+            }
             this.upgradedHeroes.add(hero);
             this.logger.info(
                     String.format("%s was replace to upgraded group", hero)
@@ -70,7 +76,11 @@ public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
     @Override
     public void degraded(Hero hero) {
         if (!this.movedHeroes.contains(hero)) {
-            this.upgradedHeroes.remove(hero);
+            if (!this.upgradedHeroes.remove(hero)) {
+                throw new IllegalStateException(
+                        String.format("%s not in upgraded group", hero)
+                );
+            }
             this.regularHeroes.add(hero);
             this.logger.info(
                     String.format("%s was replace to regular group", hero)
@@ -80,7 +90,7 @@ public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
 
     private void logSequence() {
         this.logger.info(String.format(
-                "Sequence of moves of heroes: upgraded:%s regular:%s",
+                "Sequence of heroes moves: upgraded:%s regular:%s",
                 this.upgradedHeroes, this.regularHeroes
         ));
         logger.info("------------------------------------");

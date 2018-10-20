@@ -1,4 +1,4 @@
-package ru.job4j.heroes;
+package ru.job4j.races;
 
 import ru.job4j.squad.SquadHeroes;
 

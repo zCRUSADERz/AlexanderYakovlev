@@ -2,12 +2,17 @@ package ru.job4j.observable.die;
 
 import ru.job4j.heroes.Hero;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
-public class HeroDied implements HeroDiedObservable {
+public class HeroDiedObservableSimple implements HeroDiedObservable {
     private final Collection<HeroDiedObserver> observers;
 
-    public HeroDied(Collection<HeroDiedObserver> observers) {
+    public HeroDiedObservableSimple() {
+        this(new ArrayList<>());
+    }
+
+    public HeroDiedObservableSimple(Collection<HeroDiedObserver> observers) {
         this.observers = observers;
     }
 

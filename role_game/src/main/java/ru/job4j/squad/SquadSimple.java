@@ -12,18 +12,32 @@ public class SquadSimple implements SquadHeroes {
     private final String squadName;
     private final Set<Hero> squad;
     private final Set<Hero> regularHeroes;
-    private final Set<Hero> upgradedHeroes = new HashSet<>();
+    private final Set<Hero> upgradedHeroes;
     private final GradeChangeObservable observable;
     private final RandomElementFromList random;
     private final Stop stopGame;
     private final Logger logger = Logger.getLogger(SquadSimple.class);
 
+    public SquadSimple(String squadName, GradeChangeObservable observable,
+                        RandomElementFromList random, Stop stopGame) {
+        this(
+                squadName,
+                new HashSet<>(),
+                new HashSet<>(),
+                new HashSet<>(),
+                observable,
+                random,
+                stopGame
+        );
+    }
+
     public SquadSimple(String squadName, Set<Hero> squad, Set<Hero> regularHeroes,
-                       GradeChangeObservable observable,
+                       Set<Hero> upgradedHeroes, GradeChangeObservable observable,
                        RandomElementFromList random, Stop stopGame) {
         this.squadName = squadName;
         this.squad = squad;
         this.regularHeroes = regularHeroes;
+        this.upgradedHeroes = upgradedHeroes;
         this.observable = observable;
         this.random = random;
         this.stopGame = stopGame;
@@ -46,19 +60,19 @@ public class SquadSimple implements SquadHeroes {
 
     @Override
     public void upgradeHero(Hero hero) {
-        if (!this.squad.contains(hero)) {
+        if (!this.regularHeroes.contains(hero)) {
             throw new IllegalStateException(
                     String.format(
-                            "%s not in squad - %s.",
-                            hero, this.squadName
+                            "%s not regular hero in squad %s."
+                                    + "All heroes: %s, regular heroes: %s",
+                            hero, this.squadName, this.squad, this.regularHeroes
                     )
             );
         }
-        if (this.regularHeroes.remove(hero)) {
-            this.upgradedHeroes.add(hero);
-            this.observable.upgraded(hero);
-            this.logger.info(String.format("%s was upgraded.", hero));
-        }
+        this.regularHeroes.remove(hero);
+        this.upgradedHeroes.add(hero);
+        this.observable.upgraded(hero);
+        this.logger.info(String.format("%s was upgraded.", hero));
     }
 
     @Override
@@ -66,31 +80,39 @@ public class SquadSimple implements SquadHeroes {
         if (!this.upgradedHeroes.contains(hero)) {
             throw new IllegalStateException(
                     String.format(
-                            "%s not in squad - %s.",
-                            hero, this.squadName
+                            "%s not upgraded hero in squad %s."
+                                    + "All heroes: %s, upgraded heroes: %s",
+                            hero, this.squadName, this.squad, this.upgradedHeroes
                     )
             );
         }
-        if (this.upgradedHeroes.remove(hero)) {
-            this.regularHeroes.add(hero);
-            this.observable.degraded(hero);
-            this.logger.info(String.format("%s was degraded.", hero));
-        }
+        this.upgradedHeroes.remove(hero);
+        this.regularHeroes.add(hero);
+        this.observable.degraded(hero);
+        this.logger.info(String.format("%s was degraded.", hero));
     }
 
     @Override
     public void heroDied(Hero hero) {
-        if (this.squad.remove(hero)) {
-            this.logger.info(
+        if (!this.squad.contains(hero)) {
+            throw new IllegalStateException(
                     String.format(
-                            "%s, was removed from squad - %s. "
-                                    + "Heroes in squad: %s",
+                            "%s not in squad %s."
+                                    + "All heroes: %s.",
                             hero, this.squadName, this.squad
                     )
             );
-            this.regularHeroes.remove(hero);
-            this.upgradedHeroes.remove(hero);
         }
+        this.squad.remove(hero);
+        this.logger.info(
+                String.format(
+                        "%s, was removed from squad - %s. "
+                                + "Heroes in squad: %s",
+                        hero, this.squadName, this.squad
+                )
+        );
+        this.regularHeroes.remove(hero);
+        this.upgradedHeroes.remove(hero);
         if (this.squad.size() == 0) {
             this.logger.info(
                     String.format("Squad - %s, was killed.", this.squadName)
@@ -101,6 +123,15 @@ public class SquadSimple implements SquadHeroes {
 
     @Override
     public void heroMoved(Hero hero) {
+        if (!this.squad.contains(hero)) {
+            throw new IllegalStateException(
+                    String.format(
+                            "%s not in squad %s."
+                                    + "All heroes: %s.",
+                            hero, this.squadName, this.squad
+                    )
+            );
+        }
         if (this.upgradedHeroes.remove(hero)) {
             this.regularHeroes.add(hero);
         }
@@ -108,6 +139,15 @@ public class SquadSimple implements SquadHeroes {
 
     @Override
     public void heroCreated(Hero hero) {
+        if (this.squad.contains(hero)) {
+            throw new IllegalStateException(
+                    String.format(
+                            "%s already in squad %s."
+                                    + "All heroes: %s.",
+                            hero, this.squadName, this.squad
+                    )
+            );
+        }
         this.squad.add(hero);
         this.regularHeroes.add(hero);
     }
@@ -139,6 +179,10 @@ public class SquadSimple implements SquadHeroes {
     @Override
     public int hashCode() {
 
-        return Objects.hash(squadName, squad, regularHeroes, upgradedHeroes, observable, random, stopGame, logger);
+        return Objects.hash(
+                squadName, squad, regularHeroes,
+                upgradedHeroes, observable, random,
+                stopGame, logger
+        );
     }
 }

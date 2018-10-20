@@ -2,12 +2,17 @@ package ru.job4j.observable.move;
 
 import ru.job4j.heroes.Hero;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
-public class HeroMoved implements HeroMovedObservable {
+public class HeroMovedObservableSimple implements HeroMovedObservable {
     private final Collection<HeroMovedObserver> observers;
 
-    public HeroMoved(Collection<HeroMovedObserver> observers) {
+    public HeroMovedObservableSimple() {
+        this(new ArrayList<>());
+    }
+
+    public HeroMovedObservableSimple(Collection<HeroMovedObserver> observers) {
         this.observers = observers;
     }
 

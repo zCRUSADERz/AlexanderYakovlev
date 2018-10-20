@@ -2,12 +2,17 @@ package ru.job4j.observable.gradechange;
 
 import ru.job4j.heroes.Hero;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
-public class GradeChanged implements GradeChangeObservable {
+public class GradeChangedObservableSimple implements GradeChangeObservable {
     private final Collection<GradeChangeObserver> observers;
 
-    public GradeChanged(Collection<GradeChangeObserver> observers) {
+    public GradeChangedObservableSimple() {
+        this(new ArrayList<>());
+    }
+
+    public GradeChangedObservableSimple(Collection<GradeChangeObserver> observers) {
         this.observers = observers;
     }
 

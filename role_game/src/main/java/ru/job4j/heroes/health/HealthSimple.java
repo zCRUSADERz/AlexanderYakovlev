@@ -6,29 +6,33 @@ import ru.job4j.observable.die.HeroDiedObservable;
 
 public class HealthSimple implements HeroHealth {
     private final static int MAX_HEALTH = 100;
+    private final static int MIN_HEALTH = 0;
     private final HeroDiedObservable dieObservable;
-    private final Hero heroOwner;
     private int health = MAX_HEALTH;
     private final Logger logger = Logger.getLogger(HealthSimple.class);
 
-    public HealthSimple(HeroDiedObservable dieObservable, Hero heroOwner) {
+    public HealthSimple(HeroDiedObservable dieObservable) {
         this.dieObservable = dieObservable;
-        this.heroOwner = heroOwner;
     }
 
     @Override
-    public void takeDamage(int damage) {
+    public void takeDamage(Hero heroOwner, int damage) {
         final int startHP = this.health;
         this.health -= damage;
         this.logger.info(
                 String.format(
                         "%s, HP: %d. Damage: %d, resultHP: %d.",
-                        this.heroOwner, startHP, damage, this.health
+                        heroOwner, startHP, damage, this.health
                 )
         );
-        if (this.health <= 0) {
-            this.logger.info(this.heroOwner + " die.");
-            this.dieObservable.heroDied(this.heroOwner);
+        if (this.health <= MIN_HEALTH) {
+            this.logger.info(
+                    String.format(
+                            "%s die. Min health: %d, hero health: %d.",
+                            heroOwner, MIN_HEALTH, this.health
+                    )
+            );
+            this.dieObservable.heroDied(heroOwner);
         }
     }
 }
