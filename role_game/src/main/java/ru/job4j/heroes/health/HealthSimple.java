@@ -4,6 +4,13 @@ import org.apache.log4j.Logger;
 import ru.job4j.heroes.Hero;
 import ru.job4j.observable.die.HeroDiedObservable;
 
+/**
+ * Hero health.
+ * Здоровье героя.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 21.10.2018
+ */
 public class HealthSimple implements HeroHealth {
     private final static int MAX_HEALTH = 100;
     private final static int MIN_HEALTH = 0;
@@ -15,6 +22,13 @@ public class HealthSimple implements HeroHealth {
         this.dieObservable = dieObservable;
     }
 
+    /**
+     * Получить урон.
+     * Если зоровье снизится до минимальной отметки или более,
+     * то герой будет убит и будут оповещены наблюдатели за данным событием.
+     * @param heroOwner герой владелец здоровья.
+     * @param damage полученный урон.
+     */
     @Override
     public void takeDamage(Hero heroOwner, int damage) {
         final int startHP = this.health;

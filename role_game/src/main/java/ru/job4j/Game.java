@@ -19,8 +19,18 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Game.
+ * Основной класс игры.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 21.10.2018
+ */
 public class Game {
 
+    /**
+     * Запустить игру.
+     */
     public void start() {
         final HeroDiedObservable diedObservable = new HeroDiedObservableSimple();
         final GradeChangeObservable upgradeObservable = new GradeChangedObservableSimple();

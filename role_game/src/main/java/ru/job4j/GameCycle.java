@@ -11,6 +11,13 @@ import ru.job4j.squad.SquadsMapper;
 import java.util.*;
 import java.util.function.Function;
 
+/**
+ * Game cycle.
+ * Запускает новые раунды, пока какой либо из отрядов не победит.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 21.10.2018
+ */
 public class GameCycle {
     private final SquadsMapper squadsMapper;
     private final HeroDiedObservable dieObservable;
@@ -29,6 +36,9 @@ public class GameCycle {
         this.stopGame = stopGame;
     }
 
+    /**
+     * Запустить игровой цикл.
+     */
     public void start() {
         this.logger.info("Game starting!");
         while (!this.stopGame.gameIsStopped()) {

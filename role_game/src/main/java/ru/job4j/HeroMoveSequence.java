@@ -8,6 +8,13 @@ import ru.job4j.observable.gradechange.GradeChangeObserver;
 
 import java.util.*;
 
+/**
+ * Hero move sequence.
+ * Порядок ходов героев в раунде.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 21.10.2018
+ */
 public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
     private final Collection<Hero> movedHeroes = new HashSet<>();
     private final Collection<Hero> upgradedHeroes;
@@ -24,6 +31,9 @@ public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
         this.stopGame = stopGame;
     }
 
+    /**
+     * Запустить цикл ходов героев.
+     */
     public void start() {
         while (true) {
             final Iterator<Hero> iterator;
@@ -33,7 +43,6 @@ public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
             this.logSequence();
             if (!this.upgradedHeroes.isEmpty()) {
                 iterator = this.upgradedHeroes.iterator();
-
             } else if (!this.regularHeroes.isEmpty()) {
                 iterator = this.regularHeroes.iterator();
             } else {
@@ -51,6 +60,10 @@ public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
         }
     }
 
+    /**
+     * герой был убит. Ссыки на героя будут удалены.
+     * @param hero убитый герой.
+     */
     @Override
     public void heroDied(Hero hero) {
         this.upgradedHeroes.remove(hero);
@@ -58,6 +71,11 @@ public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
         this.movedHeroes.remove(hero);
     }
 
+    /**
+     * Герой был улучшен. Если герой еще не ходил,
+     * то он будет перемещен в группу привилегированных.
+     * @param hero улучшенный герой.
+     */
     @Override
     public void upgraded(Hero hero) {
         if (!this.movedHeroes.contains(hero)) {
@@ -73,6 +91,11 @@ public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
         }
     }
 
+    /**
+     * С героя было снято улучшение. Если герой еще не ходил,
+     * то он бдет перемещен в группу обычных героев.
+     * @param hero герой с которого сняли улучшение.
+     */
     @Override
     public void degraded(Hero hero) {
         if (!this.movedHeroes.contains(hero)) {

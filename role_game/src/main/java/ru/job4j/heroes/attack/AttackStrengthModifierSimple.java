@@ -2,6 +2,13 @@ package ru.job4j.heroes.attack;
 
 import java.util.Objects;
 
+/**
+ * Attack strength modifier.
+ * Модификатор силы урона.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 21.10.2018
+ */
 public class AttackStrengthModifierSimple implements AttackStrengthModifier {
     private final double modifier;
 
@@ -9,6 +16,11 @@ public class AttackStrengthModifierSimple implements AttackStrengthModifier {
         this.modifier = modifier;
     }
 
+    /**
+     * Возвращает урон с учетом своего модификатора.
+     * @param initialDamage изначальный урон.
+     * @return урон с учетом модификатора.
+     */
     @Override
     public int resultDamage(int initialDamage) {
         return (int) (this.modifier * initialDamage);

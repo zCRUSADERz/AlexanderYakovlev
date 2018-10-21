@@ -6,6 +6,13 @@ import ru.job4j.heroes.attack.AttackStrengthModifier;
 import ru.job4j.heroes.attack.AttackStrengthModifiers;
 import ru.job4j.squad.SquadsMapper;
 
+/**
+ * Send ailment.
+ * Наслать недуг на противника. Эффект - уменьшение силы атаки цели.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 21.10.2018
+ */
 public class SendAilment implements HeroAction {
     private final SquadsMapper squadsMapper;
     private final AttackStrengthModifier attackModifier;
@@ -19,6 +26,10 @@ public class SendAilment implements HeroAction {
         this.modifiers = modifiers;
     }
 
+    /**
+     * Наслать недуг на противника.
+     * @param heroActor герой выполняющий действие.
+     */
     @Override
     public void act(Hero heroActor) {
         final Hero enemyHero = this.squadsMapper.enemySquadFor(heroActor).randomHero();

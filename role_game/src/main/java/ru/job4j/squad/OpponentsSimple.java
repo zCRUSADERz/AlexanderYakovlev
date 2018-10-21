@@ -9,6 +9,13 @@ import ru.job4j.utils.RandomElementFromList;
 import java.util.Map;
 import java.util.stream.Stream;
 
+/**
+ * Opponents.
+ * Противоборствующие стороны. Две расы воюющих друг с другом.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 21.10.2018
+ */
 public class OpponentsSimple implements Opponents {
     private final Race firstRace;
     private final Race secondRace;
@@ -29,6 +36,10 @@ public class OpponentsSimple implements Opponents {
         this.random = random;
     }
 
+    /**
+     * Создать отряды противоборствующих сторон, подготовить к бою.
+     * @param numberOfHeroesByType количество героев каждого типа.
+     */
     @Override
     public void createSquads(Map<HeroType, Integer> numberOfHeroesByType) {
         final String firstSquadName = "Красные";

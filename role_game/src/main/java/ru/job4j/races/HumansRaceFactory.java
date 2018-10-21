@@ -17,6 +17,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Humans race factory.
+ * Фабрика расы людей.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 21.10.2018
+ */
+//TODO раса должна быть вынесена в конфигурационный файл.
+// TODO Много повторяющегося кода!
 public class HumansRaceFactory implements RaceFactory {
     private final SquadsMapper squadsMapper;
     private final HealthHeroes healthHeroes;
@@ -32,6 +41,10 @@ public class HumansRaceFactory implements RaceFactory {
         this.random = random;
     }
 
+    /**
+     * Вернет расу людей.
+     * @return раса людей.
+     */
     @Override
     public Race createRace() {
         final Map<HeroType, HeroFactory> factories = new HashMap<>();
@@ -41,10 +54,15 @@ public class HumansRaceFactory implements RaceFactory {
         return new RaceSimple("Люди", factories);
     }
 
+    //TODO Жестко завязан с HeroType,
+    // TODO при малейшем изменении код нужно будет править!
     private HeroFactory mage() {
         final HeroAction mageActionDefault = new AttackEnemy(
-                "Атаковать магией ", 4,
-                this.attackStrengthModifiers, this.squadsMapper, this.healthHeroes
+                "Атаковать магией ",
+                4,
+                this.attackStrengthModifiers,
+                this.squadsMapper,
+                this.healthHeroes
         );
         return new HeroFactorySimple(
                 "маг",
@@ -59,28 +77,41 @@ public class HumansRaceFactory implements RaceFactory {
         );
     }
 
+    //TODO Жестко завязан с HeroType,
+    // TODO при малейшем изменении код нужно будет править!
     private HeroFactory archer() {
         return new HeroFactorySimple(
                 "арбалетчик",
                 Arrays.asList(
                         new AttackEnemy(
-                                "Стрелять из арбалета в ", 5,
-                                this.attackStrengthModifiers, this.squadsMapper, this.healthHeroes
+                                "Стрелять из арбалета в ",
+                                5,
+                                this.attackStrengthModifiers,
+                                this.squadsMapper,
+                                this.healthHeroes
                         ), new AttackEnemy(
-                                "Атаковать ", 3,
-                                this.attackStrengthModifiers, this.squadsMapper, this.healthHeroes
+                                "Атаковать ",
+                                3,
+                                this.attackStrengthModifiers,
+                                this.squadsMapper,
+                                this.healthHeroes
                         )
                 ), this.random
         );
     }
 
+    //TODO Жестко завязан с HeroType,
+    // TODO при малейшем изменении код нужно будет править!
     private HeroFactory warrior() {
         return new HeroFactorySimple(
                 "воин",
                 Collections.singletonList(
                         new AttackEnemy(
-                                "Атаковать мечом ", 18,
-                                this.attackStrengthModifiers, this.squadsMapper, this.healthHeroes
+                                "Атаковать мечом ",
+                                18,
+                                this.attackStrengthModifiers,
+                                this.squadsMapper,
+                                this.healthHeroes
                         )
                 ), this.random
         );

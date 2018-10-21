@@ -10,6 +10,13 @@ import ru.job4j.utils.RandomElementFromList;
 
 import java.util.List;
 
+/**
+ * Race squads.
+ * Расы отрядов.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 21.10.2018
+ */
 public class RaceSquadsSimple implements RaceSquads {
     private final List<Race> firstSquad;
     private final List<Race> secondSquad;
@@ -23,6 +30,13 @@ public class RaceSquadsSimple implements RaceSquads {
         this.random = random;
     }
 
+    /**
+     * Выбрать из отрядов рас две противоборствующие стороны.
+     * @param upgradeObservable оповещатель изменения привилегий.
+     * @param squadsMapper контроллер отрядов.
+     * @param stopGame стоп игра.
+     * @return две противоборствующие расы, оппоненты.
+     */
     @Override
     public Opponents chooseOpponents(GradeChangeObservable upgradeObservable,
                                      SquadsMapper squadsMapper, StopGame stopGame) {

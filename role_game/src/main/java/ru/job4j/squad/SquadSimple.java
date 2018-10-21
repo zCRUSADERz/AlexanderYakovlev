@@ -8,6 +8,13 @@ import ru.job4j.utils.RandomElementFromList;
 
 import java.util.*;
 
+/**
+ * Squad heroes.
+ * Отряд героев.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 21.10.2018
+ */
 public class SquadSimple implements SquadHeroes {
     private final String squadName;
     private final Set<Hero> squad;
@@ -43,21 +50,37 @@ public class SquadSimple implements SquadHeroes {
         this.stopGame = stopGame;
     }
 
+    /**
+     * Рандомный герой из отряда.
+     * @return рандомный герой из отряда.
+     */
     @Override
     public Hero randomHero() {
         return this.random.randomElement(new ArrayList<>(this.squad));
     }
 
+    /**
+     * Привилегированные герои отряда.
+     * @return привилегированные герои отряда.
+     */
     @Override
     public Collection<Hero> upgradedHeroes() {
         return Collections.unmodifiableCollection(this.upgradedHeroes);
     }
 
+    /**
+     * Обычные герои отряда.
+     * @return обычные герои отряда.
+     */
     @Override
     public Collection<Hero> regularHeroes() {
         return Collections.unmodifiableCollection(this.regularHeroes);
     }
 
+    /**
+     * Улучшить героя.
+     * @param hero улучшаемый герой.
+     */
     @Override
     public void upgradeHero(Hero hero) {
         if (!this.regularHeroes.contains(hero)) {
@@ -75,6 +98,10 @@ public class SquadSimple implements SquadHeroes {
         this.logger.info(String.format("%s was upgraded.", hero));
     }
 
+    /**
+     * Снять улучшение с героя.
+     * @param hero герой с которого снимается улучшение.
+     */
     @Override
     public void degradeHero(Hero hero) {
         if (!this.upgradedHeroes.contains(hero)) {
@@ -92,6 +119,10 @@ public class SquadSimple implements SquadHeroes {
         this.logger.info(String.format("%s was degraded.", hero));
     }
 
+    /**
+     * Герой убит. Все ссылки на героя будут удалены.
+     * @param hero убитый герой.
+     */
     @Override
     public void heroDied(Hero hero) {
         if (!this.squad.contains(hero)) {
@@ -121,6 +152,10 @@ public class SquadSimple implements SquadHeroes {
         }
     }
 
+    /**
+     * Герой сделал ход. С героя снимается улучшение.
+     * @param hero герой сделавший ход.
+     */
     @Override
     public void heroMoved(Hero hero) {
         if (!this.squad.contains(hero)) {
@@ -137,6 +172,10 @@ public class SquadSimple implements SquadHeroes {
         }
     }
 
+    /**
+     * Герой был создан. Он будет добавлен в отряд.
+     * @param hero созданный герой.
+     */
     @Override
     public void heroCreated(Hero hero) {
         if (this.squad.contains(hero)) {

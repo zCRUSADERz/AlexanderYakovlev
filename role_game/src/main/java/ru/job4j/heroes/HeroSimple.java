@@ -6,6 +6,13 @@ import ru.job4j.utils.RandomElementFromList;
 
 import java.util.List;
 
+/**
+ * Hero.
+ * герой.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 21.10.2018
+ */
 public class HeroSimple implements Hero {
     private final String name;
     private final List<HeroAction> actions;
@@ -19,12 +26,15 @@ public class HeroSimple implements Hero {
         this.random = random;
     }
 
+    /**
+     * Герой выполнит рандомное действие из списка своих действий.
+     */
     @Override
     public void doAction() {
-        HeroAction action = this.random.randomElement(this.actions);
+        final HeroAction action = this.random.randomElement(this.actions);
         this.logger.info(
                 String.format(
-                        "%s, chose action: %s.",
+                        "%s, choose action: %s.",
                         this.name, action
                 )
         );

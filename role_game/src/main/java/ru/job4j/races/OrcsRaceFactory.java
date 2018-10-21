@@ -1,7 +1,7 @@
 package ru.job4j.races;
 
 import ru.job4j.actions.AttackEnemy;
-import ru.job4j.actions.DefaultAction;
+import ru.job4j.actions.Inaction;
 import ru.job4j.actions.HeroAction;
 import ru.job4j.actions.grade.DegradeAction;
 import ru.job4j.actions.grade.GradeActionSimple;
@@ -19,6 +19,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Orcs race factory.
+ * Фабрика расы орков.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 21.10.2018
+ */
+//TODO раса должна быть вынесена в конфигурационный файл.
+// TODO Много повторяющегося кода!
 public class OrcsRaceFactory implements RaceFactory {
     private final SquadsMapper squadsMapper;
     private final HealthHeroes healthHeroes;
@@ -34,6 +43,10 @@ public class OrcsRaceFactory implements RaceFactory {
         this.random = random;
     }
 
+    /**
+     * Вернет расу орков.
+     * @return раса орков.
+     */
     @Override
     public Race createRace() {
         final Map<HeroType, HeroFactory> factories = new HashMap<>();
@@ -43,8 +56,10 @@ public class OrcsRaceFactory implements RaceFactory {
         return new RaceSimple("Орки", factories);
     }
 
+    //TODO Жестко завязан с HeroType,
+    // TODO при малейшем изменении код нужно будет править!
     private HeroFactory mage() {
-        final HeroAction defaultAction = new DefaultAction();
+        final HeroAction defaultAction = new Inaction();
         return new HeroFactorySimple(
                 "шаман",
                 Arrays.asList(
@@ -62,28 +77,41 @@ public class OrcsRaceFactory implements RaceFactory {
         );
     }
 
+    //TODO Жестко завязан с HeroType,
+    // TODO при малейшем изменении код нужно будет править!
     private HeroFactory archer() {
         return new HeroFactorySimple(
                 "лучник",
                 Arrays.asList(
                         new AttackEnemy(
-                                "Стрелять из лука в ", 3,
-                                this.attackStrengthModifiers, this.squadsMapper, this.healthHeroes
+                                "Стрелять из лука в ",
+                                3,
+                                this.attackStrengthModifiers,
+                                this.squadsMapper,
+                                this.healthHeroes
                         ), new AttackEnemy(
-                                "Удар клинком по ", 2,
-                                this.attackStrengthModifiers, this.squadsMapper, this.healthHeroes
+                                "Удар клинком по ",
+                                2,
+                                this.attackStrengthModifiers,
+                                this.squadsMapper,
+                                this.healthHeroes
                         )
                 ), this.random
         );
     }
 
+    //TODO Жестко завязан с HeroType,
+    // TODO при малейшем изменении код нужно будет править!
     private HeroFactory warrior() {
         return new HeroFactorySimple(
                 "гоблин",
                 Collections.singletonList(
                         new AttackEnemy(
-                                "Атака дубиной по ", 20,
-                                this.attackStrengthModifiers, this.squadsMapper, this.healthHeroes
+                                "Атака дубиной по ",
+                                20,
+                                this.attackStrengthModifiers,
+                                this.squadsMapper,
+                                this.healthHeroes
                         )
                 ), this.random
         );

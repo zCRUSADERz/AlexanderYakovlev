@@ -9,6 +9,13 @@ import ru.job4j.squad.SquadsMapper;
 
 import java.util.Collection;
 
+/**
+ * Attack enemy.
+ * Действие атаковать противника.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 21.10.2018
+ */
 public class AttackEnemy implements HeroAction {
     private final String actionName;
     private final int damage;
@@ -27,6 +34,10 @@ public class AttackEnemy implements HeroAction {
         this.healthHeroes = healthHeroes;
     }
 
+    /**
+     * Выполнить действие. Атаковать противника.
+     * @param heroActor герой выполняющий действие.
+     */
     @Override
     public void act(Hero heroActor) {
         final Hero enemyHero = this.squadsMapper

@@ -17,6 +17,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Elves race factory.
+ * Фабрика расы эльфов.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 21.10.2018
+ */
+//TODO раса должна быть вынесена в конфигурационный файл.
+// TODO Много повторяющегося кода!
 public class ElvesRaceFactory implements RaceFactory {
     private final SquadsMapper squadsMapper;
     private final HealthHeroes healthHeroes;
@@ -32,6 +41,10 @@ public class ElvesRaceFactory implements RaceFactory {
         this.random = random;
     }
 
+    /**
+     * Вернет расу эльфов.
+     * @return раса эльфов.
+     */
     @Override
     public Race createRace() {
         final Map<HeroType, HeroFactory> factories = new HashMap<>();
@@ -41,10 +54,15 @@ public class ElvesRaceFactory implements RaceFactory {
         return new RaceSimple("Эльфы", factories);
     }
 
+    //TODO Жестко завязан с HeroType,
+    // TODO при малейшем изменении код нужно будет править!
     private HeroFactory mage() {
         final HeroAction mageActionDefault = new AttackEnemy(
-                "Нанесение урона магией по ", 10,
-                this.attackStrengthModifiers, this.squadsMapper, this.healthHeroes
+                "Нанесение урона магией по ",
+                10,
+                this.attackStrengthModifiers,
+                this.squadsMapper,
+                this.healthHeroes
         );
         return new HeroFactorySimple(
                 "маг",
@@ -59,28 +77,41 @@ public class ElvesRaceFactory implements RaceFactory {
         );
     }
 
+    //TODO Жестко завязан с HeroType,
+    // TODO при малейшем изменении код нужно будет править!
     private HeroFactory archer() {
         return new HeroFactorySimple(
                 "лучник",
                 Arrays.asList(
                         new AttackEnemy(
-                                "Стрелять из лука в ", 7,
-                                this.attackStrengthModifiers, this.squadsMapper, this.healthHeroes
+                                "Стрелять из лука в ",
+                                7,
+                                this.attackStrengthModifiers,
+                                this.squadsMapper,
+                                this.healthHeroes
                         ), new AttackEnemy(
-                                "Атаковать противника ", 3,
-                                this.attackStrengthModifiers, this.squadsMapper, this.healthHeroes
+                                "Атаковать противника ",
+                                3,
+                                this.attackStrengthModifiers,
+                                this.squadsMapper,
+                                this.healthHeroes
                         )
                 ), this.random
         );
     }
 
+    //TODO Жестко завязан с HeroType,
+    // TODO при малейшем изменении код нужно будет править!
     private HeroFactory warrior() {
         return new HeroFactorySimple(
                 "воин",
                 Collections.singletonList(
                         new AttackEnemy(
-                                "Атака мечом ", 15,
-                                this.attackStrengthModifiers, this.squadsMapper, this.healthHeroes
+                                "Атака мечом ",
+                                15,
+                                this.attackStrengthModifiers,
+                                this.squadsMapper,
+                                this.healthHeroes
                         )
                 ), this.random
         );

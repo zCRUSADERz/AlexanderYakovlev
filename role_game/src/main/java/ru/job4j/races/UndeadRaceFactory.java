@@ -16,6 +16,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Undead race factory.
+ * Фабрика расы нежить.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 21.10.2018
+ */
+//TODO раса должна быть вынесена в конфигурационный файл.
+// TODO Много повторяющегося кода!
 public class UndeadRaceFactory implements RaceFactory {
     private final SquadsMapper squadsMapper;
     private final HealthHeroes healthHeroes;
@@ -31,6 +40,10 @@ public class UndeadRaceFactory implements RaceFactory {
         this.random = random;
     }
 
+    /**
+     * Вернет расу нежить.
+     * @return раса нежить.
+     */
     @Override
     public Race createRace() {
         final Map<HeroType, HeroFactory> factories = new HashMap<>();
@@ -40,6 +53,8 @@ public class UndeadRaceFactory implements RaceFactory {
         return new RaceSimple("Нежить", factories);
     }
 
+    //TODO Жестко завязан с HeroType,
+    // TODO при малейшем изменении код нужно будет править!
     private HeroFactory mage() {
         return new HeroFactorySimple(
                 "некромант",
@@ -50,8 +65,11 @@ public class UndeadRaceFactory implements RaceFactory {
                                 this.attackStrengthModifiers
                         ),
                         new AttackEnemy(
-                                "Атаковать ", 5,
-                                this.attackStrengthModifiers, this.squadsMapper, this.healthHeroes
+                                "Атаковать ",
+                                5,
+                                this.attackStrengthModifiers,
+                                this.squadsMapper,
+                                this.healthHeroes
                         )
                 ), this.random
         );
@@ -62,23 +80,34 @@ public class UndeadRaceFactory implements RaceFactory {
                 "охотник",
                 Arrays.asList(
                         new AttackEnemy(
-                                "Стрелять из лука в ", 4,
-                                this.attackStrengthModifiers, this.squadsMapper, this.healthHeroes
+                                "Стрелять из лука в ",
+                                4,
+                                this.attackStrengthModifiers,
+                                this.squadsMapper,
+                                this.healthHeroes
                         ), new AttackEnemy(
-                                "Атаковать ", 2,
-                                this.attackStrengthModifiers, this.squadsMapper, this.healthHeroes
+                                "Атаковать ",
+                                2,
+                                this.attackStrengthModifiers,
+                                this.squadsMapper,
+                                this.healthHeroes
                         )
                 ), this.random
         );
     }
 
+    //TODO Жестко завязан с HeroType,
+    // TODO при малейшем изменении код нужно будет править!
     private HeroFactory warrior() {
         return new HeroFactorySimple(
                 "зомби",
                 Collections.singletonList(
                         new AttackEnemy(
-                                "Атаковать копьем ", 18,
-                                this.attackStrengthModifiers, this.squadsMapper, this.healthHeroes
+                                "Атаковать копьем ",
+                                18,
+                                this.attackStrengthModifiers,
+                                this.squadsMapper,
+                                this.healthHeroes
                         )
                 ), this.random
         );
