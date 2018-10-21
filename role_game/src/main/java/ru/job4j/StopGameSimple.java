@@ -1,6 +1,6 @@
 package ru.job4j;
 
-public class StopSimple implements Stop {
+public class StopGameSimple implements StopGame {
     private boolean stopped = false;
 
     @Override

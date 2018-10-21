@@ -5,7 +5,7 @@ import ru.job4j.heroes.Hero;
 import ru.job4j.heroes.attack.AttackStrengthModifier;
 import ru.job4j.heroes.attack.AttackStrengthModifiers;
 import ru.job4j.heroes.health.HealthHeroes;
-import ru.job4j.squad.Squads;
+import ru.job4j.squad.SquadsMapper;
 
 import java.util.Collection;
 
@@ -13,23 +13,23 @@ public class AttackEnemy implements HeroAction {
     private final String actionName;
     private final int damage;
     private final AttackStrengthModifiers modifiers;
-    private final Squads squads;
+    private final SquadsMapper squadsMapper;
     private final HealthHeroes healthHeroes;
     private final Logger logger = Logger.getLogger(AttackEnemy.class);
 
     public AttackEnemy(String actionName, int damage,
                        AttackStrengthModifiers modifiers,
-                       Squads squads, HealthHeroes healthHeroes) {
+                       SquadsMapper squadsMapper, HealthHeroes healthHeroes) {
         this.actionName = actionName;
         this.damage = damage;
         this.modifiers = modifiers;
-        this.squads = squads;
+        this.squadsMapper = squadsMapper;
         this.healthHeroes = healthHeroes;
     }
 
     @Override
     public void act(Hero heroActor) {
-        final Hero enemyHero = this.squads
+        final Hero enemyHero = this.squadsMapper
                 .enemySquadFor(heroActor)
                 .randomHero();
         final Collection<AttackStrengthModifier> attackModifiers

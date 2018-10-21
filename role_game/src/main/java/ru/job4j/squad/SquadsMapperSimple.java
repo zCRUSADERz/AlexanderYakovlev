@@ -5,13 +5,13 @@ import ru.job4j.observable.newhero.HeroCreatedObservable;
 
 import java.util.*;
 
-public class SquadsSimple implements Squads {
+public class SquadsMapperSimple implements SquadsMapper {
     private final Set<SquadHeroes> squads;
     private final Map<Hero, SquadHeroes> ownSquads;
     private final Map<Hero, SquadHeroes> enemySquads;
     private final HeroCreatedObservable heroCreatedObservable;
 
-    public SquadsSimple(HeroCreatedObservable heroCreatedObservable) {
+    public SquadsMapperSimple(HeroCreatedObservable heroCreatedObservable) {
         this(
                 new HashSet<>(),
                 new HashMap<>(),
@@ -20,10 +20,10 @@ public class SquadsSimple implements Squads {
         );
     }
 
-    public SquadsSimple(Set<SquadHeroes> squads,
-                        Map<Hero, SquadHeroes> ownSquads,
-                        Map<Hero, SquadHeroes> enemySquads,
-                        HeroCreatedObservable heroCreatedObservable) {
+    public SquadsMapperSimple(Set<SquadHeroes> squads,
+                              Map<Hero, SquadHeroes> ownSquads,
+                              Map<Hero, SquadHeroes> enemySquads,
+                              HeroCreatedObservable heroCreatedObservable) {
         this.squads = squads;
         this.ownSquads = ownSquads;
         this.enemySquads = enemySquads;

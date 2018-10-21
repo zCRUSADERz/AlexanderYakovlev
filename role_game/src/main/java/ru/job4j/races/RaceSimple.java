@@ -1,67 +1,26 @@
 package ru.job4j.races;
 
+import ru.job4j.heroes.Hero;
 import ru.job4j.heroes.HeroFactory;
-import ru.job4j.squad.SquadHeroes;
-import ru.job4j.squad.Squads;
+import ru.job4j.heroes.HeroType;
 
-import java.util.stream.Stream;
+import java.util.Map;
 
 public class RaceSimple implements Race {
     private final String raceName;
-    private final HeroFactory magiciansFactory;
-    private final HeroFactory archersFactory;
-    private final HeroFactory warriorsFactory;
-    private final Squads squads;
+    private final Map<HeroType, HeroFactory> factories;
 
-    public RaceSimple(String raceName, HeroFactory magiciansFactory, HeroFactory archersFactory,
-                      HeroFactory warriorsFactory, Squads squads) {
+    public RaceSimple(String raceName, Map<HeroType, HeroFactory> factories) {
         this.raceName = raceName;
-        this.magiciansFactory = magiciansFactory;
-        this.archersFactory = archersFactory;
-        this.warriorsFactory = warriorsFactory;
-        this.squads = squads;
+        this.factories = factories;
     }
 
-    @Override
-    public void createMagiciansHeroes(int numberOfHeroes, SquadHeroes ownSquad, SquadHeroes enemySquad) {
-        createHeroes(
-                numberOfHeroes,
-                this.magiciansFactory,
-                ownSquad,
-                enemySquad
-        );
-    }
-
-    @Override
-    public void createArchersHeroes(int numberOfHeroes, SquadHeroes ownSquad, SquadHeroes enemySquad) {
-        createHeroes(
-                numberOfHeroes,
-                this.archersFactory,
-                ownSquad,
-                enemySquad
-        );
-    }
-
-    @Override
-    public void createWarriorsHeroes(int numberOfHeroes, SquadHeroes ownSquad, SquadHeroes enemySquad) {
-        createHeroes(
-                numberOfHeroes,
-                this.warriorsFactory,
-                ownSquad,
-                enemySquad
-        );
+    public Hero createHero(HeroType type, String squadName) {
+        return this.factories.get(type).hero(squadName, this.raceName);
     }
 
     @Override
     public String toString() {
         return this.raceName;
-    }
-
-    private void createHeroes(int numOfHeroes, HeroFactory heroFactory,
-                              SquadHeroes ownSquad, SquadHeroes enemySquad) {
-        Stream.iterate(1, n -> n + 1)
-                .limit(numOfHeroes)
-                .map(n -> heroFactory.hero(ownSquad.toString(), this.raceName))
-                .forEach(hero -> squads.newHeroCreated(hero, ownSquad, enemySquad));
     }
 }

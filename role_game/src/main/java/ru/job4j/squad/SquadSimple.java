@@ -1,7 +1,7 @@
 package ru.job4j.squad;
 
 import org.apache.log4j.Logger;
-import ru.job4j.Stop;
+import ru.job4j.StopGame;
 import ru.job4j.heroes.Hero;
 import ru.job4j.observable.gradechange.GradeChangeObservable;
 import ru.job4j.utils.RandomElementFromList;
@@ -15,11 +15,11 @@ public class SquadSimple implements SquadHeroes {
     private final Set<Hero> upgradedHeroes;
     private final GradeChangeObservable observable;
     private final RandomElementFromList random;
-    private final Stop stopGame;
+    private final StopGame stopGame;
     private final Logger logger = Logger.getLogger(SquadSimple.class);
 
     public SquadSimple(String squadName, GradeChangeObservable observable,
-                        RandomElementFromList random, Stop stopGame) {
+                        RandomElementFromList random, StopGame stopGame) {
         this(
                 squadName,
                 new HashSet<>(),
@@ -33,7 +33,7 @@ public class SquadSimple implements SquadHeroes {
 
     public SquadSimple(String squadName, Set<Hero> squad, Set<Hero> regularHeroes,
                        Set<Hero> upgradedHeroes, GradeChangeObservable observable,
-                       RandomElementFromList random, Stop stopGame) {
+                       RandomElementFromList random, StopGame stopGame) {
         this.squadName = squadName;
         this.squad = squad;
         this.regularHeroes = regularHeroes;
@@ -115,7 +115,7 @@ public class SquadSimple implements SquadHeroes {
         this.upgradedHeroes.remove(hero);
         if (this.squad.size() == 0) {
             this.logger.info(
-                    String.format("Squad - %s, was killed.", this.squadName)
+                    String.format("Squad - %s was killed.", this.squadName)
             );
             this.stopGame.stopGame();
         }

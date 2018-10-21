@@ -6,7 +6,7 @@ import ru.job4j.observable.move.HeroMovedObserver;
 
 import java.util.Collection;
 
-public interface Squads extends HeroDiedObserver, HeroMovedObserver {
+public interface SquadsMapper extends HeroDiedObserver, HeroMovedObserver {
 
     Collection<SquadHeroes> allSquads();
 

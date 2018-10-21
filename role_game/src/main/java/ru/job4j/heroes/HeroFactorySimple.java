@@ -24,7 +24,8 @@ public class HeroFactorySimple implements HeroFactory {
                         "Hero-%s(%s)[%s]<%s>",
                         this.counter++, this.desc,
                         squadName, raceName
-                ), this.actions,
+                ),
+                this.actions,
                 this.random
         );
     }

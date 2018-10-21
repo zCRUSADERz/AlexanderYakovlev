@@ -1,12 +1,9 @@
 package ru.job4j.races;
 
-import ru.job4j.squad.SquadHeroes;
+import ru.job4j.heroes.Hero;
+import ru.job4j.heroes.HeroType;
 
 public interface Race {
 
-    void createMagiciansHeroes(int numberOfHeroes, SquadHeroes ownSquad, SquadHeroes enemySquad);
-
-    void createArchersHeroes(int numberOfHeroes, SquadHeroes ownSquad, SquadHeroes enemySquad);
-
-    void createWarriorsHeroes(int numberOfHeroes, SquadHeroes ownSquad, SquadHeroes enemySquad);
+    Hero createHero(HeroType type, String squadName);
 }

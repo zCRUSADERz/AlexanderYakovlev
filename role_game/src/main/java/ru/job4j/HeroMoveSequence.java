@@ -13,21 +13,21 @@ public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
     private final Collection<Hero> upgradedHeroes;
     private final Collection<Hero> regularHeroes;
     private final HeroMovedObservable heroMovedObservable;
-    private final Stop stop;
+    private final StopGame stopGame;
     private final Logger logger = Logger.getLogger(HeroMoveSequence.class);
 
     public HeroMoveSequence(Collection<Hero> upgradedHeroes,
-                            Collection<Hero> regularHeroes, HeroMovedObservable heroMovedObservable, Stop stop) {
+                            Collection<Hero> regularHeroes, HeroMovedObservable heroMovedObservable, StopGame stopGame) {
         this.upgradedHeroes = upgradedHeroes;
         this.regularHeroes = regularHeroes;
         this.heroMovedObservable = heroMovedObservable;
-        this.stop = stop;
+        this.stopGame = stopGame;
     }
 
     public void start() {
         while (true) {
             final Iterator<Hero> iterator;
-            if (this.stop.gameIsStopped()) {
+            if (this.stopGame.gameIsStopped()) {
                 break;
             }
             this.logSequence();

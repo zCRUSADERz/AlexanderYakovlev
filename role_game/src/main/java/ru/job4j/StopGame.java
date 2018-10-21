@@ -1,6 +1,6 @@
 package ru.job4j;
 
-public interface Stop {
+public interface StopGame {
 
     void stopGame();
 
