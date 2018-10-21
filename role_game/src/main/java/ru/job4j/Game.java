@@ -72,9 +72,9 @@ public class Game {
                 upgradeObservable, squadsMapper, stopGame
         );
         final Map<HeroType, Integer> numberOfHeroes = new HashMap<>();
-        numberOfHeroes.put(HeroType.MAGE, 10);
-        numberOfHeroes.put(HeroType.ARCHER, 30);
-        numberOfHeroes.put(HeroType.WARRIOR, 40);
+        numberOfHeroes.put(HeroType.MAGE, 1);
+        numberOfHeroes.put(HeroType.ARCHER, 3);
+        numberOfHeroes.put(HeroType.WARRIOR, 4);
         opponents.createSquads(numberOfHeroes);
         new GameCycle(
                 squadsMapper,
