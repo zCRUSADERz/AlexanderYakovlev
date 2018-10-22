@@ -1,11 +1,11 @@
 package ru.job4j.actions;
 
 import org.apache.log4j.Logger;
+import ru.job4j.actions.target.RandomTarget;
 import ru.job4j.heroes.Hero;
 import ru.job4j.heroes.attack.AttackStrengthModifier;
 import ru.job4j.heroes.attack.AttackStrengthModifiers;
 import ru.job4j.heroes.health.HealthHeroes;
-import ru.job4j.squad.SquadsMapper;
 
 import java.util.Collection;
 
@@ -19,18 +19,18 @@ import java.util.Collection;
 public class AttackEnemy implements HeroAction {
     private final String actionName;
     private final int damage;
+    private final RandomTarget randomTarget;
     private final AttackStrengthModifiers modifiers;
-    private final SquadsMapper squadsMapper;
     private final HealthHeroes healthHeroes;
     private final Logger logger = Logger.getLogger(AttackEnemy.class);
 
     public AttackEnemy(String actionName, int damage,
-                       AttackStrengthModifiers modifiers,
-                       SquadsMapper squadsMapper, HealthHeroes healthHeroes) {
+                       RandomTarget randomTarget, AttackStrengthModifiers modifiers,
+                       HealthHeroes healthHeroes) {
         this.actionName = actionName;
         this.damage = damage;
+        this.randomTarget = randomTarget;
         this.modifiers = modifiers;
-        this.squadsMapper = squadsMapper;
         this.healthHeroes = healthHeroes;
     }
 
@@ -40,9 +40,7 @@ public class AttackEnemy implements HeroAction {
      */
     @Override
     public void act(Hero heroActor) {
-        final Hero enemyHero = this.squadsMapper
-                .enemySquadFor(heroActor)
-                .randomHero();
+        final Hero enemyHero = this.randomTarget.randomTargetFor(heroActor);
         final Collection<AttackStrengthModifier> attackModifiers
                 = this.modifiers.modifiersFor(heroActor);
         int resultDamage = this.damage;

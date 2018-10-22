@@ -2,6 +2,8 @@ package ru.job4j.races;
 
 import ru.job4j.actions.AttackEnemy;
 import ru.job4j.actions.SendAilment;
+import ru.job4j.actions.target.RandomEnemyTarget;
+import ru.job4j.actions.target.RandomTarget;
 import ru.job4j.heroes.HeroFactory;
 import ru.job4j.heroes.HeroFactorySimple;
 import ru.job4j.heroes.HeroType;
@@ -46,50 +48,51 @@ public class UndeadRaceFactory implements RaceFactory {
      */
     @Override
     public Race createRace() {
+        final RandomTarget enemyTarget = new RandomEnemyTarget(this.squadsMapper);
         final Map<HeroType, HeroFactory> factories = new HashMap<>();
-        factories.put(HeroType.MAGE, this.mage());
-        factories.put(HeroType.ARCHER, this.archer());
-        factories.put(HeroType.WARRIOR, this.warrior());
+        factories.put(HeroType.MAGE, this.mage(enemyTarget));
+        factories.put(HeroType.ARCHER, this.archer(enemyTarget));
+        factories.put(HeroType.WARRIOR, this.warrior(enemyTarget));
         return new RaceSimple("Нежить", factories);
     }
 
     //TODO Жестко завязан с HeroType,
     // TODO при малейшем изменении код нужно будет править!
-    private HeroFactory mage() {
+    private HeroFactory mage(RandomTarget enemyTarget) {
         return new HeroFactorySimple(
                 "некромант",
                 Arrays.asList(
                         new SendAilment(
-                                this.squadsMapper,
+                                enemyTarget,
                                 new AttackStrengthModifierSimple(0.5d),
                                 this.attackStrengthModifiers
                         ),
                         new AttackEnemy(
                                 "Атаковать ",
                                 5,
+                                enemyTarget,
                                 this.attackStrengthModifiers,
-                                this.squadsMapper,
                                 this.healthHeroes
                         )
                 ), this.random
         );
     }
 
-    private HeroFactory archer() {
+    private HeroFactory archer(RandomTarget enemyTarget) {
         return new HeroFactorySimple(
                 "охотник",
                 Arrays.asList(
                         new AttackEnemy(
                                 "Стрелять из лука в ",
                                 4,
+                                enemyTarget,
                                 this.attackStrengthModifiers,
-                                this.squadsMapper,
                                 this.healthHeroes
                         ), new AttackEnemy(
                                 "Атаковать ",
                                 2,
+                                enemyTarget,
                                 this.attackStrengthModifiers,
-                                this.squadsMapper,
                                 this.healthHeroes
                         )
                 ), this.random
@@ -98,15 +101,15 @@ public class UndeadRaceFactory implements RaceFactory {
 
     //TODO Жестко завязан с HeroType,
     // TODO при малейшем изменении код нужно будет править!
-    private HeroFactory warrior() {
+    private HeroFactory warrior(RandomTarget enemyTarget) {
         return new HeroFactorySimple(
                 "зомби",
                 Collections.singletonList(
                         new AttackEnemy(
                                 "Атаковать копьем ",
                                 18,
+                                enemyTarget,
                                 this.attackStrengthModifiers,
-                                this.squadsMapper,
                                 this.healthHeroes
                         )
                 ), this.random

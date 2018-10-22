@@ -20,16 +20,6 @@ public class DegradeAction implements GradeAction {
     }
 
     /**
-     * Возвращает коллекцию привилегированных героев из отряда врагов.
-     * @param heroActor герой выполняющий данное действие.
-     * @return коллекция привилегированных героев из отряда врагов.
-     */
-    @Override
-    public Collection<Hero> gradedHeroes(Hero heroActor) {
-         return this.squadsMapper.enemySquadFor(heroActor).upgradedHeroes();
-    }
-
-    /**
      * Снимает улучшение с выбранного героя.
      * @param gradedHero герой с которого будет снято улучшение.
      */

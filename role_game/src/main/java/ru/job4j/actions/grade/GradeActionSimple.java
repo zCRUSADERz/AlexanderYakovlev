@@ -2,30 +2,26 @@ package ru.job4j.actions.grade;
 
 import org.apache.log4j.Logger;
 import ru.job4j.actions.HeroAction;
+import ru.job4j.actions.target.RandomTargetForGrade;
 import ru.job4j.heroes.Hero;
-import ru.job4j.utils.RandomElementFromList;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class GradeActionSimple implements HeroAction {
-    private final RandomElementFromList random;
     private final HeroAction defaultAction;
     private final GradeAction gradeAction;
+    private final RandomTargetForGrade randomTarget;
     private final Logger logger = Logger.getLogger(GradeActionSimple.class);
 
-    public GradeActionSimple(RandomElementFromList random,
-                             HeroAction defaultAction, GradeAction gradeAction) {
-        this.random = random;
+    public GradeActionSimple(HeroAction defaultAction,
+                             GradeAction gradeAction,
+                             RandomTargetForGrade randomTarget) {
         this.defaultAction = defaultAction;
         this.gradeAction = gradeAction;
+        this.randomTarget = randomTarget;
     }
 
     @Override
     public void act(Hero heroActor) {
-        final Collection<Hero> gradedHeroes
-                = this.gradeAction.gradedHeroes(heroActor);
-        if (gradedHeroes.isEmpty()) {
+        if (this.randomTarget.targetsIsEmptyFor(heroActor)) {
             this.logger.info(String.format(
                     "Hero %s did not find suitable targets. "
                             + "%s perform the default action(%s).",
@@ -33,10 +29,7 @@ public class GradeActionSimple implements HeroAction {
             ));
             this.defaultAction.act(heroActor);
         } else {
-            final Hero gradedHero
-                    = this.random.randomElement(
-                    new ArrayList<>(gradedHeroes)
-            );
+            final Hero gradedHero = this.randomTarget.randomTargetFor(heroActor);
             this.logger.info(
                     String.format(
                             "%s. Цель: %s.",

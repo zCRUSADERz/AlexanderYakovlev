@@ -20,16 +20,6 @@ public class UpgradeAction implements GradeAction {
     }
 
     /**
-     * Возвращает коллекцию не привилегированных героев из дружественного отряда.
-     * @param heroActor герой выполняющий данное действие.
-     * @return коллекция привилегированных героев из дружественного отряда.
-     */
-    @Override
-    public Collection<Hero> gradedHeroes(Hero heroActor) {
-        return this.squadsMapper.ownSquadFor(heroActor).regularHeroes();
-    }
-
-    /**
      * Улучшает выбранного героя.
      * @param gradedHero герой который будет улучшен.
      */

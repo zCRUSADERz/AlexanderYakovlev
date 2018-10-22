@@ -30,11 +30,19 @@ public interface SquadHeroes
      */
     Collection<Hero> upgradedHeroes();
 
+    boolean upgradedHeroesIsEmpty();
+
+    Hero randomUpgradedHero();
+
     /**
      * Обычные герои отряда.
      * @return обычные герои отряда.
      */
     Collection<Hero> regularHeroes();
+
+    boolean regularHeroesIsEmpty();
+
+    Hero randomRegularHero();
 
     /**
      * Улучшить героя.

@@ -4,6 +4,10 @@ import ru.job4j.actions.AttackEnemy;
 import ru.job4j.actions.HeroAction;
 import ru.job4j.actions.grade.GradeActionSimple;
 import ru.job4j.actions.grade.UpgradeAction;
+import ru.job4j.actions.target.RandomEnemyTarget;
+import ru.job4j.actions.target.RandomTarget;
+import ru.job4j.actions.target.RandomTargetForGrade;
+import ru.job4j.actions.target.RandomTargetForUpgrade;
 import ru.job4j.heroes.HeroFactory;
 import ru.job4j.heroes.HeroFactorySimple;
 import ru.job4j.heroes.HeroType;
@@ -47,30 +51,34 @@ public class HumansRaceFactory implements RaceFactory {
      */
     @Override
     public Race createRace() {
+        final RandomTargetForGrade forUpgrade
+                = new RandomTargetForUpgrade(this.squadsMapper);
+        final RandomTarget enemyTarget = new RandomEnemyTarget(this.squadsMapper);
         final Map<HeroType, HeroFactory> factories = new HashMap<>();
-        factories.put(HeroType.MAGE, this.mage());
-        factories.put(HeroType.ARCHER, this.archer());
-        factories.put(HeroType.WARRIOR, this.warrior());
+        factories.put(HeroType.MAGE, this.mage(forUpgrade, enemyTarget));
+        factories.put(HeroType.ARCHER, this.archer(enemyTarget));
+        factories.put(HeroType.WARRIOR, this.warrior(enemyTarget));
         return new RaceSimple("Люди", factories);
     }
 
     //TODO Жестко завязан с HeroType,
     // TODO при малейшем изменении код нужно будет править!
-    private HeroFactory mage() {
+    private HeroFactory mage(RandomTargetForGrade forUpgrade,
+                             RandomTarget enemyTarget) {
         final HeroAction mageActionDefault = new AttackEnemy(
                 "Атаковать магией ",
                 4,
+                enemyTarget,
                 this.attackStrengthModifiers,
-                this.squadsMapper,
                 this.healthHeroes
         );
         return new HeroFactorySimple(
                 "маг",
                 Arrays.asList(
                         new GradeActionSimple(
-                                this.random,
                                 mageActionDefault,
-                                new UpgradeAction(this.squadsMapper)
+                                new UpgradeAction(this.squadsMapper),
+                                forUpgrade
                         ),
                         mageActionDefault
                 ), this.random
@@ -79,21 +87,21 @@ public class HumansRaceFactory implements RaceFactory {
 
     //TODO Жестко завязан с HeroType,
     // TODO при малейшем изменении код нужно будет править!
-    private HeroFactory archer() {
+    private HeroFactory archer(RandomTarget enemyTarget) {
         return new HeroFactorySimple(
                 "арбалетчик",
                 Arrays.asList(
                         new AttackEnemy(
                                 "Стрелять из арбалета в ",
                                 5,
+                                enemyTarget,
                                 this.attackStrengthModifiers,
-                                this.squadsMapper,
                                 this.healthHeroes
                         ), new AttackEnemy(
                                 "Атаковать ",
                                 3,
+                                enemyTarget,
                                 this.attackStrengthModifiers,
-                                this.squadsMapper,
                                 this.healthHeroes
                         )
                 ), this.random
@@ -102,15 +110,15 @@ public class HumansRaceFactory implements RaceFactory {
 
     //TODO Жестко завязан с HeroType,
     // TODO при малейшем изменении код нужно будет править!
-    private HeroFactory warrior() {
+    private HeroFactory warrior(RandomTarget enemyTarget) {
         return new HeroFactorySimple(
                 "воин",
                 Collections.singletonList(
                         new AttackEnemy(
                                 "Атаковать мечом ",
                                 18,
+                                enemyTarget,
                                 this.attackStrengthModifiers,
-                                this.squadsMapper,
                                 this.healthHeroes
                         )
                 ), this.random

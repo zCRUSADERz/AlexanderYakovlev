@@ -15,6 +15,7 @@ import java.util.*;
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 21.10.2018
  */
+//TODO Разделить класс на три составляющие - отряд, привелегированные, обычные.
 public class SquadSimple implements SquadHeroes {
     private final String squadName;
     private final Set<Hero> squad;
@@ -68,6 +69,16 @@ public class SquadSimple implements SquadHeroes {
         return Collections.unmodifiableCollection(this.upgradedHeroes);
     }
 
+    @Override
+    public boolean upgradedHeroesIsEmpty() {
+        return this.upgradedHeroes.isEmpty();
+    }
+
+    @Override
+    public Hero randomUpgradedHero() {
+        return this.random.randomElement(new ArrayList<>(this.upgradedHeroes));
+    }
+
     /**
      * Обычные герои отряда.
      * @return обычные герои отряда.
@@ -75,6 +86,16 @@ public class SquadSimple implements SquadHeroes {
     @Override
     public Collection<Hero> regularHeroes() {
         return Collections.unmodifiableCollection(this.regularHeroes);
+    }
+
+    @Override
+    public boolean regularHeroesIsEmpty() {
+        return this.regularHeroes.isEmpty();
+    }
+
+    @Override
+    public Hero randomRegularHero() {
+        return this.random.randomElement(new ArrayList<>(this.regularHeroes));
     }
 
     /**
