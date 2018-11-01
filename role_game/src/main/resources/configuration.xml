@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <heroTypes>
+        <mage/>
+        <archer/>
+        <warrior/>
+    </heroTypes>
+    <squadSize>
+        <mage>
+            <size>1</size>
+        </mage>
+        <archer>
+            <size>3</size>
+        </archer>
+        <warrior>
+            <size>4</size>
+        </warrior>
+    </squadSize>
+    <squad>
+        <race>
+            <name>Эльфы</name>
+            <heroes>
+                <mage>
+                    <name>маг</name>
+                    <actions>
+                        <attackEnemy>
+                            <name>Нанесение урона магией по </name>
+                            <damage>10</damage>
+                        </attackEnemy>
+                        <upgrade>
+                            <defaultAction>
+                                <attackEnemy>
+                                    <name>Нанесение урона магией по </name>
+                                    <damage>10</damage>
+                                </attackEnemy>
+                            </defaultAction>
+                        </upgrade>
+                    </actions>
+                </mage>
+                <archer>
+                    <name>лучник</name>
+                    <actions>
+                        <attackEnemy>
+                            <name>Стрелять из лука в </name>
+                            <damage>7</damage>
+                        </attackEnemy>
+                        <attackEnemy>
+                            <name>Атаковать противника </name>
+                            <damage>3</damage>
+                        </attackEnemy>
+                    </actions>
+                </archer>
+                <warrior>
+                    <name>воин</name>
+                    <actions>
+                        <attackEnemy>
+                            <name>Атака мечом </name>
+                            <damage>15</damage>
+                        </attackEnemy>
+                    </actions>
+                </warrior>
+            </heroes>
+        </race>
+        <race>
+            <name>Люди</name>
+            <heroes>
+                <mage>
+                    <name>маг</name>
+                    <actions>
+                        <attackEnemy id="1">
+                            <name>Атаковать магией </name>
+                            <damage>4</damage>
+                        </attackEnemy>
+                        <upgrade>
+                            <defaultAction>
+                                <attackEnemy id="1">
+                                    <name>Атаковать магией </name>
+                                    <damage>4</damage>
+                                </attackEnemy>
+                            </defaultAction>
+                        </upgrade>
+                    </actions>
+                </mage>
+                <archer>
+                    <name>арбалетчик</name>
+                    <actions>
+                        <attackEnemy>
+                            <name>Стрелять из арбалета в </name>
+                            <damage>5</damage>
+                        </attackEnemy>
+                        <attackEnemy>
+                            <name>Атаковать </name>
+                            <damage>3</damage>
+                        </attackEnemy>
+                    </actions>
+                </archer>
+                <warrior>
+                    <name>воин</name>
+                    <actions>
+                        <attackEnemy>
+                            <name>Атака мечом </name>
+                            <damage>18</damage>
+                        </attackEnemy>
+                    </actions>
+                </warrior>
+            </heroes>
+        </race>
+    </squad>
+    <squad>
+        <race>
+            <name>Орки</name>
+            <heroes>
+                <mage>
+                    <name>шаман</name>
+                    <actions>
+                        <upgrade>
+                            <defaultAction>
+                                <inaction />
+                            </defaultAction>
+                        </upgrade>
+                        <degrade>
+                            <defaultAction>
+                                <inaction />
+                            </defaultAction>
+                        </degrade>
+                    </actions>
+                </mage>
+                <archer>
+                    <name>лучник</name>
+                    <actions>
+                        <attackEnemy>
+                            <name>Стрелять из лука в </name>
+                            <damage>3</damage>
+                        </attackEnemy>
+                        <attackEnemy>
+                            <name>Удар клинком по </name>
+                            <damage>2</damage>
+                        </attackEnemy>
+                    </actions>
+                </archer>
+                <warrior>
+                    <name>гоблин</name>
+                    <actions>
+                        <attackEnemy>
+                            <name>Атака дубиной по </name>
+                            <damage>20</damage>
+                        </attackEnemy>
+                    </actions>
+                </warrior>
+            </heroes>
+        </race>
+        <race>
+            <name>Нежить</name>
+            <heroes>
+                <mage>
+                    <name>некромант</name>
+                    <actions>
+                        <sendAilment>
+                            <strengthModifier>0.5</strengthModifier>
+                        </sendAilment>
+                        <attackEnemy>
+                            <name>Атаковать </name>
+                            <damage>5</damage>
+                        </attackEnemy>
+                    </actions>
+                </mage>
+                <archer>
+                    <name>охотник</name>
+                    <actions>
+                        <attackEnemy>
+                            <name>Стрелять из лука в </name>
+                            <damage>4</damage>
+                        </attackEnemy>
+                        <attackEnemy>
+                            <name>Атаковать </name>
+                            <damage>2</damage>
+                        </attackEnemy>
+                    </actions>
+                </archer>
+                <warrior>
+                    <name>зомби</name>
+                    <actions>
+                        <attackEnemy>
+                            <name>Атаковать копьем </name>
+                            <damage>18</damage>
+                        </attackEnemy>
+                    </actions>
+                </warrior>
+            </heroes>
+        </race>
+    </squad>
+</configuration>
