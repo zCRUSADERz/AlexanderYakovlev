@@ -35,11 +35,8 @@ public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
      * Запустить цикл ходов героев.
      */
     public void start() {
-        while (true) {
+        while (!this.stopGame.gameIsStopped()) {
             final Iterator<Hero> iterator;
-            if (this.stopGame.gameIsStopped()) {
-                break;
-            }
             this.logSequence();
             if (!this.upgradedHeroes.isEmpty()) {
                 iterator = this.upgradedHeroes.iterator();
