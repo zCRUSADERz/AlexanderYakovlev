@@ -1,7 +1,7 @@
 package ru.job4j.actions;
 
 import org.apache.log4j.Logger;
-import ru.job4j.actions.target.RandomTarget;
+import ru.job4j.actions.actiontarget.RandomTarget;
 import ru.job4j.heroes.Hero;
 import ru.job4j.heroes.attack.AttackStrengthModifier;
 import ru.job4j.heroes.attack.AttackStrengthModifiers;

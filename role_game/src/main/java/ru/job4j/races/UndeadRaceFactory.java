@@ -2,8 +2,8 @@ package ru.job4j.races;
 
 import ru.job4j.actions.AttackEnemy;
 import ru.job4j.actions.SendAilment;
-import ru.job4j.actions.target.RandomEnemyTarget;
-import ru.job4j.actions.target.RandomTarget;
+import ru.job4j.actions.actiontarget.RandomEnemyTarget;
+import ru.job4j.actions.actiontarget.RandomTarget;
 import ru.job4j.heroes.HeroFactory;
 import ru.job4j.heroes.HeroFactorySimple;
 import ru.job4j.heroes.HeroType;

@@ -6,7 +6,7 @@ import ru.job4j.actions.HeroAction;
 import ru.job4j.actions.grade.DegradeAction;
 import ru.job4j.actions.grade.GradeActionSimple;
 import ru.job4j.actions.grade.UpgradeAction;
-import ru.job4j.actions.target.*;
+import ru.job4j.actions.actiontarget.*;
 import ru.job4j.heroes.HeroFactory;
 import ru.job4j.heroes.HeroFactorySimple;
 import ru.job4j.heroes.HeroType;

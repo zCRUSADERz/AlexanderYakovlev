@@ -2,7 +2,7 @@ package ru.job4j.actions.grade;
 
 import org.apache.log4j.Logger;
 import ru.job4j.actions.HeroAction;
-import ru.job4j.actions.target.RandomTargetForGrade;
+import ru.job4j.actions.actiontarget.RandomTargetForGrade;
 import ru.job4j.heroes.Hero;
 
 public class GradeActionSimple implements HeroAction {
