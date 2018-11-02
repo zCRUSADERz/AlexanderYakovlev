@@ -9,7 +9,7 @@ import ru.job4j.actions.grade.GradeActionSimple;
 import ru.job4j.xml.actions.utils.FindNodeByXPath;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * XMLDegradeParser.
@@ -39,8 +39,8 @@ public class XMLDegradeParser implements XMLActionParser {
      * @return коллекцию действий, либо пустую коллекцию, если не найдено.
      */
     @Override
-    public Collection<HeroAction> parseAll(Node actions) {
-        final Collection<HeroAction> result = new ArrayList<>();
+    public List<HeroAction> parseAll(Node actions) {
+        final List<HeroAction> result = new ArrayList<>();
         this.findNodeByXPath
                 .find(XML_TAG_NAME, actions)
                 .forEach((action) -> result.add(

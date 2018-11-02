@@ -3,7 +3,7 @@ package ru.job4j.xml.actions;
 import org.w3c.dom.Node;
 import ru.job4j.actions.HeroAction;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * XMLActionParser.
@@ -20,5 +20,5 @@ public interface XMLActionParser {
      * @param actions xml node указывающая на первый узел в списке действий.
      * @return коллекцию действий, либо пустую коллекцию, если не найдено.
      */
-    Collection<HeroAction> parseAll(Node actions);
+    List<HeroAction> parseAll(Node actions);
 }

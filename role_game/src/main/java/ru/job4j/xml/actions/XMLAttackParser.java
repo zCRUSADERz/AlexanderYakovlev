@@ -10,7 +10,7 @@ import ru.job4j.xml.actions.utils.FindNodeByXPath;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * XMLAttackParser.
@@ -38,8 +38,8 @@ public class XMLAttackParser implements XMLActionParser {
      * @return коллекцию действий, либо пустую коллекцию, если не найдено.
      */
     @Override
-    public Collection<HeroAction> parseAll(Node actions) {
-        final Collection<HeroAction> result = new ArrayList<>();
+    public List<HeroAction> parseAll(Node actions) {
+        final List<HeroAction> result = new ArrayList<>();
         this.findNodeByXPath
                 .find(XML_TAG_NAME, actions)
                 .forEach((action) -> {
