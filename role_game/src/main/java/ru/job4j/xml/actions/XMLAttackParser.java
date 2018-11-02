@@ -38,10 +38,10 @@ public class XMLAttackParser implements XMLActionParser {
      * @return коллекцию действий, либо пустую коллекцию, если не найдено.
      */
     @Override
-    public List<HeroAction> parseAll(Node actions) {
+    public List<HeroAction> parseAllActions(Node actions) {
         final List<HeroAction> result = new ArrayList<>();
         this.findNodeByXPath
-                .find(XML_TAG_NAME, actions)
+                .findNode(XML_TAG_NAME, actions)
                 .forEach((action) -> {
                     try {
                         final String actionName

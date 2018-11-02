@@ -17,7 +17,7 @@ import java.util.Collections;
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 02.11.2018
  */
-public class FindNodeByXPathSimple {
+public class FindNodeByXPathSimple implements FindNodeByXPath {
     private final XPath xPath;
 
     public FindNodeByXPathSimple(XPath xPath) {
@@ -31,7 +31,7 @@ public class FindNodeByXPathSimple {
      * @return коллекцию найденных узлов,
      * или пустую коллекцию, если не найден ни один узел.
      */
-    public Collection<Node> find(String expression, Node node) {
+    public Collection<Node> findNode(String expression, Node node) {
         try {
             final Collection<Node> result;
             final NodeList nodes = (NodeList) this.xPath.evaluate(
@@ -41,7 +41,7 @@ public class FindNodeByXPathSimple {
                 result = Collections.emptyList();
             } else {
                 result = new ArrayList<>(nodes.getLength());
-                for (int i = 0; i <= nodes.getLength(); i++) {
+                for (int i = 0; i < nodes.getLength(); i++) {
                     result.add(nodes.item(i));
                 }
             }

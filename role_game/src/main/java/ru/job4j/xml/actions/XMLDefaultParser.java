@@ -41,7 +41,7 @@ public class XMLDefaultParser implements XMLDefaultActionParser {
             );
             for (XMLActionParser parser : parsers) {
                 final Collection<HeroAction> defaultActions
-                        = parser.parseAll(defaultActionNode);
+                        = parser.parseAllActions(defaultActionNode);
                 if (!defaultActions.isEmpty()) {
                     if (defaultActions.size() != 1) {
                         throw new IllegalArgumentException(

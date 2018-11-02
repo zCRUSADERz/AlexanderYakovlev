@@ -20,5 +20,5 @@ public interface FindNodeByXPath {
      * @return коллекцию найденных узлов,
      * или пустую коллекцию, если не найден ни один узел.
      */
-    Collection<Node> find(String expression, Node node);
+    Collection<Node> findNode(String expression, Node node);
 }

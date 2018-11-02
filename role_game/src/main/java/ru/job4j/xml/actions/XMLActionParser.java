@@ -20,5 +20,5 @@ public interface XMLActionParser {
      * @param actions xml node указывающая на первый узел в списке действий.
      * @return коллекцию действий, либо пустую коллекцию, если не найдено.
      */
-    List<HeroAction> parseAll(Node actions);
+    List<HeroAction> parseAllActions(Node actions);
 }
