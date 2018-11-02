@@ -51,7 +51,7 @@ public class XMLHeroParserSimple implements XMLHeroParser {
                     "actions", heroNode, XPathConstants.NODE
             );
             this.actionParsers.forEach(
-                    (parser) -> heroActions.addAll(parser.parseAll(actions))
+                    (parser) -> heroActions.addAll(parser.parseAllActions(actions))
             );
             return new HeroFactorySimple(
                     heroTypeDescription,
