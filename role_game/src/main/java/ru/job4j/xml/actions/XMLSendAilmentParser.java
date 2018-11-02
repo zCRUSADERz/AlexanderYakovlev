@@ -1,12 +1,11 @@
 package ru.job4j.xml.actions;
 
 import org.w3c.dom.Node;
+import ru.job4j.GameEnvironment;
 import ru.job4j.actions.HeroAction;
 import ru.job4j.actions.SendAilment;
 import ru.job4j.actions.actiontarget.RandomEnemyTarget;
 import ru.job4j.heroes.attack.AttackStrengthModifierSimple;
-import ru.job4j.heroes.attack.AttackStrengthModifiers;
-import ru.job4j.squad.SquadsMapper;
 import ru.job4j.xml.actions.utils.FindNodeByXPath;
 
 import javax.xml.xpath.XPath;
@@ -26,19 +25,14 @@ public class XMLSendAilmentParser implements XMLActionParser {
     private final static String XML_TAG_NAME = "sendAilment";
     private final XPath xPath;
     private final FindNodeByXPath findNodeByXPath;
-    private final SquadsMapper squads;
-    private final AttackStrengthModifiers modifiers;
+    private final GameEnvironment environment;
 
-    public XMLSendAilmentParser(
-            XPath xPath,
-            FindNodeByXPath findNodeByXPath,
-            SquadsMapper squads,
-            AttackStrengthModifiers modifiers) {
-        this.squads = squads;
+    public XMLSendAilmentParser(XPath xPath, FindNodeByXPath findNodeByXPath, GameEnvironment environment) {
         this.xPath = xPath;
         this.findNodeByXPath = findNodeByXPath;
-        this.modifiers = modifiers;
+        this.environment = environment;
     }
+
 
     /**
      * Распарсить все действия наслать недуг из
@@ -58,9 +52,11 @@ public class XMLSendAilmentParser implements XMLActionParser {
                         );
                         result.add(
                                 new SendAilment(
-                                        new RandomEnemyTarget(this.squads),
+                                        new RandomEnemyTarget(
+                                                this.environment.getSquadsMapper()
+                                        ),
                                         new AttackStrengthModifierSimple(modifier),
-                                        this.modifiers
+                                        this.environment.getModifiers()
                                 )
                         );
                     } catch (XPathExpressionException e) {

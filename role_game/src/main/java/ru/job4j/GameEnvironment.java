@@ -1,16 +1,8 @@
 package ru.job4j;
 
-import ru.job4j.heroes.attack.AttackModifierChangeByGrade;
-import ru.job4j.heroes.attack.AttackStrengthModifierSimple;
 import ru.job4j.heroes.attack.AttackStrengthModifiers;
 import ru.job4j.heroes.health.HealthHeroes;
-import ru.job4j.heroes.health.HealthHeroesSimple;
-import ru.job4j.observable.die.HeroDiedObservable;
-import ru.job4j.observable.gradechange.GradeChangeObservable;
-import ru.job4j.observable.move.HeroMovedObservable;
-import ru.job4j.observable.newhero.HeroCreatedObservable;
 import ru.job4j.squad.SquadsMapper;
-import ru.job4j.squad.SquadsMapperSimple;
 import ru.job4j.utils.RandomElementFromList;
 
 /**
@@ -20,82 +12,41 @@ import ru.job4j.utils.RandomElementFromList;
  * @since 21.10.2018
  */
 public class GameEnvironment {
-    private final HeroCreatedObservable createdObservable;
-    private final HeroMovedObservable movedObservable;
-    private final GradeChangeObservable upgradeObservable;
-    private final HeroDiedObservable diedObservable;
+    private final StopGame stopGame;
+    private final SquadsMapper squadsMapper;
+    private final HealthHeroes healthHeroes;
+    private final AttackStrengthModifiers modifiers;
+    private final RandomElementFromList random;
 
-    public GameEnvironment(HeroCreatedObservable createdObservable,
-                           HeroMovedObservable movedObservable,
-                           GradeChangeObservable upgradeObservable,
-                           HeroDiedObservable diedObservable) {
-        this.createdObservable = createdObservable;
-        this.movedObservable = movedObservable;
-        this.upgradeObservable = upgradeObservable;
-        this.diedObservable = diedObservable;
+    public GameEnvironment(StopGame stopGame,
+                           SquadsMapper squadsMapper,
+                           HealthHeroes healthHeroes,
+                           AttackStrengthModifiers modifiers,
+                           RandomElementFromList random) {
+        this.stopGame = stopGame;
+        this.squadsMapper = squadsMapper;
+        this.healthHeroes = healthHeroes;
+        this.modifiers = modifiers;
+        this.random = random;
     }
 
-    /**
-     * Создает контроллер отряов.
-     * @return контроллер отрядов.
-     */
-    public SquadsMapper createSquads() {
-        final SquadsMapper squadsMapper
-                = new SquadsMapperSimple(this.createdObservable);
-        this.diedObservable.addObserver(squadsMapper);
-        this.movedObservable.addObserver(squadsMapper);
+    public StopGame getStopGame() {
+        return stopGame;
+    }
+
+    public SquadsMapper getSquadsMapper() {
         return squadsMapper;
     }
 
-    /**
-     * Создает хранилище здоровья всех героев.
-     * @return хранилище здоровья всех героев.
-     */
-    public HealthHeroes createHeroesHealths() {
-        final HealthHeroes healthHeroes
-                = new HealthHeroesSimple(this.diedObservable);
-        this.diedObservable.addObserver(healthHeroes);
-        this.createdObservable.addObserver(healthHeroes);
+    public HealthHeroes getHealthHeroes() {
         return healthHeroes;
     }
 
-    /**
-     * Создает хранилище модификаторов атаки всех героев.
-     * @return хранилище модификаторов атаки всех героев.
-     */
-    public AttackStrengthModifiers createAttackModifiers() {
-        final AttackStrengthModifiers modifiers = new AttackStrengthModifiers();
-        this.diedObservable.addObserver(modifiers);
-        this.movedObservable.addObserver(modifiers);
-        this.createdObservable.addObserver(modifiers);
-        this.initAttackModifiersByGrade(modifiers);
+    public AttackStrengthModifiers getModifiers() {
         return modifiers;
     }
 
-    /**
-     * @return стоп игра.
-     */
-    public StopGame createStopGame() {
-        return new StopGameSimple();
-    }
-
-    /**
-     * @return рандомайзер.
-     */
-    public RandomElementFromList createRandomize() {
-        return new RandomElementFromList();
-    }
-
-    /**
-     * Инициализирует объект наблюдающий изменения привилегий героев.
-     * @param modifiers модификаторы урона героев.
-     */
-    private void initAttackModifiersByGrade(AttackStrengthModifiers modifiers) {
-        this.upgradeObservable.addObserver(
-                new AttackModifierChangeByGrade(
-                        modifiers,
-                        new AttackStrengthModifierSimple(1.5d)
-                )
-        );
+    public RandomElementFromList getRandom() {
+        return random;
     }
 }

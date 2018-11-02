@@ -1,8 +1,6 @@
 package ru.job4j;
 
 import ru.job4j.heroes.HeroType;
-import ru.job4j.heroes.attack.AttackStrengthModifiers;
-import ru.job4j.heroes.health.HealthHeroes;
 import ru.job4j.observable.die.HeroDiedObservableSimple;
 import ru.job4j.observable.die.HeroDiedObservable;
 import ru.job4j.observable.move.HeroMovedObservableSimple;
@@ -13,7 +11,6 @@ import ru.job4j.observable.newhero.HeroCreatedObservableSimple;
 import ru.job4j.observable.newhero.HeroCreatedObservable;
 import ru.job4j.races.*;
 import ru.job4j.squad.*;
-import ru.job4j.utils.RandomElementFromList;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,40 +33,45 @@ public class Game {
         final GradeChangeObservable upgradeObservable = new GradeChangedObservableSimple();
         final HeroMovedObservable movedObservable = new HeroMovedObservableSimple();
         final HeroCreatedObservable createdObservable = new HeroCreatedObservableSimple();
-        final GameEnvironment environment = new GameEnvironment(
+        final GameEnvironment environment = new GameEnvironmentInitialize(
                 createdObservable, movedObservable,
                 upgradeObservable, diedObservable
-        );
-        final StopGame stopGame = environment.createStopGame();
-        final SquadsMapper squadsMapper = environment.createSquads();
-        final HealthHeroes healthHeroes = environment.createHeroesHealths();
-        final AttackStrengthModifiers modifiers = environment.createAttackModifiers();
-        final RandomElementFromList random = environment.createRandomize();
+        ).init();
         final RaceSquads raceSquads = new RaceSquadsSimple(
                 Arrays.asList(
                         new ElvesRaceFactory(
-                                squadsMapper, healthHeroes,
-                                modifiers, random
+                                environment.getSquadsMapper(),
+                                environment.getHealthHeroes(),
+                                environment.getModifiers(),
+                                environment.getRandom()
                         ).createRace(),
                         new HumansRaceFactory(
-                                squadsMapper, healthHeroes,
-                                modifiers, random
+                                environment.getSquadsMapper(),
+                                environment.getHealthHeroes(),
+                                environment.getModifiers(),
+                                environment.getRandom()
                         ).createRace()
                 ),
                 Arrays.asList(
                         new OrcsRaceFactory(
-                                squadsMapper, healthHeroes,
-                                modifiers, random
+                                environment.getSquadsMapper(),
+                                environment.getHealthHeroes(),
+                                environment.getModifiers(),
+                                environment.getRandom()
                         ).createRace(),
                         new UndeadRaceFactory(
-                                squadsMapper, healthHeroes,
-                                modifiers, random
+                                environment.getSquadsMapper(),
+                                environment.getHealthHeroes(),
+                                environment.getModifiers(),
+                                environment.getRandom()
                         ).createRace()
                 ),
-                random
+                environment.getRandom()
         );
         final Opponents opponents = raceSquads.chooseOpponents(
-                upgradeObservable, squadsMapper, stopGame
+                upgradeObservable,
+                environment.getSquadsMapper(),
+                environment.getStopGame()
         );
         final Map<HeroType, Integer> numberOfHeroes = new HashMap<>();
         numberOfHeroes.put(HeroType.MAGE, 1);
@@ -77,11 +79,11 @@ public class Game {
         numberOfHeroes.put(HeroType.WARRIOR, 4);
         opponents.createSquads(numberOfHeroes);
         new GameCycle(
-                squadsMapper,
+                environment.getSquadsMapper(),
                 diedObservable,
                 upgradeObservable,
                 movedObservable,
-                stopGame
+                environment.getStopGame()
         ).start();
     }
 

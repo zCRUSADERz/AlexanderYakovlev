@@ -1,11 +1,11 @@
 package ru.job4j.xml.actions;
 
 import org.w3c.dom.Node;
+import ru.job4j.GameEnvironment;
 import ru.job4j.actions.HeroAction;
 import ru.job4j.actions.actiontarget.RandomTargetForDegrade;
 import ru.job4j.actions.grade.DegradeAction;
 import ru.job4j.actions.grade.GradeActionSimple;
-import ru.job4j.squad.SquadsMapper;
 import ru.job4j.xml.actions.utils.FindNodeByXPath;
 
 import java.util.ArrayList;
@@ -22,14 +22,14 @@ public class XMLDegradeParser implements XMLActionParser {
     private final static String XML_TAG_NAME = "degrade";
     private final FindNodeByXPath findNodeByXPath;
     private final XMLDefaultActionParser defaultActionParser;
-    private final SquadsMapper squads;
+    private final GameEnvironment environment;
 
     public XMLDegradeParser(FindNodeByXPath findNodeByXPath,
                             XMLDefaultActionParser defaultActionParser,
-                            SquadsMapper squads) {
+                            GameEnvironment environment) {
         this.findNodeByXPath = findNodeByXPath;
         this.defaultActionParser = defaultActionParser;
-        this.squads = squads;
+        this.environment = environment;
     }
 
     /**
@@ -45,9 +45,14 @@ public class XMLDegradeParser implements XMLActionParser {
                 .find(XML_TAG_NAME, actions)
                 .forEach((action) -> result.add(
                         new GradeActionSimple(
-                                this.defaultActionParser.parseDefaultAction(action),
-                                new DegradeAction(this.squads),
-                                new RandomTargetForDegrade(this.squads)
+                                this.defaultActionParser
+                                        .parseDefaultAction(action),
+                                new DegradeAction(
+                                        this.environment.getSquadsMapper()
+                                ),
+                                new RandomTargetForDegrade(
+                                        this.environment.getSquadsMapper()
+                                )
                         )
                 ));
         return result;
