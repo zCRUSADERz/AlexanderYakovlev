@@ -1,7 +1,7 @@
 package ru.job4j.squad;
 
 import ru.job4j.StopGame;
-import ru.job4j.heroes.HeroType;
+import ru.job4j.heroes.HeroTypeEnum;
 import ru.job4j.observable.gradechange.GradeChangeObservable;
 import ru.job4j.races.Race;
 import ru.job4j.utils.RandomElementFromList;
@@ -41,7 +41,7 @@ public class OpponentsSimple implements Opponents {
      * @param numberOfHeroesByType количество героев каждого типа.
      */
     @Override
-    public void createSquads(Map<HeroType, Integer> numberOfHeroesByType) {
+    public void createSquads(Map<HeroTypeEnum, Integer> numberOfHeroesByType) {
         final String firstSquadName = "Красные";
         final SquadHeroes firstSquad = this.createSquad(firstSquadName);
         final String secondSquadName = "Синие";

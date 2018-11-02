@@ -1,6 +1,6 @@
 package ru.job4j;
 
-import ru.job4j.heroes.HeroType;
+import ru.job4j.heroes.HeroTypeEnum;
 import ru.job4j.observable.die.HeroDiedObservableSimple;
 import ru.job4j.observable.die.HeroDiedObservable;
 import ru.job4j.observable.move.HeroMovedObservableSimple;
@@ -73,10 +73,10 @@ public class Game {
                 environment.getSquadsMapper(),
                 environment.getStopGame()
         );
-        final Map<HeroType, Integer> numberOfHeroes = new HashMap<>();
-        numberOfHeroes.put(HeroType.MAGE, 1);
-        numberOfHeroes.put(HeroType.ARCHER, 3);
-        numberOfHeroes.put(HeroType.WARRIOR, 4);
+        final Map<HeroTypeEnum, Integer> numberOfHeroes = new HashMap<>();
+        numberOfHeroes.put(HeroTypeEnum.MAGE, 1);
+        numberOfHeroes.put(HeroTypeEnum.ARCHER, 3);
+        numberOfHeroes.put(HeroTypeEnum.WARRIOR, 4);
         opponents.createSquads(numberOfHeroes);
         new GameCycle(
                 environment.getSquadsMapper(),

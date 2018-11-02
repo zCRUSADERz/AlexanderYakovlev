@@ -1,6 +1,6 @@
 package ru.job4j.squad;
 
-import ru.job4j.heroes.HeroType;
+import ru.job4j.heroes.HeroTypeEnum;
 
 import java.util.Map;
 
@@ -17,5 +17,5 @@ public interface Opponents {
      * Создать отряды противоборствующих сторон, подготовить к бою.
      * @param numberOfHeroesByType количество героев каждого типа.
      */
-    void createSquads(Map<HeroType, Integer> numberOfHeroesByType);
+    void createSquads(Map<HeroTypeEnum, Integer> numberOfHeroesByType);
 }

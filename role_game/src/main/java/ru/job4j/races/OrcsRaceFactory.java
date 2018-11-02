@@ -10,6 +10,7 @@ import ru.job4j.actions.actiontarget.*;
 import ru.job4j.heroes.HeroFactory;
 import ru.job4j.heroes.HeroFactorySimple;
 import ru.job4j.heroes.HeroType;
+import ru.job4j.heroes.HeroTypeEnum;
 import ru.job4j.heroes.attack.AttackStrengthModifiers;
 import ru.job4j.heroes.health.HealthHeroes;
 import ru.job4j.squad.SquadsMapper;
@@ -56,13 +57,13 @@ public class OrcsRaceFactory implements RaceFactory {
                 = new RandomTargetForDegrade(this.squadsMapper);
         final RandomTarget enemyTarget = new RandomEnemyTarget(this.squadsMapper);
         final Map<HeroType, HeroFactory> factories = new HashMap<>();
-        factories.put(HeroType.MAGE, this.mage(forUpgrade, forDegrade));
-        factories.put(HeroType.ARCHER, this.archer(enemyTarget));
-        factories.put(HeroType.WARRIOR, this.warrior(enemyTarget));
+        factories.put(HeroTypeEnum.MAGE, this.mage(forUpgrade, forDegrade));
+        factories.put(HeroTypeEnum.ARCHER, this.archer(enemyTarget));
+        factories.put(HeroTypeEnum.WARRIOR, this.warrior(enemyTarget));
         return new RaceSimple("Орки", factories);
     }
 
-    //TODO Жестко завязан с HeroType,
+    //TODO Жестко завязан с HeroTypeEnum,
     // TODO при малейшем изменении код нужно будет править!
     private HeroFactory mage(RandomTargetForGrade forUpgrade,
                              RandomTargetForGrade forDegrade) {
@@ -84,7 +85,7 @@ public class OrcsRaceFactory implements RaceFactory {
         );
     }
 
-    //TODO Жестко завязан с HeroType,
+    //TODO Жестко завязан с HeroTypeEnum,
     // TODO при малейшем изменении код нужно будет править!
     private HeroFactory archer(RandomTarget enemyTarget) {
         return new HeroFactorySimple(
@@ -107,7 +108,7 @@ public class OrcsRaceFactory implements RaceFactory {
         );
     }
 
-    //TODO Жестко завязан с HeroType,
+    //TODO Жестко завязан с HeroTypeEnum,
     // TODO при малейшем изменении код нужно будет править!
     private HeroFactory warrior(RandomTarget enemyTarget) {
         return new HeroFactorySimple(
