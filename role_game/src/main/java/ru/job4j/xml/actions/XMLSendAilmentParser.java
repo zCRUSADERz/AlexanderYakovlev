@@ -3,9 +3,10 @@ package ru.job4j.xml.actions;
 import org.w3c.dom.Node;
 import ru.job4j.actions.HeroAction;
 import ru.job4j.actions.SendAilment;
-import ru.job4j.actions.actiontarget.RandomTarget;
+import ru.job4j.actions.actiontarget.RandomEnemyTarget;
 import ru.job4j.heroes.attack.AttackStrengthModifierSimple;
 import ru.job4j.heroes.attack.AttackStrengthModifiers;
+import ru.job4j.squad.SquadsMapper;
 import ru.job4j.xml.actions.utils.FindNodeByXPath;
 
 import javax.xml.xpath.XPath;
@@ -25,15 +26,17 @@ public class XMLSendAilmentParser implements XMLActionParser {
     private final static String XML_TAG_NAME = "sendAilment";
     private final XPath xPath;
     private final FindNodeByXPath findNodeByXPath;
-    private final RandomTarget randomTarget;
+    private final SquadsMapper squads;
     private final AttackStrengthModifiers modifiers;
 
-    public XMLSendAilmentParser(XPath xPath, FindNodeByXPath findNodeByXPath,
-                                RandomTarget randomTarget,
-                                AttackStrengthModifiers modifiers) {
+    public XMLSendAilmentParser(
+            XPath xPath,
+            FindNodeByXPath findNodeByXPath,
+            SquadsMapper squads,
+            AttackStrengthModifiers modifiers) {
+        this.squads = squads;
         this.xPath = xPath;
         this.findNodeByXPath = findNodeByXPath;
-        this.randomTarget = randomTarget;
         this.modifiers = modifiers;
     }
 
@@ -55,7 +58,7 @@ public class XMLSendAilmentParser implements XMLActionParser {
                         );
                         result.add(
                                 new SendAilment(
-                                        this.randomTarget,
+                                        new RandomEnemyTarget(this.squads),
                                         new AttackStrengthModifierSimple(modifier),
                                         this.modifiers
                                 )

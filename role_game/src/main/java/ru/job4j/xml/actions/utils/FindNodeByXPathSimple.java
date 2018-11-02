@@ -10,6 +10,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * FindNodeByXPathSimple.
+ * Находит необходимый узел в xml документе используя выражение XPath.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 02.11.2018
+ */
 public class FindNodeByXPathSimple {
     private final XPath xPath;
 
@@ -17,6 +24,13 @@ public class FindNodeByXPathSimple {
         this.xPath = xPath;
     }
 
+    /**
+     * Найти узел по выражению XPath.
+     * @param expression XPath выражение.
+     * @param node xml документ в котором будем искать.
+     * @return коллекцию найденных узлов,
+     * или пустую коллекцию, если не найден ни один узел.
+     */
     public Collection<Node> find(String expression, Node node) {
         try {
             final Collection<Node> result;
