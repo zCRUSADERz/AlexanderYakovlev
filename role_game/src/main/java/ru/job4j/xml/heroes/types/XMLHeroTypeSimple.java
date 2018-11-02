@@ -32,7 +32,7 @@ public class XMLHeroTypeSimple implements XMLHeroType {
     public Node findHeroNode(Node heroes) {
         try {
             return (Node) this.xPath.evaluate(
-                    "heroes/" + typeName, heroes, XPathConstants.NODE
+                    typeName, heroes, XPathConstants.NODE
             );
         } catch (XPathExpressionException e) {
             throw new IllegalStateException(String.format(

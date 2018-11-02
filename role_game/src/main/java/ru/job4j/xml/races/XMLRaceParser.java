@@ -1,4 +1,4 @@
-package ru.job4j.xml;
+package ru.job4j.xml.races;
 
 import org.w3c.dom.Node;
 import ru.job4j.races.Race;

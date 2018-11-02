@@ -1,4 +1,4 @@
-package ru.job4j.xml;
+package ru.job4j.xml.races;
 
 import org.w3c.dom.Node;
 import ru.job4j.heroes.HeroFactory;
@@ -9,6 +9,7 @@ import ru.job4j.xml.heroes.XMLHeroParser;
 import ru.job4j.xml.heroes.types.XMLHeroType;
 
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,8 +45,11 @@ public class XMLRaceParserSimple implements XMLRaceParser {
         try {
             final String raceName = this.xPath.evaluate("name", nodeRace);
             final Map<HeroType, HeroFactory> heroFactories = new HashMap<>();
+            final Node heroes = (Node) this.xPath.evaluate(
+                    "heroes", nodeRace, XPathConstants.NODE
+            );
             this.heroTypes.forEach((heroType) -> {
-                Node heroNode = heroType.findHeroNode(nodeRace);
+                Node heroNode = heroType.findHeroNode(heroes);
                 heroFactories.put(
                         heroType,
                         this.heroParser.parseHero(heroNode)
