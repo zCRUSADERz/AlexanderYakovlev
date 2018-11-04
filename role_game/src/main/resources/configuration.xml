@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <!-- Обязательный тег. Описывает типы героев. Если здесь описан тип героя,
+    то он обязательно должен быть описан в размере отряда, и в каждой расе.-->
     <heroTypes>
         <mage/>
         <archer/>
         <warrior/>
     </heroTypes>
+    <!-- Описывает размер отряда для каждого типа героя. Обязательно для
+    каждого типа героя должен быть описан размер отряда-->
     <squadSize>
         <mage>
             <size>1</size>
@@ -16,12 +20,36 @@
             <size>4</size>
         </warrior>
     </squadSize>
+    <!-- Отряд. В игре используется только два первых описанных отряда.
+    В отряде описывается неограниченное количество рас с помощью тега <race>. -->
     <squad>
+        <!-- В описании расы обязательны тэги <name> и <heroes> -->
         <race>
             <name>Эльфы</name>
+            <!-- <heroes> - обязательный тег, описывает типы героев. Для каждого типа определенного
+            в <heroTypes> обязательно должен быть описан соответствующий ему герой. -->
             <heroes>
                 <mage>
+                    <!-- <name> - обязательный тег. -->
                     <name>маг</name>
+                    <!-- <actions> - обязательный тег, описвающий все действия героев.
+                    В игре реализованы действия c следующей обязательной структурой:
+                        <inaction /> - бездействие
+                        <attackEnemy> - атаковать врага
+                            <name>...</name>
+                            <damage>...</damage>
+                        </attackEnemy>
+                        <sendAilment> - наслать недуг
+                             <strengthModifier>...</strengthModifier> - сила недуга
+                                                                            (0.5 = 50%, 1 = 100%)
+                        </sendAilment>
+                        <upgrade> - улучшить героя
+                            <defaultAction>...<defaultAction> - действие по умолчанию в случае
+                                                                    если невозможно выполнить действие.
+                        </upgrade>
+                        <degrade> - снять улучшение
+                            <defaultAction>...<defaultAction>
+                        <degrade> -->
                     <actions>
                         <attackEnemy>
                             <name>Нанесение урона магией по </name>
@@ -67,13 +95,13 @@
                 <mage>
                     <name>маг</name>
                     <actions>
-                        <attackEnemy id="1">
+                        <attackEnemy>
                             <name>Атаковать магией </name>
                             <damage>4</damage>
                         </attackEnemy>
                         <upgrade>
                             <defaultAction>
-                                <attackEnemy id="1">
+                                <attackEnemy>
                                     <name>Атаковать магией </name>
                                     <damage>4</damage>
                                 </attackEnemy>
