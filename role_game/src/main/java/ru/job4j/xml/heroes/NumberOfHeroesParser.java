@@ -1,4 +1,4 @@
-package ru.job4j.xml;
+package ru.job4j.xml.heroes;
 
 import org.w3c.dom.Document;
 import ru.job4j.xml.heroes.types.XMLHeroType;

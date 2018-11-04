@@ -43,6 +43,11 @@ public class XMLHeroTypeSimple implements XMLHeroType {
     }
 
     @Override
+    public String toString() {
+        return this.typeName;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

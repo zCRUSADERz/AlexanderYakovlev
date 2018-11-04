@@ -45,7 +45,7 @@ public class HeroTypesParserSimple implements HeroTypesParser {
             }
             return types;
         } catch (XPathExpressionException e) {
-            throw new IllegalStateException("Wrong XPath expression.");
+            throw new IllegalStateException("Wrong XPath expression.", e);
         }
     }
 }

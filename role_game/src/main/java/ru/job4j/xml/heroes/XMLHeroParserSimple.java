@@ -1,5 +1,6 @@
 package ru.job4j.xml.heroes;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Node;
 import ru.job4j.GameEnvironment;
 import ru.job4j.actions.AllActionsParsers;
@@ -26,6 +27,7 @@ public class XMLHeroParserSimple implements XMLHeroParser {
     private final XPath xPath;
     private final AllActionsParsers actionParsers;
     private final GameEnvironment environment;
+    private final Logger logger = Logger.getLogger(XMLHeroParserSimple.class);
 
     public XMLHeroParserSimple(XPath xPath,
                                AllActionsParsers actionParsers,
@@ -57,6 +59,14 @@ public class XMLHeroParserSimple implements XMLHeroParser {
                                     parser.parseAllActions(actions)
                             )
             );
+            this.logger.info(String.format(
+                    "Hero type name: %s",
+                    heroTypeDescription
+            ));
+            this.logger.info(String.format(
+                    "Hero actions: %s",
+                    heroActions
+            ));
             return new HeroFactorySimple(
                     heroTypeDescription,
                     heroActions,

@@ -1,5 +1,6 @@
 package ru.job4j.xml.races;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Node;
 import ru.job4j.heroes.HeroFactory;
 import ru.job4j.races.Race;
@@ -24,6 +25,7 @@ import java.util.Set;
 public class XMLRaceParserSimple implements XMLRaceParser {
     private final XPath xPath;
     private final XMLHeroParser heroParser;
+    private final Logger logger = Logger.getLogger(XMLRaceParserSimple.class);
 
     public XMLRaceParserSimple(XPath xPath, XMLHeroParser heroParser) {
         this.xPath = xPath;
@@ -40,6 +42,7 @@ public class XMLRaceParserSimple implements XMLRaceParser {
     public Race parseRace(Node nodeRace, Set<XMLHeroType> types) {
         try {
             final String raceName = this.xPath.evaluate("name", nodeRace);
+            this.logger.info(String.format("Race name: %s", raceName));
             final Map<XMLHeroType, HeroFactory> heroFactories = new HashMap<>();
             final Node heroes = (Node) this.xPath.evaluate(
                     "heroes", nodeRace, XPathConstants.NODE

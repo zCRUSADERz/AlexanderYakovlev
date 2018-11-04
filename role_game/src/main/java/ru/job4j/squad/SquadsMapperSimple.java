@@ -1,5 +1,6 @@
 package ru.job4j.squad;
 
+import org.apache.log4j.Logger;
 import ru.job4j.heroes.Hero;
 import ru.job4j.observable.newhero.HeroCreatedObservable;
 
@@ -18,6 +19,7 @@ public class SquadsMapperSimple implements SquadsMapper {
     private final Map<Hero, SquadHeroes> ownSquads;
     private final Map<Hero, SquadHeroes> enemySquads;
     private final HeroCreatedObservable heroCreatedObservable;
+    private final Logger logger = Logger.getLogger(SquadsMapperSimple.class);
 
     public SquadsMapperSimple(HeroCreatedObservable heroCreatedObservable) {
         this(
@@ -84,6 +86,7 @@ public class SquadsMapperSimple implements SquadsMapper {
         this.squads.add(enemySquad);
         ownSquad.heroCreated(hero);
         this.heroCreatedObservable.heroCreated(hero);
+        this.logger.info(String.format("%s, was created.", hero));
     }
 
     /**

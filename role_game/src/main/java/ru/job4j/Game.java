@@ -1,5 +1,6 @@
 package ru.job4j;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import ru.job4j.actions.AllActionsParsersSimple;
@@ -20,7 +21,7 @@ import ru.job4j.squad.OpponentsSimple;
 import ru.job4j.squad.SquadsMapper;
 import ru.job4j.squad.SquadsMapperSimple;
 import ru.job4j.utils.RandomElementFromList;
-import ru.job4j.xml.NumberOfHeroesParserSimple;
+import ru.job4j.xml.heroes.NumberOfHeroesParserSimple;
 import ru.job4j.xml.heroes.XMLHeroParserSimple;
 import ru.job4j.xml.heroes.types.HeroTypesParserSimple;
 import ru.job4j.xml.races.RaceSquadsParserSimple;
@@ -45,6 +46,7 @@ public class Game {
     private final HeroMovedObservable movedObservable;
     private final GradeChangeObservable upgradeObservable;
     private final HeroDiedObservable diedObservable;
+    private final Logger logger = Logger.getLogger(Game.class);
 
     public Game(HeroCreatedObservable createdObservable,
                 HeroMovedObservable movedObservable,
@@ -69,6 +71,7 @@ public class Game {
      * Запустить игру.
      */
     public void startGame() {
+        this.logger.info("Role game app run.");
         final GameEnvironment environment = new GameEnvironment(
                 new StopGameSimple(),
                 this.createSquadsMapper(),
@@ -76,12 +79,20 @@ public class Game {
                 this.createAttackModifiers(),
                 new RandomElementFromList()
         );
-        final File file = new File(
-                Game.class.getResource("/configuration.xml").getPath()
+        final String configPath = Game.class
+                .getResource("/configuration.xml")
+                .getPath();
+        this.logger.info(String.format(
+                "Configuration xml file path: %s.",
+                configPath
+                )
         );
         final Document document;
         try {
-            document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
+            document = DocumentBuilderFactory
+                    .newInstance()
+                    .newDocumentBuilder()
+                    .parse(new File(configPath));
         } catch (SAXException | ParserConfigurationException | IOException e) {
             throw new IllegalStateException(e);
         }
@@ -119,6 +130,7 @@ public class Game {
                 = new SquadsMapperSimple(this.createdObservable);
         this.diedObservable.addObserver(squadsMapper);
         this.movedObservable.addObserver(squadsMapper);
+        this.logger.info("Squads controller created and initialized.");
         return squadsMapper;
     }
 
@@ -126,9 +138,11 @@ public class Game {
      * Создает хранилище здоровья всех героев.
      */
     private HealthHeroes createHeroesHealths() {
-        final HealthHeroes healthHeroes = new HealthHeroesSimple(this.diedObservable);
+        final HealthHeroes healthHeroes
+                = new HealthHeroesSimple(this.diedObservable);
         this.diedObservable.addObserver(healthHeroes);
         this.createdObservable.addObserver(healthHeroes);
+        this.logger.info("Hero health created and initialized.");
         return healthHeroes;
     }
 
@@ -136,11 +150,15 @@ public class Game {
      * Создает хранилище модификаторов атаки всех героев.
      */
     private AttackStrengthModifiers createAttackModifiers() {
-        final AttackStrengthModifiers modifiers = new AttackStrengthModifiers();
+        final AttackStrengthModifiers modifiers
+                = new AttackStrengthModifiers();
         this.diedObservable.addObserver(modifiers);
         this.movedObservable.addObserver(modifiers);
         this.createdObservable.addObserver(modifiers);
         this.initializeAttackModifiersByGrade(modifiers);
+        this.logger.info(
+                "Attack strength modifiers created and initialized."
+        );
         return modifiers;
     }
 
@@ -150,11 +168,20 @@ public class Game {
      */
     private void initializeAttackModifiersByGrade(
             AttackStrengthModifiers modifiers) {
+        final double modifierByUpgrade = 1.5d;
+        this.logger.info(String.format(
+                "Attack modifier for upgraded heroes: %.1f",
+                modifierByUpgrade
+                )
+        );
         this.upgradeObservable.addObserver(
                 new AttackModifierChangeByGrade(
                         modifiers,
-                        new AttackStrengthModifierSimple(1.5d)
+                        new AttackStrengthModifierSimple(modifierByUpgrade)
                 )
+        );
+        this.logger.info(
+                "Attack modifier change by grade created and initialized."
         );
     }
 }

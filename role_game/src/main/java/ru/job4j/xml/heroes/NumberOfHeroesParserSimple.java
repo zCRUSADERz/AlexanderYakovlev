@@ -1,8 +1,7 @@
-package ru.job4j.xml;
+package ru.job4j.xml.heroes;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import ru.job4j.xml.heroes.types.HeroTypesParser;
 import ru.job4j.xml.heroes.types.XMLHeroType;
 
 import javax.xml.xpath.XPath;
