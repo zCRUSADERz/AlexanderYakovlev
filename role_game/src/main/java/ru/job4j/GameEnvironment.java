@@ -6,7 +6,9 @@ import ru.job4j.squad.SquadsMapper;
 import ru.job4j.utils.RandomElementFromList;
 
 /**
- * Game environment.
+ * GameEnvironment.
+ * Содержит основные игровые объекты.
+ * Создан только для удобства.
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 21.10.2018

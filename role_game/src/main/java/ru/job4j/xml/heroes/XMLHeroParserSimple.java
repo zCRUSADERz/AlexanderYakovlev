@@ -2,16 +2,16 @@ package ru.job4j.xml.heroes;
 
 import org.w3c.dom.Node;
 import ru.job4j.GameEnvironment;
+import ru.job4j.actions.AllActionsParsers;
 import ru.job4j.actions.HeroAction;
 import ru.job4j.heroes.HeroFactory;
 import ru.job4j.heroes.HeroFactorySimple;
-import ru.job4j.xml.actions.XMLActionParser;
+
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -24,11 +24,11 @@ import java.util.List;
  */
 public class XMLHeroParserSimple implements XMLHeroParser {
     private final XPath xPath;
-    private final Collection<XMLActionParser> actionParsers;
+    private final AllActionsParsers actionParsers;
     private final GameEnvironment environment;
 
     public XMLHeroParserSimple(XPath xPath,
-                               Collection<XMLActionParser> actionParsers,
+                               AllActionsParsers actionParsers,
                                GameEnvironment environment) {
         this.xPath = xPath;
         this.actionParsers = actionParsers;
@@ -50,8 +50,12 @@ public class XMLHeroParserSimple implements XMLHeroParser {
             final Node actions = (Node) this.xPath.evaluate(
                     "actions", heroNode, XPathConstants.NODE
             );
-            this.actionParsers.forEach(
-                    (parser) -> heroActions.addAll(parser.parseAllActions(actions))
+            this.actionParsers
+                    .allParsers(this.xPath, this.environment)
+                    .forEach(
+                            (parser) -> heroActions.addAll(
+                                    parser.parseAllActions(actions)
+                            )
             );
             return new HeroFactorySimple(
                     heroTypeDescription,

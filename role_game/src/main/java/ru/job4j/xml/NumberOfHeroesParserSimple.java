@@ -2,6 +2,7 @@ package ru.job4j.xml;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import ru.job4j.xml.heroes.types.HeroTypesParser;
 import ru.job4j.xml.heroes.types.XMLHeroType;
 
 import javax.xml.xpath.XPath;
@@ -20,11 +21,9 @@ import java.util.Set;
  */
 public class NumberOfHeroesParserSimple implements NumberOfHeroesParser {
     private final XPath xPath;
-    private final Set<XMLHeroType> heroTypes;
 
-    public NumberOfHeroesParserSimple(XPath xPath, Set<XMLHeroType> heroTypes) {
+    public NumberOfHeroesParserSimple(XPath xPath) {
         this.xPath = xPath;
-        this.heroTypes = heroTypes;
     }
 
     /**
@@ -35,24 +34,27 @@ public class NumberOfHeroesParserSimple implements NumberOfHeroesParser {
      * соответствует количество героев в отряде данного типа.
      */
     @Override
-    public Map<XMLHeroType, Integer> parseNumberOfHeroes(Document document) {
+    public Map<XMLHeroType, Integer> parseNumberOfHeroes(
+            Document document, Set<XMLHeroType> heroTypes) {
         try {
             final Map<XMLHeroType, Integer> numberOfHeroes = new HashMap<>();
             final Node squadSize = (Node) this.xPath.evaluate(
                     "/configuration/squadSize", document, XPathConstants.NODE
             );
-            this.heroTypes.forEach((heroType) -> {
+            heroTypes.forEach((heroType) -> {
                 try {
                     Node heroNode = heroType.findHeroNode(squadSize);
-                    int number = Integer.parseInt(this.xPath.evaluate("size", heroNode));
+                    int number = Integer.parseInt(
+                            this.xPath.evaluate("size", heroNode)
+                    );
                     numberOfHeroes.put(heroType, number);
                 } catch (XPathExpressionException e) {
                     e.printStackTrace();
                 }
-            });
+                    });
             return numberOfHeroes;
         } catch (XPathExpressionException e) {
-            throw new IllegalStateException("Wrong XPath expression");
+            throw new IllegalStateException("Wrong XPath expression", e);
         }
     }
 }

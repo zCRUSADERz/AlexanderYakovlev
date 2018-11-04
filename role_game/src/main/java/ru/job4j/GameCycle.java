@@ -6,7 +6,6 @@ import ru.job4j.observable.die.HeroDiedObservable;
 import ru.job4j.observable.move.HeroMovedObservable;
 import ru.job4j.observable.gradechange.GradeChangeObservable;
 import ru.job4j.squad.SquadHeroes;
-import ru.job4j.squad.SquadsMapper;
 
 import java.util.*;
 import java.util.function.Function;
@@ -19,33 +18,34 @@ import java.util.function.Function;
  * @since 21.10.2018
  */
 public class GameCycle {
-    private final SquadsMapper squadsMapper;
     private final HeroDiedObservable dieObservable;
     private final GradeChangeObservable upgradeObservable;
     private final HeroMovedObservable movedObservable;
-    private final StopGame stopGame;
+    private final GameEnvironment environment;
     private final Logger logger = Logger.getLogger(GameCycle.class);
 
-    public GameCycle(SquadsMapper squadsMapper, HeroDiedObservable dieObservable,
+    public GameCycle(HeroDiedObservable dieObservable,
                      GradeChangeObservable upgradeObservable,
-                     HeroMovedObservable movedObservable, StopGame stopGame) {
-        this.squadsMapper = squadsMapper;
+                     HeroMovedObservable movedObservable,
+                     GameEnvironment environment) {
         this.dieObservable = dieObservable;
         this.upgradeObservable = upgradeObservable;
         this.movedObservable = movedObservable;
-        this.stopGame = stopGame;
+        this.environment = environment;
     }
 
     /**
      * Запустить игровой цикл.
      */
-    public void start() {
+    public void startGame() {
         this.logger.info("Game starting!");
-        while (!this.stopGame.gameIsStopped()) {
+        final StopGame stopGame = this.environment.getStopGame();
+        while (!stopGame.gameIsStopped()) {
             final HeroMoveSequence sequence = new HeroMoveSequence(
                     heroesInRandomOrder(SquadHeroes::upgradedHeroes),
                     heroesInRandomOrder(SquadHeroes::regularHeroes),
-                    this.movedObservable, this.stopGame
+                    this.movedObservable,
+                    stopGame
             );
             this.upgradeObservable.addObserver(sequence);
             this.dieObservable.addObserver(sequence);
@@ -56,9 +56,15 @@ public class GameCycle {
         this.logger.info("Game finished!");
     }
 
-    private Collection<Hero> heroesInRandomOrder(Function<SquadHeroes, Collection<Hero>> function) {
+    private Collection<Hero> heroesInRandomOrder(
+            Function<SquadHeroes, Collection<Hero>> function) {
         final List<Hero> heroes = new ArrayList<>();
-        this.squadsMapper.allSquads().forEach(squad -> heroes.addAll(function.apply(squad)));
+        this.environment
+                .getSquadsMapper()
+                .allSquads()
+                .forEach(
+                        squad -> heroes.addAll(function.apply(squad))
+                );
         Collections.shuffle(heroes);
         return new LinkedHashSet<>(heroes);
     }

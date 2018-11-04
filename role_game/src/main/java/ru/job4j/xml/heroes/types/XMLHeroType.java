@@ -1,7 +1,6 @@
 package ru.job4j.xml.heroes.types;
 
 import org.w3c.dom.Node;
-import ru.job4j.heroes.HeroType;
 
 /**
  * XMLHeroType.
@@ -10,7 +9,7 @@ import ru.job4j.heroes.HeroType;
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 02.11.2018
  */
-public interface XMLHeroType extends HeroType {
+public interface XMLHeroType {
 
     /**
      * Находит узел содержащий данные героя этого типа.

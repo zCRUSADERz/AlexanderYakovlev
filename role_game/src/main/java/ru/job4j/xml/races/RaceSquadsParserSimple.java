@@ -2,20 +2,18 @@ package ru.job4j.xml.races;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import ru.job4j.GameEnvironment;
 import ru.job4j.races.Race;
-import ru.job4j.races.RaceSquads;
-import ru.job4j.races.RaceSquadsSimple;
+import ru.job4j.xml.heroes.types.XMLHeroType;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * RaceSquadsParserSimple.
- * Парсер отрядов. Парсит противоборствующие расы и создает два отряда.
+ * Парсер отрядов. Парсит рандомную расу из выбранного отряда.
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 02.11.2018
@@ -23,53 +21,53 @@ import java.util.List;
 public class RaceSquadsParserSimple implements RaceSquadsParser {
     private final XPath xPath;
     private final XMLRaceParser raceParser;
-    private final GameEnvironment environment;
+    private final Random random;
+
+    public RaceSquadsParserSimple(XPath xPath,
+                                  XMLRaceParser raceParser) {
+        this(xPath, raceParser, new Random());
+    }
 
     public RaceSquadsParserSimple(XPath xPath,
                                   XMLRaceParser raceParser,
-                                  GameEnvironment environment) {
+                                  Random random) {
         this.xPath = xPath;
         this.raceParser = raceParser;
-        this.environment = environment;
+        this.random = random;
     }
 
     /**
-     * Парсит расы отрядов.
-     * @param document xml документ с описанием рас отрядов.
-     * @return расы отрядов.
+     * Парсит рандомную расу из выбранного отряда.
+     * @param document xml документ с описанием рас.
+     * @param squadIndex индекс отряда из которого будет выбрана рандомная раса.
+     * @param heroTypes множество всех типов героев.
+     * @return рандомная раса из выбранного отряда.
      */
     @Override
-    public RaceSquads parseRaceSquads(Document document) {
+    public Race parseRandomRace(
+            Document document, int squadIndex, Set<XMLHeroType> heroTypes) {
         try {
-            final List<Race> firstSquadRaces = parseRaces(
-                    (NodeList) this.xPath.evaluate(
-                            "/configuration/squad[1]/*",
-                            document,
-                            XPathConstants.NODESET
-                    )
+            final NodeList races = (NodeList) this.xPath.evaluate(
+                    createExpression(squadIndex),
+                    document,
+                    XPathConstants.NODESET
             );
-            final List<Race> secondSquadRaces = parseRaces(
-                    (NodeList) this.xPath.evaluate(
-                            "/configuration/squad[2]/*",
-                            document,
-                            XPathConstants.NODESET
-                    )
-            );
-            return new RaceSquadsSimple(
-                    firstSquadRaces,
-                    secondSquadRaces,
-                    environment.getRandom()
+            int randomIndex = random.nextInt(races.getLength());
+            return this.raceParser.parseRace(
+                    races.item(randomIndex),
+                    heroTypes
             );
         } catch (XPathExpressionException e) {
-            throw new IllegalStateException("Wrong XPath epression.");
+            throw new IllegalStateException(
+                    String.format(
+                            "Wrong XPath expression: %s",
+                            createExpression(squadIndex)
+                    ), e
+            );
         }
     }
 
-    private List<Race> parseRaces(NodeList squad) {
-        final List<Race> squadRaces = new ArrayList<>();
-        for (int i = 0; i < squad.getLength(); i++) {
-            squadRaces.add(raceParser.parseRace(squad.item(i)));
-        }
-        return squadRaces;
+    private String createExpression(int index) {
+        return String.format("/configuration/squad[%d]/*", index);
     }
 }

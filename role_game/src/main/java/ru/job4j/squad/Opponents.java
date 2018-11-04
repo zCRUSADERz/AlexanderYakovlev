@@ -1,12 +1,12 @@
 package ru.job4j.squad;
 
-import ru.job4j.heroes.HeroTypeEnum;
+import org.w3c.dom.Document;
 
-import java.util.Map;
 
 /**
  * Opponents.
  * Противоборствующие стороны. Две расы воюющих друг с другом.
+ * Класс отвечает за создание противоборствующих отрядов и героев в них.
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 21.10.2018
@@ -14,8 +14,8 @@ import java.util.Map;
 public interface Opponents {
 
     /**
-     * Создать отряды противоборствующих сторон, подготовить к бою.
-     * @param numberOfHeroesByType количество героев каждого типа.
+     * Создать противоборствующие отряды, подготовить к бою.
+     * @param document xml документ с описанием отрядов.
      */
-    void createSquads(Map<HeroTypeEnum, Integer> numberOfHeroesByType);
+    void createSquads(Document document);
 }

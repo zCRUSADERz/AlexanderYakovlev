@@ -1,7 +1,7 @@
 package ru.job4j.races;
 
 import ru.job4j.heroes.Hero;
-import ru.job4j.heroes.HeroType;
+import ru.job4j.xml.heroes.types.XMLHeroType;
 
 /**
  * Race.
@@ -18,5 +18,5 @@ public interface Race {
      * @param squadName название отряда.
      * @return герой данной расы.
      */
-    Hero createHero(HeroType type, String squadName);
+    Hero createHero(XMLHeroType type, String squadName);
 }

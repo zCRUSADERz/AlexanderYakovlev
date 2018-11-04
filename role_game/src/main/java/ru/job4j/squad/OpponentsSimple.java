@@ -1,61 +1,71 @@
 package ru.job4j.squad;
 
-import ru.job4j.StopGame;
-import ru.job4j.heroes.HeroTypeEnum;
+import org.w3c.dom.Document;
+import ru.job4j.GameEnvironment;
 import ru.job4j.observable.gradechange.GradeChangeObservable;
 import ru.job4j.races.Race;
-import ru.job4j.utils.RandomElementFromList;
+import ru.job4j.xml.NumberOfHeroesParser;
+import ru.job4j.xml.heroes.types.HeroTypesParser;
+import ru.job4j.xml.heroes.types.XMLHeroType;
+import ru.job4j.xml.races.RaceSquadsParser;
 
-import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
  * Opponents.
  * Противоборствующие стороны. Две расы воюющих друг с другом.
+ * Класс отвечает за создание противоборствующих отрядов и героев в них.
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 21.10.2018
  */
 public class OpponentsSimple implements Opponents {
-    private final Race firstRace;
-    private final Race secondRace;
+    private final RaceSquadsParser squadsParser;
+    private final NumberOfHeroesParser numberOfHeroesParser;
+    private final HeroTypesParser typesParser;
     private final GradeChangeObservable upgradeObservable;
-    private final SquadsMapper squadsMapper;
-    private final StopGame stopGame;
-    private final RandomElementFromList random;
+    private final GameEnvironment environment;
 
-    public OpponentsSimple(Race firstRace, Race secondRace,
+    public OpponentsSimple(RaceSquadsParser squadsParser,
+                           NumberOfHeroesParser numberOfHeroesParser,
+                           HeroTypesParser typesParser,
                            GradeChangeObservable upgradeObservable,
-                           SquadsMapper squadsMapper,
-                           StopGame stopGame, RandomElementFromList random) {
-        this.firstRace = firstRace;
-        this.secondRace = secondRace;
+                           GameEnvironment environment) {
+        this.squadsParser = squadsParser;
+        this.numberOfHeroesParser = numberOfHeroesParser;
+        this.typesParser = typesParser;
         this.upgradeObservable = upgradeObservable;
-        this.squadsMapper = squadsMapper;
-        this.stopGame = stopGame;
-        this.random = random;
+        this.environment = environment;
     }
 
     /**
-     * Создать отряды противоборствующих сторон, подготовить к бою.
-     * @param numberOfHeroesByType количество героев каждого типа.
+     * Создать противоборствующие отряды, подготовить к бою.
+     * @param document xml документ с описанием отрядов.
      */
     @Override
-    public void createSquads(Map<HeroTypeEnum, Integer> numberOfHeroesByType) {
+    public void createSquads(Document document) {
+        final Set<XMLHeroType> heroTypes = this.typesParser.parseTypes(document);
+        final Race raceOfRed = this.squadsParser.parseRandomRace(document, 1, heroTypes);
         final String firstSquadName = "Красные";
         final SquadHeroes firstSquad = this.createSquad(firstSquadName);
+        final Race raceOfBlue = this.squadsParser.parseRandomRace(document, 2, heroTypes);
         final String secondSquadName = "Синие";
         final SquadHeroes secondSquad = this.createSquad(secondSquadName);
-        numberOfHeroesByType.forEach((type, number) ->
-                Stream.iterate(1, n -> n + 1)
-                        .limit(number)
+        final SquadsMapper squadsMapper = this.environment.getSquadsMapper();
+        this.numberOfHeroesParser
+                .parseNumberOfHeroes(document, heroTypes)
+                .forEach((type, number) ->
+                        Stream.iterate(1, n -> n + 1)
+                                .limit(number)
                         .forEach((n) -> {
+
                             squadsMapper.newHeroCreated(
-                                    firstRace.createHero(type, firstSquadName),
+                                    raceOfRed.createHero(type, firstSquadName),
                                     firstSquad, secondSquad
                             );
                             squadsMapper.newHeroCreated(
-                                    secondRace.createHero(type, secondSquadName),
+                                    raceOfBlue.createHero(type, secondSquadName),
                                     secondSquad, firstSquad
                             );
                         })
@@ -66,7 +76,7 @@ public class OpponentsSimple implements Opponents {
         return new SquadSimple(
                 squadName,
                 this.upgradeObservable,
-                this.random,
-                this.stopGame);
+                this.environment.getRandom(),
+                this.environment.getStopGame());
     }
 }

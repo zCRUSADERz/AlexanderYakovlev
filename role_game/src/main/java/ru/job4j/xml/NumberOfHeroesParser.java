@@ -4,6 +4,7 @@ import org.w3c.dom.Document;
 import ru.job4j.xml.heroes.types.XMLHeroType;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * NumberOfHeroesParser.
@@ -21,5 +22,6 @@ public interface NumberOfHeroesParser {
      * @return словарь, в котором каждому типу героя
      * соответствует количество героев в отряде данного типа.
      */
-    Map<XMLHeroType, Integer> parseNumberOfHeroes(Document document);
+    Map<XMLHeroType, Integer> parseNumberOfHeroes(
+            Document document, Set<XMLHeroType> heroTypes);
 }
