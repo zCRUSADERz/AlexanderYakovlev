@@ -13,13 +13,28 @@ import ru.job4j.observable.die.HeroDiedObservable;
  */
 public class HealthSimple implements HeroHealth {
     private final static int MAX_HEALTH = 100;
-    private final static int MIN_HEALTH = 0;
+    private final int minHealth;
     private final HeroDiedObservable dieObservable;
-    private int health = MAX_HEALTH;
-    private final Logger logger = Logger.getLogger(HealthSimple.class);
+    private final HealthLogger logger;
+    private int health;
 
     public HealthSimple(HeroDiedObservable dieObservable) {
+        this(
+                MAX_HEALTH,
+                0,
+                dieObservable,
+                new HealthLogger()
+        );
+    }
+
+    public HealthSimple(int health,
+                        int minHealth,
+                        HeroDiedObservable dieObservable,
+                        HealthLogger logger) {
+        this.minHealth = minHealth;
+        this.health = health;
         this.dieObservable = dieObservable;
+        this.logger = logger;
     }
 
     /**
@@ -28,25 +43,49 @@ public class HealthSimple implements HeroHealth {
      * то герой будет убит и будут оповещены наблюдатели за данным событием.
      * @param heroOwner герой владелец здоровья.
      * @param damage полученный урон.
+     * @throws IllegalStateException если герой уже мертв(HP равно или меньше
+     * минимальной отметки HP)
      */
     @Override
     public void takeDamage(Hero heroOwner, int damage) {
+        if (isDead()) {
+            throw new IllegalStateException(String.format(
+                    "%s is already dead. His hp: %d, minHP: %d",
+                    heroOwner, this.health, this.minHealth
+            ));
+        }
         final int startHP = this.health;
         this.health -= damage;
-        this.logger.info(
-                String.format(
-                        "%s, HP: %d. Damage: %d, resultHP: %d.",
-                        heroOwner, startHP, damage, this.health
-                )
-        );
-        if (this.health <= MIN_HEALTH) {
+        this.logger.logDamage(heroOwner, startHP, damage, this.health);
+        if (isDead()) {
+            this.logger.logHeroDie(heroOwner, this.minHealth, this.health);
+            this.dieObservable.heroDied(heroOwner);
+        }
+    }
+
+    private boolean isDead() {
+        return this.health <= this.minHealth;
+    }
+
+    public static class HealthLogger {
+        private final Logger logger = Logger.getLogger(HealthLogger.class);
+
+        public void logDamage(Hero hero, int currentHP, int damage, int resultHP) {
+            this.logger.info(
+                    String.format(
+                            "%s, HP: %d. Damage: %d, resultHP: %d.",
+                            hero, currentHP, damage, resultHP
+                    )
+            );
+        }
+
+        public void logHeroDie(Hero hero, int minHP, int heroHP) {
             this.logger.info(
                     String.format(
                             "%s die. Min health: %d, hero health: %d.",
-                            heroOwner, MIN_HEALTH, this.health
+                            hero, minHP, heroHP
                     )
             );
-            this.dieObservable.heroDied(heroOwner);
         }
     }
 }
