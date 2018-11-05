@@ -17,16 +17,22 @@ import java.util.Map;
 public class HealthHeroesSimple implements HealthHeroes {
     private final Map<Hero, HeroHealth> heroHealthMap;
     private final HeroDiedObservable diedObservable;
-    private final Logger logger = Logger.getLogger(HealthHeroesSimple.class);
+    private final Logger logger;
 
     public HealthHeroesSimple(HeroDiedObservable diedObservable) {
-        this(new HashMap<>(), diedObservable);
+        this(
+                new HashMap<>(),
+                diedObservable,
+                Logger.getLogger(HealthHeroesSimple.class)
+        );
     }
 
     public HealthHeroesSimple(Map<Hero, HeroHealth> heroHealthMap,
-                              HeroDiedObservable diedObservable) {
+                              HeroDiedObservable diedObservable,
+                              Logger logger) {
         this.heroHealthMap = heroHealthMap;
         this.diedObservable = diedObservable;
+        this.logger = logger;
     }
 
     /**
@@ -36,12 +42,18 @@ public class HealthHeroesSimple implements HealthHeroes {
      */
     @Override
     public void attackHero(Hero hero, int damage) {
+        final HeroHealth heroHealth = this.heroHealthMap.get(hero);
+        if (heroHealth == null) {
+            throw new IllegalStateException(String.format(
+                    "%s has no health.", hero
+            ));
+        }
         this.logger.info(
                 String.format(
                         "%s, is attacked.", hero
                 )
         );
-        this.heroHealthMap.get(hero).takeDamage(hero, damage);
+        heroHealth.takeDamage(hero, damage);
     }
 
     /**

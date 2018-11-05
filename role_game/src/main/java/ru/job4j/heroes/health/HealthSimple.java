@@ -31,8 +31,8 @@ public class HealthSimple implements HeroHealth {
                         int minHealth,
                         HeroDiedObservable dieObservable,
                         HealthLogger logger) {
-        this.minHealth = minHealth;
         this.health = health;
+        this.minHealth = minHealth;
         this.dieObservable = dieObservable;
         this.logger = logger;
     }

@@ -11,7 +11,7 @@ import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.*;
 
 /**
- * HealthSimpleTest.
+ * HealthSimpleTest..
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 05.11.2018
@@ -25,18 +25,24 @@ public class HealthSimpleTest {
     @Mock
     private HealthSimple.HealthLogger logger;
 
-    @Test
-    public void whenDamageLessThanStartHPThenLogDamage() {
-        final int startHP = 100;
-        final HealthSimple health = new HealthSimple(
+    private HealthSimple health;
+
+    private void initHealth(int startHP, int minHP) {
+        this.health = new HealthSimple(
                 startHP,
-                0,
+                minHP,
                 this.diedObservable,
                 this.logger
         );
+    }
+
+    @Test
+    public void whenDamageLessThanStartHPThenLogDamage() {
+        final int startHP = 100;
+        this.initHealth(startHP, 0);
         final int damage = 7;
         final int resultHP = startHP - damage;
-        health.takeDamage(hero, damage);
+        this.health.takeDamage(hero, damage);
         verify(this.logger, only())
                 .logDamage(hero, startHP, damage, resultHP);
         verify(this.logger, never())
@@ -48,30 +54,20 @@ public class HealthSimpleTest {
     public void whenDamageGreaterOrEqualThanStartHPThenHeroDied() {
         final int startHP = 10;
         final int minHP = 0;
-        final HealthSimple health = new HealthSimple(
-                startHP,
-                minHP,
-                this.diedObservable,
-                this.logger
-        );
+        this.initHealth(startHP, minHP);
         final int damage = 25;
         final int resultHP = startHP - damage;
-        health.takeDamage(hero, damage);
+        this.health.takeDamage(hero, damage);
         verify(this.logger, times(1))
                 .logDamage(this.hero, startHP, damage, resultHP);
         verify(this.logger, times(1))
                 .logHeroDie(this.hero, minHP, resultHP);
-        verify(this.diedObservable, only()).heroDied(hero);
+        verify(this.diedObservable, only()).heroDied(this.hero);
     }
 
     @Test(expected = IllegalStateException.class)
     public void whenHeroIsDeadThenTakeDamageThrowIllegalStateException() {
-        final HealthSimple health = new HealthSimple(
-                0,
-                0,
-                this.diedObservable,
-                this.logger
-        );
-        health.takeDamage(this.hero, 0);
+        this.initHealth(0, 0);
+        this.health.takeDamage(this.hero, 0);
     }
 }
