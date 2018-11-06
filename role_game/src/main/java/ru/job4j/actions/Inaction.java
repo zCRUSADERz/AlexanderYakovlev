@@ -25,6 +25,6 @@ public class Inaction implements HeroAction {
 
     @Override
     public String toString() {
-        return "Default action. The hero is inactive.";
+        return "Hero is inactive.";
     }
 }

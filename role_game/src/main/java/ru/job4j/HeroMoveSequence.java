@@ -24,7 +24,9 @@ public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
     private final Logger logger = Logger.getLogger(HeroMoveSequence.class);
 
     public HeroMoveSequence(Collection<Hero> upgradedHeroes,
-                            Collection<Hero> regularHeroes, HeroMovedObservable heroMovedObservable, StopGame stopGame) {
+                            Collection<Hero> regularHeroes,
+                            HeroMovedObservable heroMovedObservable,
+                            StopGame stopGame) {
         this.upgradedHeroes = upgradedHeroes;
         this.regularHeroes = regularHeroes;
         this.heroMovedObservable = heroMovedObservable;
@@ -50,8 +52,8 @@ public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
             iterator.remove();
             this.logger.info(String.format("%s turn.", hero));
             this.movedHeroes.add(hero);
-            this.heroMovedObservable.heroMoved(hero);
             hero.doAction();
+            this.heroMovedObservable.heroMoved(hero);
             this.logger.info(String.format("%s completed his turn.", hero));
             this.logger.info("------------------------------------");
         }
@@ -75,15 +77,10 @@ public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
      */
     @Override
     public void upgraded(Hero hero) {
-        if (!this.movedHeroes.contains(hero)) {
-            if (!this.regularHeroes.remove(hero)) {
-                throw new IllegalStateException(
-                        String.format("%s not in regular group", hero)
-                );
-            }
+        if (this.regularHeroes.remove(hero)) {
             this.upgradedHeroes.add(hero);
             this.logger.info(
-                    String.format("%s was replace to upgraded group", hero)
+                    String.format("%s was replace to upgraded group.", hero)
             );
         }
     }
@@ -95,15 +92,10 @@ public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
      */
     @Override
     public void degraded(Hero hero) {
-        if (!this.movedHeroes.contains(hero)) {
-            if (!this.upgradedHeroes.remove(hero)) {
-                throw new IllegalStateException(
-                        String.format("%s not in upgraded group", hero)
-                );
-            }
+        if (this.upgradedHeroes.remove(hero)) {
             this.regularHeroes.add(hero);
             this.logger.info(
-                    String.format("%s was replace to regular group", hero)
+                    String.format("%s was replace to regular group.", hero)
             );
         }
     }

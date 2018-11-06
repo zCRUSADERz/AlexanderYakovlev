@@ -23,7 +23,7 @@ public class GradeActionSimple implements HeroAction {
     public void act(Hero heroActor) {
         if (this.randomTarget.targetsIsEmptyFor(heroActor)) {
             this.logger.info(String.format(
-                    "Hero %s did not find suitable targets. "
+                    "%s did not find suitable targets.%n"
                             + "%s perform the default action(%s).",
                     heroActor, heroActor, this.defaultAction
             ));
