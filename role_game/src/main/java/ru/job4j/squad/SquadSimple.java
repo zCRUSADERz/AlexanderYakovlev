@@ -56,8 +56,8 @@ public class SquadSimple implements SquadHeroes {
      * @return рандомный герой из отряда.
      */
     @Override
-    public Hero randomHero() {
-        return this.random.randomElement(new ArrayList<>(this.squad));
+    public Optional<Hero> randomHero() {
+        return this.randomHero(this.squad);
     }
 
     /**
@@ -70,13 +70,8 @@ public class SquadSimple implements SquadHeroes {
     }
 
     @Override
-    public boolean upgradedHeroesIsEmpty() {
-        return this.upgradedHeroes.isEmpty();
-    }
-
-    @Override
-    public Hero randomUpgradedHero() {
-        return this.random.randomElement(new ArrayList<>(this.upgradedHeroes));
+    public Optional<Hero> randomUpgradedHero() {
+        return this.randomHero(this.upgradedHeroes);
     }
 
     /**
@@ -89,13 +84,8 @@ public class SquadSimple implements SquadHeroes {
     }
 
     @Override
-    public boolean regularHeroesIsEmpty() {
-        return this.regularHeroes.isEmpty();
-    }
-
-    @Override
-    public Hero randomRegularHero() {
-        return this.random.randomElement(new ArrayList<>(this.regularHeroes));
+    public Optional<Hero> randomRegularHero() {
+        return this.randomHero(this.regularHeroes);
     }
 
     /**
@@ -244,5 +234,18 @@ public class SquadSimple implements SquadHeroes {
                 upgradedHeroes, observable, random,
                 stopGame, logger
         );
+    }
+
+    private Optional<Hero> randomHero(Set<Hero> group) {
+        final Optional<Hero> result;
+        if (group.isEmpty()) {
+            result = Optional.empty();
+        } else {
+            result = Optional.of(
+                    this.random.randomElement(
+                            new ArrayList<>(group))
+            );
+        }
+        return result;
     }
 }

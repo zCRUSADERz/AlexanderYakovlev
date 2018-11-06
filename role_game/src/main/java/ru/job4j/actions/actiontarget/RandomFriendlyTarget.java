@@ -3,6 +3,8 @@ package ru.job4j.actions.actiontarget;
 import ru.job4j.heroes.Hero;
 import ru.job4j.squad.SquadsMapper;
 
+import java.util.Optional;
+
 /**
  * RandomFriendlyTarget.
  * Рандомный дружественный герой для выполнения действия.
@@ -23,7 +25,7 @@ public class RandomFriendlyTarget implements RandomTarget {
      * @return дружественный герой, цель.
      */
     @Override
-    public Hero randomTargetFor(Hero hero) {
+    public Optional<Hero> randomTargetFor(Hero hero) {
         return this.squadsMapper
                 .ownSquadFor(hero)
                 .randomHero();

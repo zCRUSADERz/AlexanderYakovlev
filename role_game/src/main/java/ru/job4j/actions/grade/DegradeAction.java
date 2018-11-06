@@ -3,8 +3,6 @@ package ru.job4j.actions.grade;
 import ru.job4j.heroes.Hero;
 import ru.job4j.squad.SquadsMapper;
 
-import java.util.Collection;
-
 /**
  * Degrade action.
  * Снятие улучшения с персонажа. Персонаж удаляется из привилегированной группы.

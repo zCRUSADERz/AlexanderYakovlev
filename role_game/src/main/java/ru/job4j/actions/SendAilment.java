@@ -33,7 +33,7 @@ public class SendAilment implements HeroAction {
      */
     @Override
     public void act(Hero heroActor) {
-        final Hero enemyHero = this.randomTarget.randomTargetFor(heroActor);
+        final Hero enemyHero = this.randomTarget.randomTargetFor(heroActor).get();
         this.modifiers.add(enemyHero, this.attackModifier);
         this.logger.info(String.format(
                 "%s sent the disease to the %s. (%s)",

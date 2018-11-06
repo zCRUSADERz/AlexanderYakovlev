@@ -37,7 +37,7 @@ public class AttackEnemy implements HeroAction {
      */
     @Override
     public void act(Hero heroActor) {
-        final Hero enemyHero = this.randomTarget.randomTargetFor(heroActor);
+        final Hero enemyHero = this.randomTarget.randomTargetFor(heroActor).get();
         int resultDamage = this.modifiers.applyModifiersFor(heroActor, this.damage);
         this.logger.info(
                 String.format(

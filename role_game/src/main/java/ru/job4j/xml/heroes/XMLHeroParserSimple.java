@@ -73,7 +73,7 @@ public class XMLHeroParserSimple implements XMLHeroParser {
                     environment.getRandom()
             );
         } catch (XPathExpressionException e) {
-            throw new IllegalStateException("Wrong XPath expression");
+            throw new IllegalStateException("Wrong XPath expression", e);
         }
     }
 }

@@ -3,6 +3,8 @@ package ru.job4j.actions.actiontarget;
 import ru.job4j.heroes.Hero;
 import ru.job4j.squad.SquadsMapper;
 
+import java.util.Optional;
+
 /**
  * RandomTargetForDegrade.
  * Рандомный герой(цель) для снятия улучшения.
@@ -10,24 +12,11 @@ import ru.job4j.squad.SquadsMapper;
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 21.10.2018
  */
-public class RandomTargetForDegrade implements RandomTargetForGrade {
+public class RandomTargetForDegrade implements RandomTarget {
     private final SquadsMapper squadsMapper;
 
     public RandomTargetForDegrade(SquadsMapper squadsMapper) {
         this.squadsMapper = squadsMapper;
-    }
-
-    /**
-     * Проверяет есть ли цели для выбранного героя.
-     * Для снятия улучшения нужны привилегированные герои.
-     * @param hero герой для которого будет проверено наличие целей.
-     * @return true если есть подходящие цели.
-     */
-    @Override
-    public boolean targetsIsEmptyFor(Hero hero) {
-        return this.squadsMapper
-                .enemySquadFor(hero)
-                .upgradedHeroesIsEmpty();
     }
 
     /**
@@ -36,7 +25,7 @@ public class RandomTargetForDegrade implements RandomTargetForGrade {
      * @return цель.
      */
     @Override
-    public Hero randomTargetFor(Hero hero) {
+    public Optional<Hero> randomTargetFor(Hero hero) {
         return this.squadsMapper
                 .enemySquadFor(hero)
                 .randomUpgradedHero();

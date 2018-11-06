@@ -3,10 +3,10 @@ package ru.job4j.squad;
 import ru.job4j.observable.die.HeroDiedObserver;
 import ru.job4j.heroes.Hero;
 import ru.job4j.observable.move.HeroMovedObserver;
-import ru.job4j.observable.newhero.HeroCreatedObservable;
 import ru.job4j.observable.newhero.HeroCreatedObserver;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Squad heroes.
@@ -22,7 +22,7 @@ public interface SquadHeroes
      * Рандомный герой из отряда.
      * @return рандомный герой из отряда.
      */
-    Hero randomHero();
+    Optional<Hero> randomHero();
 
     /**
      * Привилегированные герои отряда.
@@ -30,9 +30,7 @@ public interface SquadHeroes
      */
     Collection<Hero> upgradedHeroes();
 
-    boolean upgradedHeroesIsEmpty();
-
-    Hero randomUpgradedHero();
+    Optional<Hero> randomUpgradedHero();
 
     /**
      * Обычные герои отряда.
@@ -40,9 +38,7 @@ public interface SquadHeroes
      */
     Collection<Hero> regularHeroes();
 
-    boolean regularHeroesIsEmpty();
-
-    Hero randomRegularHero();
+    Optional<Hero> randomRegularHero();
 
     /**
      * Улучшить героя.

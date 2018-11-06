@@ -2,6 +2,8 @@ package ru.job4j.actions.actiontarget;
 
 import ru.job4j.heroes.Hero;
 
+import java.util.Optional;
+
 /**
  * RandomTarget.
  * Рандомный герой(цель) для выполнения действия.
@@ -16,5 +18,5 @@ public interface RandomTarget {
      * @param hero герой для которого будет выбрана цель.
      * @return цель.
      */
-    Hero randomTargetFor(Hero hero);
+    Optional<Hero> randomTargetFor(Hero hero);
 }
