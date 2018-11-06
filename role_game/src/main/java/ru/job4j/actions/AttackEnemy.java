@@ -3,11 +3,8 @@ package ru.job4j.actions;
 import org.apache.log4j.Logger;
 import ru.job4j.actions.actiontarget.RandomTarget;
 import ru.job4j.heroes.Hero;
-import ru.job4j.heroes.attack.AttackStrengthModifier;
 import ru.job4j.heroes.attack.AttackStrengthModifiers;
 import ru.job4j.heroes.health.HealthHeroes;
-
-import java.util.Collection;
 
 /**
  * Attack enemy.
@@ -41,19 +38,13 @@ public class AttackEnemy implements HeroAction {
     @Override
     public void act(Hero heroActor) {
         final Hero enemyHero = this.randomTarget.randomTargetFor(heroActor);
-        final Collection<AttackStrengthModifier> attackModifiers
-                = this.modifiers.modifiersFor(heroActor);
-        int resultDamage = this.damage;
-        for (AttackStrengthModifier modifier : attackModifiers) {
-            resultDamage = modifier.resultDamage(resultDamage);
-        }
+        int resultDamage = this.modifiers.applyModifiersFor(heroActor, this.damage);
         this.logger.info(
                 String.format(
-                        "%s, %s%s. Damage: %d HP.(Modifiers: %s)",
+                        "%s, %s%s. Damage: %d HP.",
                         heroActor,
                         this.actionName, enemyHero,
-                        resultDamage,
-                        attackModifiers
+                        resultDamage
                 )
         );
         this.healthHeroes.attackHero(enemyHero, resultDamage);

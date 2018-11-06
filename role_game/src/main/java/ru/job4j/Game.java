@@ -5,6 +5,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import ru.job4j.actions.AllActionsParsersSimple;
 import ru.job4j.heroes.attack.AttackModifierChangeByGrade;
+import ru.job4j.heroes.attack.AttackStrengthModifier;
 import ru.job4j.heroes.attack.AttackStrengthModifierSimple;
 import ru.job4j.heroes.attack.AttackStrengthModifiers;
 import ru.job4j.heroes.health.HealthHeroes;
@@ -168,16 +169,17 @@ public class Game {
      */
     private void initializeAttackModifiersByGrade(
             AttackStrengthModifiers modifiers) {
-        final double modifierByUpgrade = 1.5d;
+        final AttackStrengthModifier modifier
+                = new AttackStrengthModifierSimple(1.5d);
         this.logger.info(String.format(
-                "Attack modifier for upgraded heroes: %.1f",
-                modifierByUpgrade
+                "Attack modifier for upgraded heroes: %s",
+                modifier
                 )
         );
         this.upgradeObservable.addObserver(
                 new AttackModifierChangeByGrade(
                         modifiers,
-                        new AttackStrengthModifierSimple(modifierByUpgrade)
+                        modifier
                 )
         );
         this.logger.info(

@@ -37,7 +37,6 @@ public class HealthHeroesSimpleTest {
 
     @Test(expected = IllegalStateException.class)
     public void whenAttackHeroWithoutHisHealthThenThrowIllegalStateException() {
-        given(this.heroHealthMap.get(any(Hero.class))).willReturn(null);
         this.healthHeroes.attackHero(this.hero, anyInt());
     }
 
