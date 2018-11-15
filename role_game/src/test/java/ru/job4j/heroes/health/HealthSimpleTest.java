@@ -5,7 +5,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import ru.job4j.heroes.Hero;
-import ru.job4j.observable.die.HeroDiedObservable;
+import ru.job4j.observers.HeroDiedObserver;
+import ru.job4j.observers.Observables;
 
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.*;
@@ -19,7 +20,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class HealthSimpleTest {
     @Mock
-    private HeroDiedObservable diedObservable;
+    private Observables<HeroDiedObserver> diedObservable;
     @Mock
     private Hero hero;
     @Mock
@@ -62,7 +63,7 @@ public class HealthSimpleTest {
                 .logDamage(this.hero, startHP, damage, resultHP);
         verify(this.logger, times(1))
                 .logHeroDie(this.hero, minHP, resultHP);
-        verify(this.diedObservable, only()).heroDied(this.hero);
+        verify(this.diedObservable, only()).notifyObservers(this.hero);
     }
 
     @Test(expected = IllegalStateException.class)

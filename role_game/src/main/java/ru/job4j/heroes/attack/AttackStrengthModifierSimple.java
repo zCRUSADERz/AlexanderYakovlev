@@ -1,7 +1,5 @@
 package ru.job4j.heroes.attack;
 
-import java.util.Objects;
-
 /**
  * Attack strength modifier.
  * Модификатор силы урона.
@@ -22,30 +20,12 @@ public class AttackStrengthModifierSimple implements AttackStrengthModifier {
      * @return урон с учетом модификатора.
      */
     @Override
-    public int resultDamage(int initialDamage) {
+    public int damage(int initialDamage) {
         return (int) (this.modifier * initialDamage);
     }
 
     @Override
     public String toString() {
         return (int) (this.modifier * 100) + "%";
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        AttackStrengthModifierSimple that = (AttackStrengthModifierSimple) o;
-        return Double.compare(that.modifier, this.modifier) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(modifier);
     }
 }

@@ -1,9 +1,7 @@
 package ru.job4j.actions;
 
-import ru.job4j.GameEnvironment;
 import ru.job4j.xml.actions.XMLActionParser;
 
-import javax.xml.xpath.XPath;
 import java.util.Collection;
 
 /**
@@ -18,10 +16,7 @@ public interface AllActionsParsers {
 
     /**
      * Возвращает коллекцию всех парсеров действий.
-     * @param xPath XPath.
-     * @param environment основные игровые объекты.
      * @return коллекцию всех парсеров действий.
      */
-    Collection<XMLActionParser> allParsers(XPath xPath,
-                                           GameEnvironment environment);
+    Collection<XMLActionParser> parsers();
 }

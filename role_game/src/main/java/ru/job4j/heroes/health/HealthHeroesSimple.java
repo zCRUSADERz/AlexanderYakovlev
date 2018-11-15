@@ -2,7 +2,8 @@ package ru.job4j.heroes.health;
 
 import org.apache.log4j.Logger;
 import ru.job4j.heroes.Hero;
-import ru.job4j.observable.die.HeroDiedObservable;
+import ru.job4j.observers.HeroDiedObserver;
+import ru.job4j.observers.Observables;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,22 +17,22 @@ import java.util.Map;
  */
 public class HealthHeroesSimple implements HealthHeroes {
     private final Map<Hero, HeroHealth> heroHealthMap;
-    private final HeroDiedObservable diedObservable;
+    private final Observables<HeroDiedObserver> diedObservables;
     private final Logger logger;
 
-    public HealthHeroesSimple(HeroDiedObservable diedObservable) {
+    public HealthHeroesSimple(Observables<HeroDiedObserver> diedObservables) {
         this(
                 new HashMap<>(),
-                diedObservable,
+                diedObservables,
                 Logger.getLogger(HealthHeroesSimple.class)
         );
     }
 
     public HealthHeroesSimple(Map<Hero, HeroHealth> heroHealthMap,
-                              HeroDiedObservable diedObservable,
+                              Observables<HeroDiedObserver> diedObservables,
                               Logger logger) {
         this.heroHealthMap = heroHealthMap;
-        this.diedObservable = diedObservable;
+        this.diedObservables = diedObservables;
         this.logger = logger;
     }
 
@@ -85,6 +86,6 @@ public class HealthHeroesSimple implements HealthHeroes {
                     )
             );
         }
-        this.heroHealthMap.put(hero, new HealthSimple(this.diedObservable));
+        this.heroHealthMap.put(hero, new HealthSimple(this.diedObservables));
     }
 }

@@ -2,9 +2,9 @@ package ru.job4j.heroes.attack;
 
 import org.apache.log4j.Logger;
 import ru.job4j.heroes.Hero;
-import ru.job4j.observable.die.HeroDiedObserver;
-import ru.job4j.observable.move.HeroMovedObserver;
-import ru.job4j.observable.newhero.HeroCreatedObserver;
+import ru.job4j.observers.HeroDiedObserver;
+import ru.job4j.observers.HeroMovedObserver;
+import ru.job4j.observers.HeroCreatedObserver;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -81,7 +81,7 @@ public class AttackStrengthModifiers implements HeroDiedObserver, HeroMovedObser
         final Collection<AttackStrengthModifier> modifiers
                 = this.modifiersMap.get(hero);
         for (AttackStrengthModifier modifier : modifiers) {
-            resultDamage = modifier.resultDamage(resultDamage);
+            resultDamage = modifier.damage(resultDamage);
         }
         this.logger.info(String.format(
                 "%s, applying attack modifiers for damage: %d. "
@@ -131,5 +131,10 @@ public class AttackStrengthModifiers implements HeroDiedObserver, HeroMovedObser
                     "%s don't have its attack modifiers.", hero
             ));
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Attack strength modifiers";
     }
 }

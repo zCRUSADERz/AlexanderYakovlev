@@ -1,10 +1,11 @@
 package ru.job4j.xml.actions;
 
 import org.w3c.dom.Node;
-import ru.job4j.GameEnvironment;
 import ru.job4j.actions.AttackEnemy;
 import ru.job4j.actions.HeroAction;
-import ru.job4j.actions.actiontarget.RandomEnemyTarget;
+import ru.job4j.actions.actiontarget.RandomTargetForHero;
+import ru.job4j.heroes.attack.AttackStrengthModifiers;
+import ru.job4j.heroes.health.HealthHeroes;
 import ru.job4j.xml.actions.utils.FindNodeByXPath;
 
 import javax.xml.xpath.XPath;
@@ -23,12 +24,20 @@ public class XMLAttackParser implements XMLActionParser {
     private final static String XML_TAG_NAME = "attackEnemy";
     private final XPath xPath;
     private final FindNodeByXPath findNodeByXPath;
-    private final GameEnvironment environment;
+    private final RandomTargetForHero enemyFromSquad;
+    private final AttackStrengthModifiers attackModifiers;
+    private final HealthHeroes healthHeroes;
 
-    public XMLAttackParser(XPath xPath, FindNodeByXPath findNodeByXPath, GameEnvironment environment) {
+    public XMLAttackParser(XPath xPath,
+                           FindNodeByXPath findNodeByXPath,
+                           RandomTargetForHero enemyFromSquad,
+                           AttackStrengthModifiers attackModifiers,
+                           HealthHeroes healthHeroes) {
         this.xPath = xPath;
         this.findNodeByXPath = findNodeByXPath;
-        this.environment = environment;
+        this.enemyFromSquad = enemyFromSquad;
+        this.attackModifiers = attackModifiers;
+        this.healthHeroes = healthHeroes;
     }
 
     /**
@@ -53,10 +62,9 @@ public class XMLAttackParser implements XMLActionParser {
                                 new AttackEnemy(
                                         actionName,
                                         damage,
-                                        new RandomEnemyTarget(
-                                                this.environment.getSquadsMapper()
-                                        ), this.environment.getModifiers(),
-                                        this.environment.getHealthHeroes()
+                                        this.enemyFromSquad,
+                                        this.attackModifiers,
+                                        this.healthHeroes
                                 )
                         );
                     } catch (XPathExpressionException e) {

@@ -1,7 +1,7 @@
 package ru.job4j.actions;
 
 import org.apache.log4j.Logger;
-import ru.job4j.actions.actiontarget.RandomTarget;
+import ru.job4j.actions.actiontarget.RandomTargetForHero;
 import ru.job4j.heroes.Hero;
 import ru.job4j.heroes.attack.AttackStrengthModifier;
 import ru.job4j.heroes.attack.AttackStrengthModifiers;
@@ -14,12 +14,12 @@ import ru.job4j.heroes.attack.AttackStrengthModifiers;
  * @since 21.10.2018
  */
 public class SendAilment implements HeroAction {
-    private final RandomTarget randomTarget;
+    private final RandomTargetForHero randomTarget;
     private final AttackStrengthModifier attackModifier;
     private final AttackStrengthModifiers modifiers;
     private final Logger logger = Logger.getLogger(SendAilment.class);
 
-    public SendAilment(RandomTarget randomTarget,
+    public SendAilment(RandomTargetForHero randomTarget,
                        AttackStrengthModifier attackModifier,
                        AttackStrengthModifiers modifiers) {
         this.randomTarget = randomTarget;
@@ -33,7 +33,7 @@ public class SendAilment implements HeroAction {
      */
     @Override
     public void act(Hero heroActor) {
-        final Hero enemyHero = this.randomTarget.randomTargetFor(heroActor).get();
+        final Hero enemyHero = this.randomTarget.targetFor(heroActor).get();
         this.modifiers.add(enemyHero, this.attackModifier);
         this.logger.info(String.format(
                 "%s sent the disease to the %s. (%s)",

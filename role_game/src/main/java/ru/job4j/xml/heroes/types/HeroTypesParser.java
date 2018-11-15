@@ -15,8 +15,7 @@ public interface HeroTypesParser {
 
     /**
      * Парсит все типы героев.
-     * @param document xml документ содержащий описание типов героев.
      * @return типы героев.
      */
-    Set<XMLHeroType> parseTypes(Document document);
+    Set<XMLHeroType> parse();
 }

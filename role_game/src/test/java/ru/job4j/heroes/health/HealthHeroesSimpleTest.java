@@ -7,7 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import ru.job4j.heroes.Hero;
-import ru.job4j.observable.die.HeroDiedObservable;
+import ru.job4j.observers.HeroDiedObserver;
+import ru.job4j.observers.Observables;
 
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public class HealthHeroesSimpleTest {
     @Mock
     private Map<Hero, HeroHealth> heroHealthMap;
     @Mock
-    private HeroDiedObservable diedObservable;
+    private Observables<HeroDiedObserver> diedObservable;
     @Mock
     private Hero hero;
     @Mock

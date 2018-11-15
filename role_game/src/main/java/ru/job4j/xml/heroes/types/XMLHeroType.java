@@ -4,7 +4,7 @@ import org.w3c.dom.Node;
 
 /**
  * XMLHeroType.
- * Тип героя(Например: маг, лучникб воин и др.).
+ * Тип героя(Например: маг, лучник, воин и др.).
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 02.11.2018

@@ -13,10 +13,6 @@ public interface HeroAction {
 
     /**
      * Выполнить действие.
-     * @param heroActor герой выполняющий действие.
      */
     void act(Hero heroActor);
-
-    @Override
-    String toString();
 }

@@ -18,10 +18,8 @@ public interface NumberOfHeroesParser {
     /**
      * Возвращает словарь, в котором каждому типу героя
      * соответствует количество героев в отряде данного типа.
-     * @param document xml документ с описанием размера отряда.
      * @return словарь, в котором каждому типу героя
      * соответствует количество героев в отряде данного типа.
      */
-    Map<XMLHeroType, Integer> parseNumberOfHeroes(
-            Document document, Set<XMLHeroType> heroTypes);
+    Map<XMLHeroType, Integer> parse();
 }

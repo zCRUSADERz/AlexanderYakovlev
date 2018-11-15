@@ -1,11 +1,11 @@
 package ru.job4j.xml.actions;
 
 import org.w3c.dom.Node;
-import ru.job4j.GameEnvironment;
 import ru.job4j.actions.HeroAction;
 import ru.job4j.actions.SendAilment;
-import ru.job4j.actions.actiontarget.RandomEnemyTarget;
+import ru.job4j.actions.actiontarget.RandomTargetForHero;
 import ru.job4j.heroes.attack.AttackStrengthModifierSimple;
+import ru.job4j.heroes.attack.AttackStrengthModifiers;
 import ru.job4j.xml.actions.utils.FindNodeByXPath;
 
 import javax.xml.xpath.XPath;
@@ -25,12 +25,17 @@ public class XMLSendAilmentParser implements XMLActionParser {
     private final static String XML_TAG_NAME = "sendAilment";
     private final XPath xPath;
     private final FindNodeByXPath findNodeByXPath;
-    private final GameEnvironment environment;
+    private final RandomTargetForHero target;
+    private final AttackStrengthModifiers attackModifiers;
 
-    public XMLSendAilmentParser(XPath xPath, FindNodeByXPath findNodeByXPath, GameEnvironment environment) {
+    public XMLSendAilmentParser(XPath xPath,
+                                FindNodeByXPath findNodeByXPath,
+                                RandomTargetForHero target,
+                                AttackStrengthModifiers attackModifiers) {
         this.xPath = xPath;
         this.findNodeByXPath = findNodeByXPath;
-        this.environment = environment;
+        this.target = target;
+        this.attackModifiers = attackModifiers;
     }
 
 
@@ -52,11 +57,9 @@ public class XMLSendAilmentParser implements XMLActionParser {
                         );
                         result.add(
                                 new SendAilment(
-                                        new RandomEnemyTarget(
-                                                this.environment.getSquadsMapper()
-                                        ),
+                                        this.target,
                                         new AttackStrengthModifierSimple(modifier),
-                                        this.environment.getModifiers()
+                                        this.attackModifiers
                                 )
                         );
                     } catch (XPathExpressionException e) {

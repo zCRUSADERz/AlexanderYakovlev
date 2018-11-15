@@ -1,7 +1,7 @@
 package ru.job4j.actions;
 
 import org.apache.log4j.Logger;
-import ru.job4j.actions.actiontarget.RandomTarget;
+import ru.job4j.actions.actiontarget.RandomTargetForHero;
 import ru.job4j.heroes.Hero;
 import ru.job4j.heroes.attack.AttackStrengthModifiers;
 import ru.job4j.heroes.health.HealthHeroes;
@@ -16,13 +16,15 @@ import ru.job4j.heroes.health.HealthHeroes;
 public class AttackEnemy implements HeroAction {
     private final String actionName;
     private final int damage;
-    private final RandomTarget randomTarget;
+    private final RandomTargetForHero randomTarget;
     private final AttackStrengthModifiers modifiers;
     private final HealthHeroes healthHeroes;
     private final Logger logger = Logger.getLogger(AttackEnemy.class);
 
-    public AttackEnemy(String actionName, int damage,
-                       RandomTarget randomTarget, AttackStrengthModifiers modifiers,
+    public AttackEnemy(String actionName,
+                       int damage,
+                       RandomTargetForHero randomTarget,
+                       AttackStrengthModifiers modifiers,
                        HealthHeroes healthHeroes) {
         this.actionName = actionName;
         this.damage = damage;
@@ -37,7 +39,9 @@ public class AttackEnemy implements HeroAction {
      */
     @Override
     public void act(Hero heroActor) {
-        final Hero enemyHero = this.randomTarget.randomTargetFor(heroActor).get();
+        final Hero enemyHero = this.randomTarget
+                .targetFor(heroActor)
+                .get();
         int resultDamage = this.modifiers.applyModifiersFor(heroActor, this.damage);
         this.logger.info(
                 String.format(

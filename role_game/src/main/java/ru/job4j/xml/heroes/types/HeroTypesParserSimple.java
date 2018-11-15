@@ -1,5 +1,6 @@
 package ru.job4j.xml.heroes.types;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -18,18 +19,20 @@ import java.util.Set;
  */
 public class HeroTypesParserSimple implements HeroTypesParser {
     private final XPath xPath;
+    private final Document document;
+    private final Logger logger = Logger.getLogger(HeroTypesParserSimple.class);
 
-    public HeroTypesParserSimple(XPath xPath) {
+    public HeroTypesParserSimple(XPath xPath, Document document) {
         this.xPath = xPath;
+        this.document = document;
     }
 
     /**
      * Парсит все типы героев.
-     * @param document xml документ содержащий описание типов героев.
      * @return типы героев.
      */
     @Override
-    public Set<XMLHeroType> parseTypes(Document document) {
+    public Set<XMLHeroType> parse() {
         try {
             final NodeList heroTypes = (NodeList) xPath.evaluate(
                     "/configuration/heroTypes/*", document, XPathConstants.NODESET
@@ -43,6 +46,7 @@ public class HeroTypesParserSimple implements HeroTypesParser {
                         )
                 );
             }
+            this.logger.info(String.format("HeroTypesParser - parse hero types: %s", types));
             return types;
         } catch (XPathExpressionException e) {
             throw new IllegalStateException("Wrong XPath expression.", e);

@@ -43,11 +43,6 @@ public class XMLHeroTypeSimple implements XMLHeroType {
     }
 
     @Override
-    public String toString() {
-        return this.typeName;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -56,12 +51,16 @@ public class XMLHeroTypeSimple implements XMLHeroType {
             return false;
         }
         XMLHeroTypeSimple that = (XMLHeroTypeSimple) o;
-        return Objects.equals(xPath, that.xPath)
-                && Objects.equals(typeName, that.typeName);
+        return Objects.equals(typeName, that.typeName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(xPath, typeName);
+        return Objects.hash(typeName);
+    }
+
+    @Override
+    public String toString() {
+        return this.typeName;
     }
 }

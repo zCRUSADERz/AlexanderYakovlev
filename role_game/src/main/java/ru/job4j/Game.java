@@ -4,29 +4,31 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import ru.job4j.actions.AllActionsParsersSimple;
+import ru.job4j.actions.actiontarget.Targets;
 import ru.job4j.heroes.attack.AttackModifierChangeByGrade;
 import ru.job4j.heroes.attack.AttackStrengthModifier;
 import ru.job4j.heroes.attack.AttackStrengthModifierSimple;
 import ru.job4j.heroes.attack.AttackStrengthModifiers;
 import ru.job4j.heroes.health.HealthHeroes;
 import ru.job4j.heroes.health.HealthHeroesSimple;
-import ru.job4j.observable.die.HeroDiedObservableSimple;
-import ru.job4j.observable.die.HeroDiedObservable;
-import ru.job4j.observable.move.HeroMovedObservableSimple;
-import ru.job4j.observable.move.HeroMovedObservable;
-import ru.job4j.observable.gradechange.GradeChangedObservableSimple;
-import ru.job4j.observable.gradechange.GradeChangeObservable;
-import ru.job4j.observable.newhero.HeroCreatedObservable;
-import ru.job4j.observable.newhero.HeroCreatedObservableSimple;
-import ru.job4j.squad.OpponentsSimple;
-import ru.job4j.squad.SquadsMapper;
-import ru.job4j.squad.SquadsMapperSimple;
+import ru.job4j.observers.HeroDiedObserver;
+import ru.job4j.observers.DegradeObserver;
+import ru.job4j.observers.Observable;
+import ru.job4j.observers.UpgradeObserver;
+import ru.job4j.observers.HeroMovedObserver;
+import ru.job4j.observers.HeroCreatedObserver;
+import ru.job4j.observers.Observables;
+import ru.job4j.squad.SquadHeroesFactory;
+import ru.job4j.squad.SquadRegister;
+import ru.job4j.squad.SquadSubType;
+import ru.job4j.squad.observers.*;
+import ru.job4j.squad.observers.actions.*;
 import ru.job4j.utils.RandomElementFromList;
 import ru.job4j.xml.heroes.NumberOfHeroesParserSimple;
 import ru.job4j.xml.heroes.XMLHeroParserSimple;
 import ru.job4j.xml.heroes.types.HeroTypesParserSimple;
-import ru.job4j.xml.races.RaceSquadsParserSimple;
-import ru.job4j.xml.races.XMLRaceParserSimple;
+import ru.job4j.xml.races.SquadsParserSimple;
+import ru.job4j.xml.races.XMLRandomRaceParserSimple;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,6 +36,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
 
 /**
  * Game.
@@ -43,29 +46,10 @@ import java.io.IOException;
  * @since 21.10.2018
  */
 public class Game {
-    private final HeroCreatedObservable createdObservable;
-    private final HeroMovedObservable movedObservable;
-    private final GradeChangeObservable upgradeObservable;
-    private final HeroDiedObservable diedObservable;
     private final Logger logger = Logger.getLogger(Game.class);
 
-    public Game(HeroCreatedObservable createdObservable,
-                HeroMovedObservable movedObservable,
-                GradeChangeObservable upgradeObservable,
-                HeroDiedObservable diedObservable) {
-        this.createdObservable = createdObservable;
-        this.movedObservable = movedObservable;
-        this.upgradeObservable = upgradeObservable;
-        this.diedObservable = diedObservable;
-    }
-
     public static void main(String[] args) {
-        new Game(
-                new HeroCreatedObservableSimple(),
-                new HeroMovedObservableSimple(),
-                new GradeChangedObservableSimple(),
-                new HeroDiedObservableSimple()
-        ).startGame();
+        new Game().startGame();
     }
 
     /**
@@ -73,13 +57,130 @@ public class Game {
      */
     public void startGame() {
         this.logger.info("Role game app run.");
-        final GameEnvironment environment = new GameEnvironment(
-                new StopGameSimple(),
-                this.createSquadsMapper(),
-                this.createHeroesHealths(),
-                this.createAttackModifiers(),
-                new RandomElementFromList()
+        final Observables<HeroDiedObserver> diedObservables
+                = new Observables<>(HeroDiedObserver.DIED);
+        final HealthHeroes healthHeroes
+                = new HealthHeroesSimple(diedObservables);
+        final AttackStrengthModifiers attackModifiers
+                = new AttackStrengthModifiers();
+        final AttackStrengthModifier modifierForUpgraded
+                = new AttackStrengthModifierSimple(1.5d);
+        final AttackModifierChangeByGrade attackModifierChangeByGrade =
+                new AttackModifierChangeByGrade(attackModifiers, modifierForUpgraded);
+        final RandomElementFromList random = new RandomElementFromList();
+        final Targets targets = new Targets(random);
+        final XPath xPath = XPathFactory.newInstance().newXPath();
+        final StopGame game = new StopGameSimple();
+        final Observables<HeroCreatedObserver> createdObservables
+                = new Observables<>(
+                Arrays.asList(
+                        attackModifiers,
+                        healthHeroes
+                ),
+                HeroCreatedObserver.CREATED
         );
+        final Observables<HeroMovedObserver> movedObservables =
+                new Observables<>(
+                        Collections.singleton(
+                                attackModifiers
+                        ),
+                        HeroMovedObserver.MOVED
+                );
+        final Observables<UpgradeObserver> upgradeObservables
+                = new Observables<>(
+                Collections.singleton(
+                        attackModifierChangeByGrade
+                ),
+                UpgradeObserver.UPGRADED
+        );
+        final Observables<DegradeObserver> degradeObservables
+                = new Observables<>(
+                Collections.singleton(
+                        attackModifierChangeByGrade
+                ),
+                DegradeObserver.DEGRADED
+        );
+        diedObservables.addObserver(healthHeroes);
+        diedObservables.addObserver(attackModifiers);
+        diedObservables.addObserver(targets);
+        diedObservables.addObserver(movedObservables);
+        diedObservables.addObserver(upgradeObservables);
+        diedObservables.addObserver(degradeObservables);
+        diedObservables.addObserver(diedObservables);
+        final Document document = this.configurationXMLDoc();
+        new GameCycle(
+                new SquadsParserSimple(
+                        xPath,
+                        new XMLRandomRaceParserSimple(
+                                xPath,
+                                new XMLHeroParserSimple(
+                                        xPath,
+                                        new AllActionsParsersSimple(
+                                                xPath,
+                                                attackModifiers,
+                                                healthHeroes,
+                                                targets,
+                                                upgradeObservables,
+                                                degradeObservables
+                                        ),
+                                        random),
+                                new HeroTypesParserSimple(
+                                        xPath,
+                                        document
+                                ),
+                                new Random()
+                        ),
+                        targets,
+                        new SquadRegister(
+                                this.observersForMainSquads(
+                                        diedObservables,
+                                        movedObservables,
+                                        upgradeObservables,
+                                        degradeObservables,
+                                        game
+                                )
+                        ),
+                        new SquadHeroesFactory(
+                                new NumberOfHeroesParserSimple(
+                                        xPath,
+                                        document,
+                                        new HeroTypesParserSimple(
+                                                xPath,
+                                                document
+                                        )
+                                ),
+                                Arrays.asList(
+                                        SquadSubType.MAIN,
+                                        SquadSubType.REGULAR
+                                ),
+                                new Observable<>(
+                                        Arrays.asList(
+                                                createdObservables,
+                                                movedObservables,
+                                                upgradeObservables,
+                                                degradeObservables,
+                                                diedObservables
+                                        ),
+                                        HeroCreatedObserver.CREATED
+                                ),
+                                createdObservables,
+                                AddHero::new
+                        )
+                ),
+                new SquadRegister(
+                        this.observersForMoveSequenceSquads(
+                                diedObservables,
+                                movedObservables,
+                                upgradeObservables,
+                                degradeObservables
+                        )
+                ),
+                movedObservables,
+                game
+        ).startGame(document);
+    }
+
+    private Document configurationXMLDoc() {
         final String configPath = Game.class
                 .getResource("/configuration.xml")
                 .getPath();
@@ -88,102 +189,183 @@ public class Game {
                 configPath
                 )
         );
-        final Document document;
         try {
-            document = DocumentBuilderFactory
+            return DocumentBuilderFactory
                     .newInstance()
                     .newDocumentBuilder()
                     .parse(new File(configPath));
         } catch (SAXException | ParserConfigurationException | IOException e) {
             throw new IllegalStateException(e);
         }
-        final XPath xPath = XPathFactory.newInstance().newXPath();
-        new OpponentsSimple(
-                new RaceSquadsParserSimple(
-                        xPath,
-                        new XMLRaceParserSimple(
-                                xPath,
-                                new XMLHeroParserSimple(
-                                        xPath,
-                                        new AllActionsParsersSimple(),
-                                        environment
+    }
+
+    private Map<SquadSubType, Collection<ObserverFactory>> observersForMainSquads(
+            Observables<HeroDiedObserver> diedObservables,
+            Observables<HeroMovedObserver> movedObservables,
+            Observables<UpgradeObserver> upgradeObservables,
+            Observables<DegradeObserver> degradeObservables,
+            StopGame game) {
+        final Map<SquadSubType, Collection<ObserverFactory>> observers = new HashMap<>();
+        observers.put(
+                SquadSubType.MAIN,
+                Collections.singleton(
+                        new ObserverFactory<>(
+                                diedObservables,
+                                squad -> new DiedObserver(
+                                        "Died",
+                                        new RemoveAndCheckSquadDestroyed(
+                                                squad,
+                                                SquadSubType.MAIN,
+                                                game
+                                        )
                                 )
                         )
-                ),
-                new NumberOfHeroesParserSimple(xPath),
-                new HeroTypesParserSimple(xPath),
-                upgradeObservable,
-                environment
-        ).createSquads(document);
-        new GameCycle(
-                diedObservable,
-                upgradeObservable,
-                movedObservable,
-                environment
-        ).startGame();
-    }
-
-    /**
-     * Создает контроллер отряов.
-     */
-    private SquadsMapper createSquadsMapper() {
-        final SquadsMapper squadsMapper
-                = new SquadsMapperSimple(this.createdObservable);
-        this.diedObservable.addObserver(squadsMapper);
-        this.movedObservable.addObserver(squadsMapper);
-        this.logger.info("Squads controller created and initialized.");
-        return squadsMapper;
-    }
-
-    /**
-     * Создает хранилище здоровья всех героев.
-     */
-    private HealthHeroes createHeroesHealths() {
-        final HealthHeroes healthHeroes
-                = new HealthHeroesSimple(this.diedObservable);
-        this.diedObservable.addObserver(healthHeroes);
-        this.createdObservable.addObserver(healthHeroes);
-        this.logger.info("Hero health created and initialized.");
-        return healthHeroes;
-    }
-
-    /**
-     * Создает хранилище модификаторов атаки всех героев.
-     */
-    private AttackStrengthModifiers createAttackModifiers() {
-        final AttackStrengthModifiers modifiers
-                = new AttackStrengthModifiers();
-        this.diedObservable.addObserver(modifiers);
-        this.movedObservable.addObserver(modifiers);
-        this.createdObservable.addObserver(modifiers);
-        this.initializeAttackModifiersByGrade(modifiers);
-        this.logger.info(
-                "Attack strength modifiers created and initialized."
-        );
-        return modifiers;
-    }
-
-    /**
-     * Инициализирует объект наблюдающий изменения привилегий героев.
-     * @param modifiers модификаторы силы атаки героев.
-     */
-    private void initializeAttackModifiersByGrade(
-            AttackStrengthModifiers modifiers) {
-        final AttackStrengthModifier modifier
-                = new AttackStrengthModifierSimple(1.5d);
-        this.logger.info(String.format(
-                "Attack modifier for upgraded heroes: %s",
-                modifier
                 )
         );
-        this.upgradeObservable.addObserver(
-                new AttackModifierChangeByGrade(
-                        modifiers,
-                        modifier
+        observers.put(
+                SquadSubType.REGULAR,
+                Arrays.asList(
+                        new ObserverFactory<>(
+                                upgradeObservables,
+                                squad -> new UpgradeObserverSquad(
+                                        "Upgrade",
+                                        new TransferHero(
+                                                squad,
+                                                SquadSubType.REGULAR,
+                                                SquadSubType.UPGRADED
+                                        )
+                                )
+                        ),
+                        new ObserverFactory<>(
+                                diedObservables,
+                                squad -> new DiedObserver(
+                                        "Died",
+                                        new RemoveHero(
+                                                squad,
+                                                SquadSubType.REGULAR
+                                        )
+                                )
+                        )
                 )
         );
-        this.logger.info(
-                "Attack modifier change by grade created and initialized."
+        observers.put(
+                SquadSubType.UPGRADED,
+                Arrays.asList(
+                        new ObserverFactory<>(
+                                movedObservables,
+                                squad -> new MovedObserver(
+                                        "Moved",
+                                        new TransferHero(
+                                                squad,
+                                                SquadSubType.UPGRADED,
+                                                SquadSubType.REGULAR
+                                        )
+                                )
+                        ),
+                        new ObserverFactory<>(
+                                degradeObservables,
+                                squad -> new DegradeObserverSquad(
+                                        "Degrade",
+                                        new TransferHero(
+                                                squad,
+                                                SquadSubType.UPGRADED,
+                                                SquadSubType.REGULAR
+                                        )
+                                )
+                        ),
+                        new ObserverFactory<>(
+                                diedObservables,
+                                squad -> new DiedObserver(
+                                        "Died",
+                                        new RemoveHero(
+                                                squad,
+                                                SquadSubType.UPGRADED
+                                        )
+                                )
+                        )
+                )
         );
+        return observers;
+    }
+
+    private Map<SquadSubType, Collection<ObserverFactory>> observersForMoveSequenceSquads(
+            Observables<HeroDiedObserver> diedObservables,
+            Observables<HeroMovedObserver> movedObservables,
+            Observables<UpgradeObserver> upgradeObservables,
+            Observables<DegradeObserver> degradeObservables) {
+        final Map<SquadSubType, Collection<ObserverFactory>> observers = new HashMap<>();
+        observers.put(
+                SquadSubType.REGULAR,
+                Arrays.asList(
+                        new ObserverFactory<>(
+                                movedObservables,
+                                squad -> new MovedObserver(
+                                        "Moved",
+                                        new RemoveHero(
+                                                squad,
+                                                SquadSubType.REGULAR
+                                        )
+                                )
+                        ),
+                        new ObserverFactory<>(
+                                upgradeObservables,
+                                squad -> new UpgradeObserverSquad(
+                                        "Upgrade",
+                                        new TransferHero(
+                                                squad,
+                                                SquadSubType.REGULAR,
+                                                SquadSubType.UPGRADED
+                                        )
+                                )
+                        ),
+                        new ObserverFactory<>(
+                                diedObservables,
+                                squad -> new DiedObserver(
+                                        "Died",
+                                        new RemoveHero(
+                                                squad,
+                                                SquadSubType.REGULAR
+                                        )
+                                )
+                        )
+                )
+        );
+        observers.put(
+                SquadSubType.UPGRADED,
+                Arrays.asList(
+                        new ObserverFactory<>(
+                                movedObservables,
+                                squad -> new MovedObserver(
+                                        "Moved",
+                                        new RemoveHero(
+                                                squad,
+                                                SquadSubType.UPGRADED
+                                        )
+                                )
+                        ),
+                        new ObserverFactory<>(
+                                degradeObservables,
+                                squad -> new DegradeObserverSquad(
+                                        "Degrade",
+                                        new TransferHero(
+                                                squad,
+                                                SquadSubType.UPGRADED,
+                                                SquadSubType.REGULAR
+                                        )
+                                )
+                        ),
+                        new ObserverFactory<>(
+                                diedObservables,
+                                squad -> new DiedObserver(
+                                        "Died",
+                                        new RemoveHero(
+                                                squad,
+                                                SquadSubType.REGULAR
+                                        )
+                                )
+                        )
+                )
+        );
+        return observers;
     }
 }

@@ -1,11 +1,11 @@
 package ru.job4j.xml.actions;
 
 import org.w3c.dom.Node;
-import ru.job4j.GameEnvironment;
 import ru.job4j.actions.HeroAction;
-import ru.job4j.actions.actiontarget.RandomTargetForUpgrade;
-import ru.job4j.actions.grade.GradeActionSimple;
-import ru.job4j.actions.grade.UpgradeAction;
+import ru.job4j.actions.actiontarget.RandomTargetForHero;
+import ru.job4j.actions.GradeActionSimple;
+import ru.job4j.observers.Observables;
+import ru.job4j.observers.UpgradeObserver;
 import ru.job4j.xml.actions.utils.FindNodeByXPath;
 
 import java.util.ArrayList;
@@ -22,14 +22,17 @@ public class XMLUpgradeParser implements XMLActionParser {
     private final static String XML_TAG_NAME = "upgrade";
     private final FindNodeByXPath findNodeByXPath;
     private final XMLDefaultActionParser defaultActionParser;
-    private final GameEnvironment environment;
+    private final RandomTargetForHero friendlyFromRegular;
+    private final Observables<UpgradeObserver> upgradeObservables;
 
     public XMLUpgradeParser(FindNodeByXPath findNodeByXPath,
                             XMLDefaultActionParser defaultActionParser,
-                            GameEnvironment environment) {
+                            RandomTargetForHero friendlyFromRegular,
+                            Observables<UpgradeObserver> upgradeObservables) {
         this.findNodeByXPath = findNodeByXPath;
         this.defaultActionParser = defaultActionParser;
-        this.environment = environment;
+        this.friendlyFromRegular = friendlyFromRegular;
+        this.upgradeObservables = upgradeObservables;
     }
 
     /**
@@ -44,14 +47,11 @@ public class XMLUpgradeParser implements XMLActionParser {
         this.findNodeByXPath
                 .findNode(XML_TAG_NAME, actions)
                 .forEach((action) -> result.add(
-                        new GradeActionSimple(
+                        new GradeActionSimple<>(
+                                "Наложение улучшения на персонажа своего отряда",
                                 this.defaultActionParser.parseDefaultAction(action),
-                                new UpgradeAction(
-                                        this.environment.getSquadsMapper()
-                                ),
-                                new RandomTargetForUpgrade(
-                                        this.environment.getSquadsMapper()
-                                )
+                                this.upgradeObservables,
+                                this.friendlyFromRegular
                         )
                 ));
         return result;

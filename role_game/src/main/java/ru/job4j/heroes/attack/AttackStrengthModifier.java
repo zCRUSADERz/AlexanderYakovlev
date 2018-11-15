@@ -14,5 +14,5 @@ public interface AttackStrengthModifier {
      * @param initialDamage изначальный урон.
      * @return урон с учетом модификатора.
      */
-    int resultDamage(int initialDamage);
+    int damage(int initialDamage);
 }

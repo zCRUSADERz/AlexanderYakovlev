@@ -1,10 +1,10 @@
 package ru.job4j;
 
 import org.apache.log4j.Logger;
-import ru.job4j.observable.die.HeroDiedObserver;
 import ru.job4j.heroes.Hero;
-import ru.job4j.observable.move.HeroMovedObservable;
-import ru.job4j.observable.gradechange.GradeChangeObserver;
+import ru.job4j.observers.HeroMovedObserver;
+import ru.job4j.observers.Observables;
+import ru.job4j.squad.SquadHeroes;
 
 import java.util.*;
 
@@ -15,21 +15,17 @@ import java.util.*;
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 21.10.2018
  */
-public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
-    private final Collection<Hero> movedHeroes = new HashSet<>();
-    private final Collection<Hero> upgradedHeroes;
-    private final Collection<Hero> regularHeroes;
-    private final HeroMovedObservable heroMovedObservable;
+public class HeroMoveSequence {
+    private final List<SquadHeroes> squads;
+    private final Observables<HeroMovedObserver> movedObservables;
     private final StopGame stopGame;
     private final Logger logger = Logger.getLogger(HeroMoveSequence.class);
 
-    public HeroMoveSequence(Collection<Hero> upgradedHeroes,
-                            Collection<Hero> regularHeroes,
-                            HeroMovedObservable heroMovedObservable,
+    public HeroMoveSequence(List<SquadHeroes> squads,
+                            Observables<HeroMovedObserver> movedObservables,
                             StopGame stopGame) {
-        this.upgradedHeroes = upgradedHeroes;
-        this.regularHeroes = regularHeroes;
-        this.heroMovedObservable = heroMovedObservable;
+        this.squads = squads;
+        this.movedObservables = movedObservables;
         this.stopGame = stopGame;
     }
 
@@ -37,80 +33,29 @@ public class HeroMoveSequence implements HeroDiedObserver, GradeChangeObserver {
      * Запустить цикл ходов героев.
      */
     public void start() {
-        while (!this.stopGame.gameIsStopped()) {
-            final Iterator<Hero> iterator;
-            this.logSequence();
-            if (!this.upgradedHeroes.isEmpty()) {
-                iterator = this.upgradedHeroes.iterator();
-            } else if (!this.regularHeroes.isEmpty()) {
-                iterator = this.regularHeroes.iterator();
-            } else {
-                this.logger.info("Round is over.");
-                break;
+        boolean roundOn = true;
+        while (!this.stopGame.gameIsStopped() && roundOn) {
+            this.logger.info(String.format(
+                    "Sequence of heroes moves: upgraded:%s regular:%s",
+                    this.squads.get(0).heroes(), this.squads.get(1).heroes()
+            ));
+            logger.info("------------------------------------");
+            final Iterator<SquadHeroes> iterator = this.squads.iterator();
+            Optional<Hero> optionalHero = Optional.empty();
+            while (!optionalHero.isPresent() && iterator.hasNext()) {
+                optionalHero = iterator.next().hero();
             }
-            final Hero hero = iterator.next();
-            iterator.remove();
-            this.logger.info(String.format("%s turn.", hero));
-            this.movedHeroes.add(hero);
-            hero.doAction();
-            this.heroMovedObservable.heroMoved(hero);
-            this.logger.info(String.format("%s completed his turn.", hero));
-            this.logger.info("------------------------------------");
+            if (optionalHero.isPresent()) {
+                final Hero hero = optionalHero.get();
+                this.logger.info(String.format("%s turn.", hero));
+                hero.doAction();
+                this.logger.info(String.format("%s completed his turn.", hero));
+                this.movedObservables.notifyObservers(hero);
+                this.logger.info("------------------------------------");
+            } else {
+                roundOn = false;
+                this.logger.info("Round is over.");
+            }
         }
-    }
-
-    /**
-     * Герой был убит. Ссылки на героя будут удалены.
-     * @param hero убитый герой.
-     */
-    @Override
-    public void heroDied(Hero hero) {
-        this.upgradedHeroes.remove(hero);
-        this.regularHeroes.remove(hero);
-        this.movedHeroes.remove(hero);
-    }
-
-    /**
-     * Герой был улучшен.
-     * Если герой находился в группе обычных героев, перемещаем в группу
-     * привилегированных.
-     * Если герой сделал ход и уже находится в группе сделавших ход,
-     * то ничего не произойдет
-     * @param hero улучшенный герой.
-     */
-    @Override
-    public void upgraded(Hero hero) {
-        if (this.regularHeroes.remove(hero)) {
-            this.upgradedHeroes.add(hero);
-            this.logger.info(
-                    String.format("%s was replace to upgraded group.", hero)
-            );
-        }
-    }
-
-    /**
-     * С героя было снято улучшение.
-     * Если герой находился в группе привилегированных героев, перемещаем в группу
-     * обычных.
-     * Если герой сделал ход и уже находится в группе сделавших ход,
-     * то ничего не произойдет
-     * @param hero герой с которого сняли улучшение.
-     */
-    @Override
-    public void degraded(Hero hero) {
-        if (this.upgradedHeroes.remove(hero)) {
-            this.regularHeroes.add(hero);
-            this.logger.info(
-                    String.format("%s was replace to regular group.", hero)
-            );
-        }
-    }
-
-    private void logSequence() {
-        this.logger.info(String.format(
-                "Sequence of heroes moves: upgraded:%s regular:%s",
-                this.upgradedHeroes, this.regularHeroes
-        ));
-        logger.info("------------------------------------");
     }
 }

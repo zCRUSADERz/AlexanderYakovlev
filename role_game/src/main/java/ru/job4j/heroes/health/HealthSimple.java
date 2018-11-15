@@ -2,7 +2,8 @@ package ru.job4j.heroes.health;
 
 import org.apache.log4j.Logger;
 import ru.job4j.heroes.Hero;
-import ru.job4j.observable.die.HeroDiedObservable;
+import ru.job4j.observers.HeroDiedObserver;
+import ru.job4j.observers.Observables;
 
 /**
  * Hero health.
@@ -14,11 +15,11 @@ import ru.job4j.observable.die.HeroDiedObservable;
 public class HealthSimple implements HeroHealth {
     private final static int MAX_HEALTH = 100;
     private final int minHealth;
-    private final HeroDiedObservable dieObservable;
+    private final Observables<HeroDiedObserver> diedObservables;
     private final HealthLogger logger;
     private int health;
 
-    public HealthSimple(HeroDiedObservable dieObservable) {
+    public HealthSimple(Observables<HeroDiedObserver> dieObservable) {
         this(
                 MAX_HEALTH,
                 0,
@@ -29,11 +30,11 @@ public class HealthSimple implements HeroHealth {
 
     public HealthSimple(int health,
                         int minHealth,
-                        HeroDiedObservable dieObservable,
+                        Observables<HeroDiedObserver> diedObservables,
                         HealthLogger logger) {
         this.health = health;
         this.minHealth = minHealth;
-        this.dieObservable = dieObservable;
+        this.diedObservables = diedObservables;
         this.logger = logger;
     }
 
@@ -41,7 +42,6 @@ public class HealthSimple implements HeroHealth {
      * Получить урон.
      * Если зоровье снизится до минимальной отметки или более,
      * то герой будет убит и будут оповещены наблюдатели за данным событием.
-     * @param heroOwner герой владелец здоровья.
      * @param damage полученный урон.
      * @throws IllegalStateException если герой уже мертв(HP равно или меньше
      * минимальной отметки HP)
@@ -59,7 +59,7 @@ public class HealthSimple implements HeroHealth {
         this.logger.logDamage(heroOwner, startHP, damage, this.health);
         if (isDead()) {
             this.logger.logHeroDie(heroOwner, this.minHealth, this.health);
-            this.dieObservable.heroDied(heroOwner);
+            this.diedObservables.notifyObservers(heroOwner);
         }
     }
 

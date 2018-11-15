@@ -17,7 +17,7 @@ public class AttackStrengthModifierSimpleTest {
     public void whenInitialDamageEightAndModifierFiftyPercentThenResultDamageReturnFour() {
         final AttackStrengthModifier modifier = new AttackStrengthModifierSimple(0.5d);
         final int expected = 4;
-        final int result = modifier.resultDamage(8);
+        final int result = modifier.damage(8);
         assertThat(result, is(expected));
     }
 

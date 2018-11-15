@@ -80,8 +80,8 @@ public class AttackStrengthModifiersTest {
         final int initialDamage = 10;
         final int firstResult = 15;
         final int expectedDamage = 7;
-        given(this.modifier.resultDamage(initialDamage)).willReturn(firstResult);
-        given(secondModifier.resultDamage(firstResult)).willReturn(expectedDamage);
+        given(this.modifier.damage(initialDamage)).willReturn(firstResult);
+        given(secondModifier.damage(firstResult)).willReturn(expectedDamage);
         final int resultDamage = this.modifiers
                 .applyModifiersFor(this.hero, initialDamage);
         assertThat(resultDamage, is(expectedDamage));

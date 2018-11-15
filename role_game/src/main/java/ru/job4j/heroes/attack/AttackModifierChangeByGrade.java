@@ -1,7 +1,8 @@
 package ru.job4j.heroes.attack;
 
 import ru.job4j.heroes.Hero;
-import ru.job4j.observable.gradechange.GradeChangeObserver;
+import ru.job4j.observers.DegradeObserver;
+import ru.job4j.observers.UpgradeObserver;
 
 /**
  * Attack modifier change by grade.
@@ -11,7 +12,7 @@ import ru.job4j.observable.gradechange.GradeChangeObserver;
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 21.10.2018
  */
-public class AttackModifierChangeByGrade implements GradeChangeObserver {
+public class AttackModifierChangeByGrade implements UpgradeObserver, DegradeObserver {
     private final AttackStrengthModifiers modifiers;
     private final AttackStrengthModifier modifierByUpgrade;
 
@@ -37,5 +38,10 @@ public class AttackModifierChangeByGrade implements GradeChangeObserver {
     @Override
     public void degraded(Hero hero) {
         this.modifiers.remove(hero, this.modifierByUpgrade);
+    }
+
+    @Override
+    public String toString() {
+        return "Change grade observer for modifiers";
     }
 }

@@ -1,7 +1,9 @@
 package ru.job4j.xml.heroes;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import ru.job4j.xml.heroes.types.HeroTypesParser;
 import ru.job4j.xml.heroes.types.XMLHeroType;
 
 import javax.xml.xpath.XPath;
@@ -9,7 +11,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * NumberOfHeroesParser.
@@ -20,33 +21,45 @@ import java.util.Set;
  */
 public class NumberOfHeroesParserSimple implements NumberOfHeroesParser {
     private final XPath xPath;
+    private final Document document;
+    private final HeroTypesParser typesParser;
+    private final Logger logger = Logger.getLogger(NumberOfHeroesParserSimple.class);
 
-    public NumberOfHeroesParserSimple(XPath xPath) {
+    public NumberOfHeroesParserSimple(XPath xPath,
+                                      Document document,
+                                      HeroTypesParser typesParser) {
         this.xPath = xPath;
+        this.document = document;
+        this.typesParser = typesParser;
     }
 
     /**
      * Возвращает словарь, в котором каждому типу героя
      * соответствует количество героев в отряде данного типа.
-     * @param document xml документ с описанием размера отряда.
      * @return словарь, в котором каждому типу героя
      * соответствует количество героев в отряде данного типа.
      */
     @Override
-    public Map<XMLHeroType, Integer> parseNumberOfHeroes(
-            Document document, Set<XMLHeroType> heroTypes) {
+    public Map<XMLHeroType, Integer> parse() {
         try {
             final Map<XMLHeroType, Integer> numberOfHeroes = new HashMap<>();
+            this.logger.info("NumberOfHeroesParser - parse squad size.");
             final Node squadSize = (Node) this.xPath.evaluate(
-                    "/configuration/squadSize", document, XPathConstants.NODE
+                    "/configuration/squadSize",
+                    this.document,
+                    XPathConstants.NODE
             );
-            heroTypes.forEach((heroType) -> {
+            this.typesParser.parse().forEach((heroType) -> {
                 try {
                     Node heroNode = heroType.findHeroNode(squadSize);
                     int number = Integer.parseInt(
                             this.xPath.evaluate("size", heroNode)
                     );
                     numberOfHeroes.put(heroType, number);
+                    this.logger.info(String.format(
+                            "For type: %s - %d heroes.",
+                            heroType, number
+                    ));
                 } catch (XPathExpressionException e) {
                     e.printStackTrace();
                 }
