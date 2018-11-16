@@ -1,6 +1,7 @@
 package ru.job4j.tracker;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Validate input.
@@ -14,13 +15,19 @@ public class ValidateInput implements Input {
      * User input.
      */
     private final Input input;
+    private final Consumer<String> writer;
 
     /**
      * Constructor.
      * @param input - user input.
      */
     ValidateInput(Input input) {
+        this(input, System.out::println);
+    }
+
+    ValidateInput(Input input, Consumer<String> writer) {
         this.input = input;
+        this.writer = writer;
     }
 
     /**
@@ -48,9 +55,9 @@ public class ValidateInput implements Input {
                 value = input.ask(question, range);
                 invalid = false;
             } catch (MenuOutException moe) {
-                System.out.println(moe.getMessage());
+                this.writer.accept(moe.getMessage());
             } catch (NumberFormatException nfe) {
-                System.out.println("Введите корректное значение снова.");
+                this.writer.accept("Введите корректное значение снова.");
             }
         } while (invalid);
         return value;

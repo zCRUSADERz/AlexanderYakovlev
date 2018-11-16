@@ -1,5 +1,7 @@
 package ru.job4j.tracker;
 
+import java.util.function.Consumer;
+
 /**
  * Start User Interface.
  *
@@ -22,21 +24,20 @@ public class StartUI implements Stop {
      */
     private boolean working;
 
-    /**
-     * Constructor user interface.
-     * @param input - user input.
-     * @param tracker - tracker for items.
-     */
-    StartUI(Input input, Tracker tracker) {
+    public StartUI(Input input, Tracker tracker) {
+        this(input, System.out::println, tracker);
+    }
+
+    public StartUI(Input input, Consumer<String> writer, Tracker tracker) {
         this.input = input;
-        menu = new MenuTracker(input, tracker);
-        working = true;
-        menu.addActions(
-                new Exit(
-                        (menu.getRange().size()),
+        this.menu = new MenuTracker(input, writer, tracker);
+        this.menu.addActions(
+                new Exit(this.menu.getRange().size(),
                         "Закончить работу", this
                 )
         );
+        this.working = true;
+
     }
 
     /**
@@ -47,7 +48,9 @@ public class StartUI implements Stop {
         try (PostgresDB db = new PostgresDB()) {
             try (Tracker tracker = new Tracker(db.getConnection())) {
                 new StartUI(
-                        new ValidateInput(new ConsoleInput()),
+                        new ValidateInput(
+                                new InputFromSupplier()
+                        ),
                         tracker
                 ).init();
             }
@@ -64,14 +67,17 @@ public class StartUI implements Stop {
      */
     public void init() throws DBException {
         do {
-            menu.show();
-            menu.select(
-                    input.ask("Введите пункт меню: ", menu.getRange())
+            this.menu.show();
+            this.menu.select(
+                    this.input.ask(
+                            "Введите пункт меню: ",
+                            this.menu.getRange()
+                    )
             );
-        } while (working);
+        } while (this.working);
     }
 
     public void stop() {
-        working = false;
+        this.working = false;
     }
 }

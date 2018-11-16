@@ -1,41 +1,37 @@
 package ru.job4j.tracker;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
- * Console input.
+ * Input from supplier.
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
- * @since 4.01.2017
- * @version 2.0
+ * @since 17.11.2017
  */
-public class ConsoleInput implements Input {
-    private Scanner scanner;
+public class InputFromSupplier implements Input {
+    private final Supplier<String> scanner;
+    private final Consumer<String> writer;
 
-    /**
-     * Default constructor.
-     */
-    ConsoleInput() {
-        scanner = new Scanner(System.in);
+    InputFromSupplier() {
+        this(new Scanner(System.in)::nextLine, System.out::print);
     }
 
-    /**
-     * Constructor for testing.
-     * @param in - input stream;
-     */
-    ConsoleInput(InputStream in) {
-        scanner = new Scanner(in);
+    InputFromSupplier(Supplier<String> scanner, Consumer<String> writer) {
+        this.scanner = scanner;
+        this.writer = writer;
     }
+
     /**
      * Ask user.
      * @param question - question for user.
      * @return - answer.
      */
     public String ask(String question) {
-        System.out.print(question);
-        return scanner.nextLine();
+        this.writer.accept(question);
+        return this.scanner.get();
     }
 
     /**

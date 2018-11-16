@@ -4,6 +4,7 @@ import ru.job4j.tracker.models.Item;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Menu tracker.
@@ -16,32 +17,31 @@ public class MenuTracker {
     /**
      * User input.
      */
-    private Input input;
+    private final Input input;
+    private final Consumer<String> writer;
     /**
      * Tracker for items.
      */
-    private Tracker tracker;
+    private final Tracker tracker;
     /**
      * User actions.
      */
-    private ArrayList<UserAction> actions;
+    private final ArrayList<UserAction> actions = new ArrayList<>();
     /**
      * Range of key menu.
      */
-    private ArrayList<Integer> range;
+    private final ArrayList<Integer> range  = new ArrayList<>();
 
     /**
-     * Constructor menu tracker.
      * @param input - user input.
+     * @param writer - string writer.
      * @param tracker - tracker.
      */
-    MenuTracker(Input input, Tracker tracker) {
+    public MenuTracker(Input input, Consumer<String> writer, Tracker tracker) {
         this.input = input;
+        this.writer = writer;
         this.tracker = tracker;
-        actions = new ArrayList<>();
-        range = new ArrayList<>();
         fillActions();
-
     }
 
     public List<Integer> getRange() {
@@ -52,9 +52,9 @@ public class MenuTracker {
      * Show menu.
      */
     public void show() {
-        System.out.println("Меню.");
+        this.writer.accept("Меню.");
         for (UserAction action : actions) {
-            System.out.println(action.info());
+            this.writer.accept(action.info());
         }
     }
 
@@ -119,11 +119,11 @@ public class MenuTracker {
          * @param tracker - tracker.
          */
         public void execute(Input input, Tracker tracker) throws DBException {
-            System.out.println("---------- Добавление новой заявки ----------");
+            writer.accept("---------- Добавление новой заявки ----------");
             String name = input.ask("Введите название заявки: ");
             String description = input.ask("Введите описание заявки: ");
             int resultId = tracker.add(name, description);
-            System.out.println(
+            writer.accept(
                     "---------- Новая заявка с Id: " + resultId + " ----------"
             );
         }
@@ -132,7 +132,7 @@ public class MenuTracker {
     /**
      * User action: show all item in tracker.
      */
-    private static class ShowAllItem extends BaseAction {
+    private class ShowAllItem extends BaseAction {
 
         /**
          * Constructor.
@@ -151,14 +151,14 @@ public class MenuTracker {
         public void execute(Input input, Tracker tracker) throws DBException {
             List<Item> items = tracker.findAll();
             if (items.size() != 0) {
-                System.out.println(
+                writer.accept(
                         "---------- Зарегистрированны следующие заявки: ----------"
                 );
                 for (Item item : items) {
-                    System.out.println(item);
+                    writer.accept(item.toString());
                 }
             } else {
-                System.out.println("- Зарегистрированных заявок в системе нет.");
+                writer.accept("- Зарегистрированных заявок в системе нет.");
             }
         }
     }
@@ -183,14 +183,14 @@ public class MenuTracker {
          * @param tracker - tracker.
          */
         public void execute(Input input, Tracker tracker) throws DBException {
-            System.out.println("---------- Редактирование заявки ----------");
+            writer.accept("---------- Редактирование заявки ----------");
             String id = input.ask(
                     "Введите Id заявки, которую желаете отредактировать: "
             );
             String name = input.ask("Введите новое название заявки: ");
             String desc = input.ask("Введите новое описание заявки: ");
             if (!tracker.replace(id, name, desc)) {
-                System.out.println(
+                writer.accept(
                         "- Заявка с Id: " + id + " не зарегистрированна в системе."
                 );
             }
@@ -217,7 +217,7 @@ public class MenuTracker {
          * @param tracker - tracker.
          */
         public void execute(Input input, Tracker tracker) throws DBException {
-            System.out.println("---------- Удаление заявки ----------");
+            writer.accept("---------- Удаление заявки ----------");
             String id = input.ask(
                     "Введите Id заявки, которую желаете удалить: "
             );
@@ -245,58 +245,59 @@ public class MenuTracker {
          * @param tracker - tracker.
          */
         public void execute(Input input, Tracker tracker) throws DBException {
-            System.out.println("---------- Поис заявки по Id ----------");
+            writer.accept("---------- Поис заявки по Id ----------");
             String id = input.ask(
                     "Введите Id заявки, которую желаете найти: "
             );
             Item item = tracker.findById(id);
             if (item != null) {
-                System.out.println(item);
+                writer.accept(item.toString());
             } else {
-                System.out.println(
+                writer.accept(
                         "- Заявка с Id: " + id + " не зарегистрированна в системе."
                 );
             }
         }
     }
-}
-
-/**
- * User action: find items by name in tracker.
- */
-class FindByName extends BaseAction {
 
     /**
-     * Constructor.
-     * @param key - menu key.
-     * @param name - name action;
+     * User action: find items by name in tracker.
      */
-    FindByName(int key, String name) {
-        super(key, name);
-    }
+    class FindByName extends BaseAction {
 
-    /**
-     * Find items by name in tracker.
-     * @param input - user input.
-     * @param tracker - tracker.
-     */
-    public void execute(Input input, Tracker tracker) throws DBException {
-        System.out.println("---------- Поиск заявки по названию ----------");
-        String name = input.ask(
-                "Введите название заявки(ок), которую(ые) желаете найти: "
-        );
-        List<Item> items = tracker.findByName(name);
-        if (items.size() != 0) {
-            System.out.println(
-                    "---------- Зарегистрированны следующие заявки: ----------"
+        /**
+         * Constructor.
+         * @param key - menu key.
+         * @param name - name action;
+         */
+        FindByName(int key, String name) {
+            super(key, name);
+        }
+
+        /**
+         * Find items by name in tracker.
+         * @param input - user input.
+         * @param tracker - tracker.
+         */
+        public void execute(Input input, Tracker tracker) throws DBException {
+            writer.accept("---------- Поиск заявки по названию ----------");
+            String name = input.ask(
+                    "Введите название заявки(ок), которую(ые) желаете найти: "
             );
-            for (Item item : items) {
-                System.out.println(item);
+            List<Item> items = tracker.findByName(name);
+            if (items.size() != 0) {
+                writer.accept(
+                        "---------- Зарегистрированны следующие заявки: ----------"
+                );
+                for (Item item : items) {
+                    writer.accept(item.toString());
+                }
+            } else {
+
+                writer.accept(
+                        "- Зарегистрированных заявок с названием " + name + " в системе нет."
+                );
             }
-        } else {
-            System.out.println(
-                    "- Зарегистрированных заявок с названием " + name + " в системе нет."
-            );
         }
     }
 }
