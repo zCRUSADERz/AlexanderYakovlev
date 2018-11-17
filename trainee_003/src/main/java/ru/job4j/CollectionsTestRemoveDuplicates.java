@@ -23,7 +23,6 @@ public class CollectionsTestRemoveDuplicates {
      * Number of objects with duplicates.
      */
     private int numOfDuplicate;
-    private int countTest = 1;
 
     /**
      * Constructor.

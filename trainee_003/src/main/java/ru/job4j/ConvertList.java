@@ -1,8 +1,11 @@
 package ru.job4j;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Convert List to array and from array.
@@ -19,17 +22,10 @@ public class ConvertList {
      * @return - List.
      */
     public List<Integer> toList(int[][] array) {
-        int capacity = 0;
-        for (int[] arr : array) {
-            capacity += arr.length;
-        }
-        List<Integer> list = new ArrayList<>((int) (capacity * 1.25));
-        for (int[] arr : array) {
-            for (int num : arr) {
-                list.add(num);
-            }
-        }
-        return list;
+        return Arrays.stream(array)
+                .flatMapToInt(Arrays::stream)
+                .boxed()
+                .collect(Collectors.toList());
     }
 
     /**
@@ -39,16 +35,19 @@ public class ConvertList {
      * @return - array.
      */
     public int[][] toArray(List<Integer> list, int rows) {
+        Iterator<Integer> iterator = list.iterator();
         double size = (double) list.size() / rows;
         int column = (size % (int) size) != 0 ? (int) size + 1 : (int) size;
-        int[][] array = new int[rows][column];
-        Iterator<Integer> iterator = list.iterator();
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < column; j++) {
-                array[i][j] = iterator.hasNext() ? iterator.next() : 0;
-            }
-        }
-        return array;
+        int[][] result = new int[rows][column];
+        Stream.iterate(0, i -> i + 1)
+                .limit(rows)
+                .forEach(i ->
+                    result[i] = Stream.iterate(0, j -> j + 1)
+                            .limit(column)
+                            .mapToInt(j -> iterator.hasNext() ? iterator.next() : 0)
+                            .toArray()
+                );
+        return result;
     }
 
     /**
@@ -57,12 +56,9 @@ public class ConvertList {
      * @return - List.
      */
     public List<Integer> convert(List<int[]> list) {
-        List<Integer> result = new ArrayList<>();
-        for (int[] array : list) {
-            for (int num : array) {
-                result.add(num);
-            }
-        }
-        return result;
+        return list.stream()
+                .flatMapToInt(Arrays::stream)
+                .boxed()
+                .collect(Collectors.toList());
     }
 }

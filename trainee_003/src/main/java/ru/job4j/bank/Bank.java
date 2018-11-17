@@ -3,10 +3,7 @@ package ru.job4j.bank;
 import ru.job4j.bank.exceptions.AccountNotFoundException;
 import ru.job4j.bank.exceptions.UserNotFoundException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Bank.
@@ -23,7 +20,7 @@ public class Bank {
      * @param user - new user.
      */
     public void addUser(User user) {
-        users.putIfAbsent(user, new ArrayList<>());
+        this.users.putIfAbsent(user, new ArrayList<>());
     }
 
     /**
@@ -31,7 +28,7 @@ public class Bank {
      * @param user - user.
      */
     public void deleteUser(User user) {
-        users.remove(user);
+        this.users.remove(user);
     }
 
     /**
@@ -41,7 +38,7 @@ public class Bank {
      * @throws UserNotFoundException - if the user not found in the users.
      */
     public void addAccountToUser(String passport, Account account) throws UserNotFoundException {
-        List<Account> accounts = getUserAccounts(passport);
+        List<Account> accounts = this.getUserAccounts(passport);
         accounts.add(account);
     }
 
@@ -52,7 +49,7 @@ public class Bank {
      * @throws UserNotFoundException - if the user not found in the users.
      */
     public void deleteAccountFromUser(String passport, Account account) throws UserNotFoundException {
-        List<Account> accounts = getUserAccounts(passport);
+        List<Account> accounts = this.getUserAccounts(passport);
         accounts.remove(account);
     }
 
@@ -63,17 +60,14 @@ public class Bank {
      * @throws UserNotFoundException - if the user not found in the users.
      */
     public List<Account> getUserAccounts(String passport) throws UserNotFoundException {
-        List<Account> result = null;
-        for (User user : users.keySet()) {
-            if (user.getPassport().equals(passport)) {
-                result = users.get(user);
-                break;
-            }
-        }
-        if (result == null) {
+        Optional<User> userOptional = this.users.keySet()
+                .stream()
+                .filter(user -> user.getPassport().equals(passport))
+                .findFirst();
+        if (!userOptional.isPresent()) {
             throw new UserNotFoundException("User with passport: " + passport + " not found.");
         }
-        return result;
+        return this.users.get(userOptional.get());
     }
 
     /**
@@ -90,15 +84,15 @@ public class Bank {
                                  double amount) {
         boolean result;
         try {
-            List<Account> srcAccounts = getUserAccounts(srcPassport);
-            List<Account> destAccounts;
+            final List<Account> srcAccounts = this.getUserAccounts(srcPassport);
+            final List<Account> destAccounts;
             if (srcPassport.equals(destPassport)) {
                 destAccounts = srcAccounts;
             } else {
-                destAccounts = getUserAccounts(destPassport);
+                destAccounts = this.getUserAccounts(destPassport);
             }
-            Account srcAccount = getAccount(srcAccounts, srcRequisite);
-            Account destAccount = getAccount(destAccounts, destRequisite);
+            final Account srcAccount = this.getAccount(srcAccounts, srcRequisite);
+            final Account destAccount = this.getAccount(destAccounts, destRequisite);
             result = srcAccount.transfer(destAccount, amount);
         } catch (UserNotFoundException | AccountNotFoundException e) {
             result = false;
@@ -114,16 +108,12 @@ public class Bank {
      * @throws AccountNotFoundException - if the account not found in the accounts.
      */
     private Account getAccount(List<Account> accounts, String requisite) throws AccountNotFoundException {
-        Account result = null;
-        for (Account account : accounts) {
-            if (account.getRequisites().equals(requisite)) {
-                result = account;
-                break;
-            }
-        }
-        if (result == null) {
+        Optional<Account> accountOptional = accounts.stream()
+                .filter(account -> account.getRequisites().equals(requisite))
+                .findFirst();
+        if (!accountOptional.isPresent()) {
             throw new AccountNotFoundException("User with requisites: " + requisite + " not found.");
         }
-        return result;
+        return accountOptional.get();
     }
 }

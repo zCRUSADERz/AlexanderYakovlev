@@ -16,45 +16,41 @@ import static org.junit.Assert.*;
  * @version 1.0
  */
 public class ConvertListTest {
+private final ConvertList convert = new ConvertList();
 
     @Test
     public void whenArrayToList() {
-        ConvertList convert = new ConvertList();
         int[][] array = new int[][]{{1}, {4}};
-        List<Integer> result = convert.toList(array);
+        List<Integer> result = this.convert.toList(array);
         List<Integer> expected = new ArrayList<>(Arrays.asList(1, 4));
         assertThat(result, is(expected));
     }
 
     @Test
     public void whenListToArrayAndNumberOfElementsIsNotAMultipleOfRows() {
-        ConvertList convert = new ConvertList();
-        List<Integer> list = new ArrayList<>();
-        list.add(1);
-        list.add(4);
-        int[][] result = convert.toArray(list, 3);
+        List<Integer> list = new ArrayList<>(Arrays.asList(1, 4));
+        int[][] result = this.convert.toArray(list, 3);
         int[][] expected = new int[][]{{1}, {4}, {0}};
         assertThat(result, is(expected));
     }
 
     @Test
     public void whenListToArrayAndNumberOfElementsAMultipleOfRows() {
-        ConvertList convert = new ConvertList();
-        List<Integer> list = new ArrayList<>();
-        list.add(1);
-        list.add(4);
-        int[][] result = convert.toArray(list, 2);
+        List<Integer> list = new ArrayList<>(Arrays.asList(1, 4));
+        int[][] result = this.convert.toArray(list, 2);
         int[][] expected = new int[][]{{1}, {4}};
         assertThat(result, is(expected));
     }
 
     @Test
     public void whenListArraysConvertToListInteger() {
-        ConvertList convert = new ConvertList();
-        List<int[]> list = new ArrayList<>();
-        list.add(new int[]{1, 2});
-        list.add(new int[]{3, 4, 5, 6});
-        List<Integer> result = convert.convert(list);
+        List<int[]> list = new ArrayList<>(
+                Arrays.asList(
+                        new int[]{1, 2},
+                        new int[]{3, 4, 5, 6}
+                        )
+        );
+        List<Integer> result = this.convert.convert(list);
         List<Integer> expected = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6));
         assertThat(result, is(expected));
     }

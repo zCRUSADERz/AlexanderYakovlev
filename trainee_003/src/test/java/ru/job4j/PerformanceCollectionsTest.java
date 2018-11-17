@@ -18,13 +18,13 @@ import static org.junit.Assert.*;
  * @version 1.0
  */
 public class PerformanceCollectionsTest {
-    private int amount = 1000;
+    private final PerformanceCollections performance = new PerformanceCollections();
+    private final int amount = 1000;
 
     @Test
     public void whenArrayListTestAddTenStringsThenListSizeTen() {
-        PerformanceCollections performance = new PerformanceCollections();
         ArrayList<String> list = new ArrayList<>();
-        performance.add(list, 10);
+        this.performance.add(list, 10);
         int result = list.size();
         int expected = 10;
         assertThat(result, is(expected));
@@ -32,9 +32,8 @@ public class PerformanceCollectionsTest {
 
     @Test
     public void whenArrayListTestDeleteOneStringOutOfTwoThenListSizeOne() {
-        PerformanceCollections performance = new PerformanceCollections();
         ArrayList<String> list = new ArrayList<>(Arrays.asList("123", "234"));
-        performance.delete(list, 1);
+        this.performance.delete(list, 1);
         int result = list.size();
         int expected = 1;
         assertThat(result, is(expected));
@@ -42,53 +41,74 @@ public class PerformanceCollectionsTest {
 
     @Test
     public void testArrayListAddOneThousandStrings() {
-        PerformanceCollections performance = new PerformanceCollections();
         ArrayList<String> list = new ArrayList<>();
-        System.out.println("ArrayList add:                    " + performance.add(list, amount));
+        System.out.println(String.format(
+                "ArrayList add:%28s",
+                this.performance.add(list, this.amount)
+                )
+        );
     }
 
     @Test
     public void testArrayListDeleteOneThousandStringsFromListOfTenThousandLines() {
-        PerformanceCollections performance = new PerformanceCollections();
         ArrayList<String> list = new ArrayList<>();
-        performance.add(list, 10000);
-        System.out.println("ArrayList delete:                 " + performance.delete(list, amount));
+        this.performance.add(list, 10000);
+        System.out.println(String.format(
+                "ArrayList delete:%25s",
+                this.performance.delete(list, this.amount)
+                )
+        );
     }
 
     @Test
     public void testArrayListWithSetCapacityAddOneThousandStrings() {
-        PerformanceCollections performance = new PerformanceCollections();
-        ArrayList<String> list = new ArrayList<>(amount);
-        System.out.println("ArrayList with set capacity add:  " + performance.add(list, amount));
+        ArrayList<String> list = new ArrayList<>(this.amount);
+        System.out.println(String.format(
+                "ArrayList with set capacity add:%10s",
+                performance.add(list, amount)
+                )
+        );
     }
 
     @Test
     public void testLinkedListAddOneThousandStrings() {
-        PerformanceCollections performance = new PerformanceCollections();
         LinkedList<String> list = new LinkedList<>();
-        System.out.println("LinkedList add:                   " + performance.add(list, amount));
+        System.out.println(String.format(
+                "LinkedList add:%27s",
+                this.performance.add(list, this.amount)
+                )
+        );
     }
 
     @Test
     public void testLinkedListDeleteOneThousandStringsFromListOfTenThousandLines() {
-        PerformanceCollections performance = new PerformanceCollections();
         LinkedList<String> list = new LinkedList<>();
-        performance.add(list, 10000);
-        System.out.println("LinkedList delete:                " + performance.delete(list, amount));
+        this.performance.add(list, 10000);
+        System.out.println(String.format(
+                "LinkedList delete:%24s",
+                this.performance.delete(list, this.amount)
+                )
+        );
     }
 
     @Test
     public void testTreeSetAddOneThousandStrings() {
-        PerformanceCollections performance = new PerformanceCollections();
         TreeSet<String> list = new TreeSet<>();
-        System.out.println("TreeSet add:                      " + performance.add(list, amount));
+        System.out.println(String.format(
+                "TreeSet add:%30s",
+                this.performance.add(list, this.amount)
+                )
+        );
     }
 
     @Test
     public void testTreeSetDeleteOneThousandStringsFromListOfTenThousandLines() {
-        PerformanceCollections performance = new PerformanceCollections();
         TreeSet<String> list = new TreeSet<>();
-        performance.add(list, 10000);
-        System.out.println("TreeSet delete:                   " + performance.add(list, amount));
+        this.performance.add(list, 10000);
+        System.out.println(String.format(
+                "TreeSet delete:%27s",
+                this.performance.delete(list, this.amount)
+                )
+        );
     }
 }

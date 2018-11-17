@@ -1,9 +1,6 @@
 package ru.job4j;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import org.junit.Test;
 
@@ -25,8 +22,8 @@ public class UserConvertTest {
         User user1 = new User("1", "a");
         User user2 = new User("2", "a");
         List<User> list = new ArrayList<>(Arrays.asList(user1, user2));
-        HashMap<Integer, User> result = convert.process(list);
-        HashMap<Integer, User> expected = new HashMap<>();
+        Map<Integer, User> result = convert.process(list);
+        Map<Integer, User> expected = new HashMap<>();
         expected.put(user1.getId(), user1);
         expected.put(user2.getId(), user2);
         assertThat(result, is(expected));

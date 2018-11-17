@@ -1,6 +1,7 @@
 package ru.job4j;
 
-import java.util.Collection;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Testing performance collections.
@@ -22,11 +23,9 @@ public class PerformanceCollections {
      * @return - time in millis.
      */
     public long add(Collection<String> collection, int amount) {
-        String[] strings = getStrings(amount);
+        String[] strings = this.getStrings(amount);
         long start = System.nanoTime();
-        for (String string : strings) {
-            collection.add(string);
-        }
+        collection.addAll(Arrays.asList(strings));
         return System.nanoTime() - start;
     }
 
@@ -37,18 +36,13 @@ public class PerformanceCollections {
      * @return - time in millis.
      */
     public long delete(Collection<String> collection, int amount) {
-        String[] strings = new String[amount];
-        int i = 0;
-        for (String string : collection) {
-            if (i == strings.length) {
-                break;
-            }
-            strings[i++] = string;
-        }
+        final List<String> strings = new ArrayList<>();
+        collection.stream()
+                .limit(amount)
+                .forEach(strings::add);
+        Collections.shuffle(strings);
         long start = System.nanoTime();
-        for (String string : strings) {
-            collection.remove(string);
-        }
+        strings.forEach(collection::remove);
         return System.nanoTime() - start;
     }
 
@@ -59,6 +53,10 @@ public class PerformanceCollections {
      */
     private String[] getStrings(int amount) {
         String[] strings = new String[amount];
+        Stream
+                .iterate(0, n -> n + 1)
+                .limit(amount)
+                .forEach(n -> strings[n] = getString());
         for (int i = 0; i < amount; i++) {
             strings[i] = getString();
         }
@@ -70,7 +68,7 @@ public class PerformanceCollections {
      * @return - unique string.
      */
     private String getString() {
-        double d = (count++) + Math.random();
+        double d = (this.count++) + Math.random();
         return String.valueOf(d);
     }
 }
