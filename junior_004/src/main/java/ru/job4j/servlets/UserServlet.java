@@ -49,22 +49,17 @@ public class UserServlet extends HttpServlet {
     }
 
     /**
-     * Find all users and print.
+     * Redirect to user list.
      * @param req HttpServletRequest.
      * @param resp HttpServletResponse.
      * @throws IOException IOException.
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        final PrintWriter writer = resp.getWriter();
-        this.validateService
-                .findAll()
-                .forEach(writer::println);
-        writer.flush();
+        resp.sendRedirect(String.format("%s/list", req.getContextPath()));
     }
 
     /**
-     * Post.
      * Parameters:
      *  action:
      *      add(name, login, email),

@@ -21,6 +21,26 @@ public class User {
         this.createDate = createDate;
     }
 
+    public long getId() {
+        return this.id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
+    }
+
     public User rename(String newName) {
         return new User(
                 this.id,

@@ -26,13 +26,17 @@ public class MemoryStore implements Store {
 
     /**
      * Add new User.
+     * Synchronized, потому что необходимо для каждого user
+     * поддерживать уникальность поля login
      * @param name user name.
      * @param login user login.
      * @param email user email.
      * @return Optional with user, if added, or empty.
      */
     @Override
-    public synchronized Optional<User> add(String name, String login, String email) {
+    public synchronized Optional<User> add(String name,
+                                           String login,
+                                           String email) {
         final Optional<User> optNewUser;
         final Optional<User> userWithSameLogin = this.users
                 .values()
