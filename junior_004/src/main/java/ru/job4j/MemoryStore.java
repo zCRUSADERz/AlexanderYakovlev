@@ -24,6 +24,9 @@ public class MemoryStore implements Store {
      */
     private final AtomicLong idCounter = new AtomicLong(0);
 
+    private MemoryStore() {
+    }
+
     /**
      * Add new User.
      * Synchronized, потому что необходимо для каждого user

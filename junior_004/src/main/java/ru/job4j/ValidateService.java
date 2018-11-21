@@ -16,6 +16,9 @@ public class ValidateService {
     private final static ValidateService INSTANCE = new ValidateService();
     private final Store store = MemoryStore.getInstance();
 
+    private ValidateService() {
+    }
+
     /**
      * Add new User.
      * @param name user name.
