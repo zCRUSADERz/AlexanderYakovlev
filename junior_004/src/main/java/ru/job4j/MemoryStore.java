@@ -34,13 +34,11 @@ public class MemoryStore implements Store {
      * @param name user name.
      * @param login user login.
      * @param email user email.
-     * @return Optional with user, if added, or empty.
      */
     @Override
-    public synchronized Optional<User> add(String name,
+    public synchronized void add(String name,
                                            String login,
                                            String email) {
-        final Optional<User> optNewUser;
         final Optional<User> userWithSameLogin = this.users
                 .values()
                 .stream()
@@ -56,37 +54,29 @@ public class MemoryStore implements Store {
                     LocalDateTime.now()
             );
             this.users.put(newId, newUser);
-            optNewUser = Optional.of(newUser);
-        } else {
-            optNewUser = Optional.empty();
         }
-        return optNewUser;
     }
 
     /**
      * Update user name.
      * @param id user id.
      * @param name user name.
-     * @return Optional with user, if updated, or empty.
      */
     @Override
-    public Optional<User> update(long id, String name) {
-        return Optional.ofNullable(
-                this.users.computeIfPresent(
-                        id,
-                        (aLong, user) -> user.rename(name)
-                )
+    public void update(long id, String name) {
+        this.users.computeIfPresent(
+                id,
+                (aLong, user) -> user.rename(name)
         );
     }
 
     /**
      * Delete user with id.
      * @param id user id.
-     * @return true, if deleted.
      */
     @Override
-    public boolean delete(long id) {
-        return Optional.ofNullable(this.users.remove(id)).isPresent();
+    public void delete(long id) {
+        this.users.remove(id);
     }
 
     /**

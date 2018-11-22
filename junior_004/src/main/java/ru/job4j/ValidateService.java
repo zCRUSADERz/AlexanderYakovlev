@@ -14,7 +14,7 @@ import java.util.*;
  */
 public class ValidateService {
     private final static ValidateService INSTANCE = new ValidateService();
-    private final Store store = MemoryStore.getInstance();
+    private final Store store = DBStore.getInstance();
 
     private ValidateService() {
     }
@@ -24,71 +24,37 @@ public class ValidateService {
      * @param name user name.
      * @param login user login.
      * @param email user email.
-     * @return Iterable with errors message, or result message.
      */
-    public Iterable<String> add(String name, String login, String email) {
-        final Collection<String> result = new ArrayList<>();
-        if (this.stringIsEmpty(name)) {
-            result.add(this.notFilled("Name"));
+    public void add(String name, String login, String email) {
+        if (this.stringNotEmpty(name)
+                && this.stringNotEmpty(login)
+                && this.stringNotEmpty(email)
+                && this.emailValid(email)) {
+            this.store.add(name, login, email);
         }
-        if (this.stringIsEmpty(login)) {
-            result.add(this.notFilled("Login"));
-        }
-        if (this.stringIsEmpty(email)) {
-            result.add(this.notFilled("Email"));
-        } else if (!this.emailValid(email)) {
-            result.add(String.format("Email: %s, invalid.", email));
-        }
-        if (result.isEmpty()) {
-            final Optional<User> user = this.store.add(name, login, email);
-            if (!user.isPresent()) {
-                result.add(String.format("Login: %s, already taken.", login));
-            } else {
-                result.add(String.format("%s created.", user.get()));
-            }
-        }
-        return result;
     }
 
     /**
      * Update user name.
      * @param id user id.
      * @param name user name.
-     * @return Iterable with errors message, or result message.
      */
-    public Iterable<String> update(String id, String name) {
-        final Collection<String> result = new ArrayList<>();
-        this.validateId(id).ifPresent(result::add);
-        if (this.stringIsEmpty(name)) {
-            result.add(this.notFilled("Name"));
+    public void update(String id, String name) {
+        if (this.stringNotEmpty(id)
+                && this.stringNotEmpty(name)
+                && this.idValid(id)) {
+            this.store.update(Long.parseLong(id), name);
         }
-        if (result.isEmpty()) {
-            final Optional<User> user = this.store.update(Long.parseLong(id), name);
-            if (!user.isPresent()) {
-                result.add(String.format("User with id: %s, not found.", id));
-            } else {
-                result.add(String.format("%s updated.", user.get()));
-            }
-        }
-        return result;
     }
 
     /**
      * Delete user with id.
      * @param id user id.
-     * @return Iterable with errors message, or result message.
      */
-    public Iterable<String> delete(String id) {
-        final Collection<String> result = new ArrayList<>();
-        this.validateId(id).ifPresent(result::add);
-        if (result.isEmpty()) {
-            if (this.store.delete(Long.parseLong(id))) {
-                result.add(String.format("User with id: %s, was removed.", id));
-            } else {
-                result.add(String.format("User with id: %s, not found.", id));
-            }
+    public void delete(String id) {
+        if (this.stringNotEmpty(id) && this.idValid(id)) {
+            this.store.delete(Long.parseLong(id));
         }
-        return result;
     }
 
     /**
@@ -106,7 +72,7 @@ public class ValidateService {
      */
     public Optional<User> findById(String id) {
         final Optional<User> result;
-        if (!this.stringIsEmpty(id) && this.idValid(id)) {
+        if (this.stringNotEmpty(id) && this.idValid(id)) {
             result = this.store.findById(Long.parseLong(id));
         } else {
             result = Optional.empty();
@@ -118,20 +84,8 @@ public class ValidateService {
         return INSTANCE;
     }
 
-    private Optional<String> validateId(String id) {
-        final Optional<String> error;
-        if (this.stringIsEmpty(id)) {
-            error = Optional.of(this.notFilled("Id"));
-        } else if (!this.idValid(id)) {
-            error = Optional.of(String.format("Id: %s, not a number.", id));
-        } else {
-            error = Optional.empty();
-        }
-        return error;
-    }
-
-    private boolean stringIsEmpty(String string) {
-        return Objects.isNull(string) || "".equals(string.trim());
+    private boolean stringNotEmpty(String string) {
+        return !(Objects.isNull(string) || "".equals(string.trim()));
     }
 
     private boolean idValid(String id) {
@@ -152,9 +106,5 @@ public class ValidateService {
             valid = false;
         }
         return valid;
-    }
-
-    private String notFilled(String parameterName) {
-        return String.format("%s - not filled.", parameterName);
     }
 }

@@ -18,24 +18,21 @@ public interface Store {
      * @param name user name.
      * @param login user login.
      * @param email user email.
-     * @return Optional with user, if added, or empty.
      */
-    Optional<User> add(String name, String login, String email);
+    void add(String login, String name, String email);
 
     /**
      * Update user name.
      * @param id user id.
      * @param name user name.
-     * @return Optional with user, if updated, or empty.
      */
-    Optional<User> update(long id, String name);
+    void update(long id, String name);
 
     /**
      * Delete user with id.
      * @param id user id.
-     * @return true, if deleted.
      */
-    boolean delete(long id);
+    void delete(long id);
 
     /**
      * Find all users.

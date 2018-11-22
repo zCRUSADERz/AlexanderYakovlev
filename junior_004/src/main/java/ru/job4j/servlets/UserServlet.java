@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 /**
  * User servlet.
@@ -19,7 +19,7 @@ import java.util.function.Function;
  */
 public class UserServlet extends HttpServlet {
     private final ValidateService validateService = ValidateService.getInstance();
-    private final Map<CRUD, Function<HttpServletRequest, Iterable<String>>> dispatcher = new HashMap<>();
+    private final Map<CRUD, Consumer<HttpServletRequest>> dispatcher = new HashMap<>();
 
     @Override
     public void init() throws ServletException {
@@ -73,7 +73,7 @@ public class UserServlet extends HttpServlet {
         final String action = req.getParameter("action").toUpperCase();
         this.dispatcher
                 .get(CRUD.valueOf(action))
-                .apply(req);
+                .accept(req);
         this.doGet(req, resp);
     }
 }
