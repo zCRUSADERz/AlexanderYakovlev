@@ -1,4 +1,4 @@
-<%@ page import="ru.job4j.model.User" %>
+<%@ page import="ru.job4j.persistence.model.User" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>

@@ -49,4 +49,8 @@
         <servlet-name>EchoServlet</servlet-name>
         <url-pattern>/echo</url-pattern>
     </servlet-mapping>
+
+    <listener>
+        <listener-class>ru.job4j.DBInitializeContextListener</listener-class>
+    </listener>
 </web-app>

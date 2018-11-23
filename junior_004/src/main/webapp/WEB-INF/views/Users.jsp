@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="ru.job4j.model.User" %>
+<%@ page import="ru.job4j.persistence.model.User" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="java.time.format.FormatStyle" %>
 <%@ page import="java.util.Collection" %>

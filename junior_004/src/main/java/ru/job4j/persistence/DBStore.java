@@ -1,8 +1,8 @@
-package ru.job4j;
+package ru.job4j.persistence;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.log4j.Logger;
-import ru.job4j.model.User;
+import ru.job4j.persistence.model.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class DBStore implements Store, AutoCloseable {
 
     private DBStore() {
         this.source.setDriverClassName("org.postgresql.Driver");
-        this.source.setUrl("jdbc:postgresql://localhost:5432/");
+        this.source.setUrl("jdbc:postgresql://localhost:5432/dbstore");
         this.source.setUsername("postgres");
         this.source.setPassword("password");
         this.source.setInitialSize(10);
