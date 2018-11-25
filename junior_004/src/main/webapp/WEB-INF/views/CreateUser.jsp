@@ -12,7 +12,7 @@
 <body>
     <h3>Create new user</h3>
     <div class="main">
-        <form action="<%=request.getContextPath()%>/" method="post">
+        <form action="${pageContext.request.contextPath}/" method="post">
             <input type="hidden" name="action" value="add">
             <div class="field">
                 <label for="login">Login</label>

@@ -1,28 +1,30 @@
-<%@ page import="ru.job4j.persistence.model.User" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
     <title>Edit user</title>
 </head>
 <body>
     <h3>Edit user</h3>
-    <% if (((Boolean) request.getAttribute("userFound"))) { %>
-        <% final User user = (User) request.getAttribute("user"); %>
-        <form action="<%=request.getContextPath()%>/" method="post">
+    <%--@elvariable id="userFound" type="java.lang.Boolean"--%>
+    <%--@elvariable id="user" type="ru.job4j.persistence.model.User"--%>
+    <c:if test="${userFound}" >
+        <form action="${pageContext.request.contextPath}/" method="post">
             <input type="hidden" name="action" value="update">
-            <input type="hidden" name="id" value="<%=user.getId()%>">
+            <input type="hidden" name="id" value="${user.id}">
             <div class="main">
                 <div class="field">
                     <label for="name">User name</label>
-                    <input type="text" id="name" name="name" value="<%=user.getName()%>"/>
+                    <input type="text" id="name" name="name" value="${user.name}"/>
                 </div>
                 <div class="field">
                     <input type="submit" value="Update">
                 </div>
             </div>
         </form>
-    <% } else { %>
+    </c:if>
+    <c:if test="${!userFound}" >
         User not found.
-    <% } %>
+    </c:if>
 </body>
 </html>

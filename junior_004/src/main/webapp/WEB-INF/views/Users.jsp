@@ -1,8 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="ru.job4j.persistence.model.User" %>
-<%@ page import="java.time.format.DateTimeFormatter" %>
-<%@ page import="java.time.format.FormatStyle" %>
-<%@ page import="java.util.Collection" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
     <title>Users list</title>
@@ -34,35 +31,33 @@
             <th>Edit</th>
             <th>Delete</th>
         </tr>
-        <% for (User user : (Collection<User>) request.getAttribute("users")) {%>
-        <tr>
-            <td><%=user.getId()%></td>
-            <td><%=user.getLogin()%></td>
-            <td><%=user.getName()%></td>
-            <td><%=user.getEmail()%></td>
-            <td><%=user.getCreateDate().format(
-                    DateTimeFormatter.ofLocalizedDateTime(
-                            FormatStyle.SHORT,
-                            FormatStyle.SHORT
-                    ))%>
-            </td>
-            <td>
-                <form action="<%=request.getContextPath()%>/edit" method="get">
-                    <input type="hidden" name="id" value="<%=user.getId()%>">
-                    <br><input type="submit" value="Edit">
-                </form>
-            </td>
-            <td>
-                <form action="<%=request.getContextPath()%>/" method="post">
-                    <input type="hidden" name="action" value="delete">
-                    <input type="hidden" name="id" value="<%=user.getId()%>">
-                    <br><input type="submit" value="Delete">
-                </form>
-            </td>
-        </tr>
-        <%}%>
+        <%--@elvariable id="users" type="java.util.Collection<User>"--%>
+        <%--@elvariable id="user" type="ru.job4j.persistence.model.User"--%>
+        <%--@elvariable id="usersCreateDate" type="Map<Long, String>"--%>
+        <c:forEach items="${users}" var="user" >
+            <tr>
+                <td>${user.id}</td>
+                <td>${user.login}</td>
+                <td>${user.name}</td>
+                <td>${user.email}</td>
+                <td>${usersCreateDate[user.id]}</td>
+                <td>
+                    <form action="${pageContext.request.contextPath}/edit" method="get">
+                        <input type="hidden" name="id" value="${user.id}">
+                        <br><input type="submit" value="Edit">
+                    </form>
+                </td>
+                <td>
+                    <form action="${pageContext.request.contextPath}/" method="post">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="id" value="${user.id}">
+                        <br><input type="submit" value="Delete">
+                    </form>
+                </td>
+            </tr>
+        </c:forEach>
     </table>
-    <form action="<%=request.getContextPath()%>/create" method="get">
+    <form action="${pageContext.request.contextPath}/create" method="get">
         <br><input type="submit" value="Create new User">
     </form>
 </body>

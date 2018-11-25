@@ -1,6 +1,8 @@
 package ru.job4j.persistence.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 public class User {
     private final long id;
@@ -53,6 +55,15 @@ public class User {
 
     public boolean loginIsEqual(String login) {
         return this.login.equals(login);
+    }
+
+    public String createDateToString() {
+        return this.createDate.format(
+                DateTimeFormatter.ofLocalizedDateTime(
+                        FormatStyle.SHORT,
+                        FormatStyle.SHORT
+                )
+        );
     }
 
     @Override
