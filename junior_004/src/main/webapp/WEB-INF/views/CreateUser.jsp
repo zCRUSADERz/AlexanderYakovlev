@@ -12,11 +12,15 @@
 <body>
     <h3>Create new user</h3>
     <div class="main">
-        <form action="${pageContext.request.contextPath}/" method="post">
+        <form action="${pageContext.request.contextPath}/users/" method="post">
             <input type="hidden" name="action" value="add">
             <div class="field">
                 <label for="login">Login</label>
                 <input type="text" id="login" name="login" />
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" />
             </div>
             <div class="field">
                 <label for="name">User name</label>

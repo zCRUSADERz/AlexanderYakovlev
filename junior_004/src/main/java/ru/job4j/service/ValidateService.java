@@ -3,6 +3,7 @@ package ru.job4j.service;
 import ru.job4j.persistence.DBStore;
 import ru.job4j.persistence.Store;
 import ru.job4j.persistence.model.User;
+import ru.job4j.persistence.model.UserException;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -21,42 +22,41 @@ public class ValidateService {
     private ValidateService() {
     }
 
+    public static ValidateService getInstance() {
+        return INSTANCE;
+    }
+
     /**
      * Add new User.
-     * @param name user name.
-     * @param login user login.
-     * @param email user email.
+     * @param user added user.
      */
-    public void add(String name, String login, String email) {
-        if (this.stringNotEmpty(name)
-                && this.stringNotEmpty(login)
-                && this.stringNotEmpty(email)
-                && this.emailValid(email)) {
-            this.store.add(name, login, email);
-        }
+    public void add(User user) throws UserException {
+        this.validateLogin(user);
+        this.validatePassword(user);
+        this.validateName(user);
+        this.validateEmail(user);
+        this.store.add(user);
+
     }
 
     /**
      * Update user name.
-     * @param id user id.
-     * @param name user name.
+     * @param user updated user.
      */
-    public void update(String id, String name) {
-        if (this.stringNotEmpty(id)
-                && this.stringNotEmpty(name)
-                && this.idValid(id)) {
-            this.store.update(Long.parseLong(id), name);
-        }
+    public void update(User user) throws UserException {
+        this.validatePassword(user);
+        this.validateName(user);
+        this.validateEmail(user);
+        this.store.update(user);
     }
 
     /**
      * Delete user with id.
      * @param id user id.
      */
-    public void delete(String id) {
-        if (this.stringNotEmpty(id) && this.idValid(id)) {
-            this.store.delete(Long.parseLong(id));
-        }
+    public void delete(String id) throws UserException {
+        final long userId = validateId(id);
+        this.store.delete(userId);
     }
 
     /**
@@ -72,41 +72,70 @@ public class ValidateService {
      * @param id user id.
      * @return Optional with user, or empty.
      */
-    public Optional<User> findById(String id) {
-        final Optional<User> result;
-        if (this.stringNotEmpty(id) && this.idValid(id)) {
-            result = this.store.findById(Long.parseLong(id));
-        } else {
-            result = Optional.empty();
+    public Optional<User> findById(String id) throws UserException {
+        final long userId = validateId(id);
+        return this.store.findById(userId);
+    }
+
+    public Optional<User> isCredentials(User user) throws UserException {
+        this.validateLogin(user);
+        this.validatePassword(user);
+        return this.store.isCredentials(user);
+    }
+
+    private boolean empty(String string) {
+        return Objects.isNull(string) || "".equals(string.trim());
+    }
+
+    private long validateId(String id) throws UserException {
+        final long result;
+        try {
+            result = Long.parseLong(id);
+        } catch (NumberFormatException ex) {
+            throw new UserException(
+                    String.format(
+                            "%s - is not number.",
+                            id
+                    ),
+                    ex
+            );
         }
         return result;
     }
 
-    public static ValidateService getInstance() {
-        return INSTANCE;
-    }
-
-    private boolean stringNotEmpty(String string) {
-        return !(Objects.isNull(string) || "".equals(string.trim()));
-    }
-
-    private boolean idValid(String id) {
-        boolean valid = true;
-        try {
-            long parsed = Long.parseLong(id);
-        } catch (NumberFormatException ex) {
-            valid = false;
+    private void validateEmail(User user) throws UserException {
+        if (this.empty(user.getEmail())) {
+            throw new UserException(String.format("Email is empty. %s", user));
         }
-        return valid;
-    }
-
-    private boolean emailValid(String email) {
-        boolean valid = true;
         try {
-            new InternetAddress(email).validate();
+            new InternetAddress(user.getEmail()).validate();
         } catch (AddressException ex) {
-            valid = false;
+            throw new UserException(String.format("Invalid email address. %s", user), ex);
         }
-        return valid;
+    }
+
+    private void validateLogin(User user) throws UserException {
+        if (this.empty(user.getLogin())) {
+            throw new UserException(String.format("Login is empty. %s", user));
+        }
+    }
+
+    private void validatePassword(User user) throws UserException {
+        final int minPasswordLength = 6;
+        if (this.empty(user.getPassword())) {
+            throw new UserException(String.format("Password is empty. %s", user));
+        }
+        if (user.getPassword().length() < minPasswordLength) {
+            throw new UserException(String.format(
+                    "The password is too short: it must be at least %s characters. %s",
+                    minPasswordLength, user
+            ));
+        }
+    }
+
+    private void validateName(User user) throws UserException {
+        if (this.empty(user.getName())) {
+            throw new UserException(String.format("User name is empty. %s", user));
+        }
     }
 }

@@ -37,18 +37,19 @@ public class DBStore implements Store, AutoCloseable {
 
     /**
      * Add new User.
-     * @param name user name.
-     * @param login user login.
-     * @param email user email.
+     * @param user added user
      */
     @Override
-    public void add(String name, String login, String email) {
+    public void add(User user) {
+        final String query = ""
+                + "INSERT INTO users (login, password, name, email) "
+                + "VALUES (?, ?, ?, ?)";
         try (Connection connection = this.source.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO users (login, name, email) VALUES (?, ?, ?)")) {
-                statement.setString(1, login);
-                statement.setString(2, name);
-                statement.setString(3, email);
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, user.getLogin());
+                statement.setString(2, user.getPassword());
+                statement.setString(3, user.getName());
+                statement.setString(4, user.getEmail());
                 statement.executeUpdate();
             }
         } catch (SQLException ex) {
@@ -58,16 +59,19 @@ public class DBStore implements Store, AutoCloseable {
 
     /**
      * Update user name.
-     * @param id user id.
-     * @param name user name.
+     * @param user updated user.
      */
     @Override
-    public void update(long id, String name) {
+    public void update(User user) {
+        final String query = ""
+                + "UPDATE users SET password = ?, name = ?, email = ? "
+                + "WHERE id = ?";
         try (Connection connection = this.source.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(
-                    "UPDATE users SET name = ? WHERE id = ?")) {
-                statement.setString(1, name);
-                statement.setLong(2, id);
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, user.getPassword());
+                statement.setString(2, user.getName());
+                statement.setString(3, user.getEmail());
+                statement.setLong(4, user.getId());
                 statement.executeUpdate();
             }
         } catch (SQLException ex) {
@@ -98,18 +102,21 @@ public class DBStore implements Store, AutoCloseable {
      */
     @Override
     public Collection<User> findAll() {
+        final String query = ""
+                + "SELECT id, login, password, name, email, created_date "
+                + "FROM users";
         final Collection<User> users = new ArrayList<>();
         try (Connection connection = this.source.getConnection()) {
             try (Statement statement = connection.createStatement()) {
-                try (ResultSet resultSet = statement.executeQuery(
-                        "SELECT id, login, name, email, created_date FROM users")) {
+                try (ResultSet resultSet = statement.executeQuery(query)) {
                     while (resultSet.next()) {
                         users.add(new User(
                                 resultSet.getLong(1),
                                 resultSet.getString(2),
                                 resultSet.getString(3),
                                 resultSet.getString(4),
-                                resultSet.getTimestamp(5).toLocalDateTime()
+                                resultSet.getString(5),
+                                resultSet.getTimestamp(6).toLocalDateTime()
                         ));
                     }
                 }
@@ -128,9 +135,11 @@ public class DBStore implements Store, AutoCloseable {
     @Override
     public Optional<User> findById(long id) {
         Optional<User> optUser = Optional.empty();
+        final String query = ""
+                + "SELECT id, login, password, name, email, created_date "
+                + "FROM users WHERE id=?";
         try (Connection connection = this.source.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(
-                    "SELECT id, login, name, email, created_date FROM users WHERE id=?")) {
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setLong(1, id);
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
@@ -139,7 +148,36 @@ public class DBStore implements Store, AutoCloseable {
                                 resultSet.getString(2),
                                 resultSet.getString(3),
                                 resultSet.getString(4),
-                                resultSet.getTimestamp(5).toLocalDateTime()
+                                resultSet.getString(5),
+                                resultSet.getTimestamp(6).toLocalDateTime()
+                        ));
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            this.logger.error("SQL error.", ex);
+        }
+        return optUser;
+    }
+
+    public Optional<User> isCredentials(User user) {
+        Optional<User> optUser = Optional.empty();
+        final String query = ""
+                + "SELECT id, login, password, name, email, created_date "
+                + "FROM users WHERE login = ? AND password = ?";
+        try (Connection connection = this.source.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, user.getLogin());
+                statement.setString(2, user.getPassword());
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        optUser = Optional.of(new User(
+                                resultSet.getLong(1),
+                                resultSet.getString(2),
+                                resultSet.getString(3),
+                                resultSet.getString(4),
+                                resultSet.getString(5),
+                                resultSet.getTimestamp(6).toLocalDateTime()
                         ));
                     }
                 }

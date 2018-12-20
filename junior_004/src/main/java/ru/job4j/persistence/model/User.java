@@ -5,20 +5,42 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
 public class User {
-    private final long id;
-    private final String name;
-    private final String login;
-    private final String email;
-    private final LocalDateTime createDate;
+    private long id;
+    private String login;
+    private String password;
+    private String name;
+    private String email;
+    private LocalDateTime createDate;
+
+    public User() {
+    }
+
+    public User(String login,
+                String password) {
+        this.login = login;
+        this.password = password;
+    }
+
+    public User(String login,
+                String password,
+                String name,
+                String email) {
+        this.login = login;
+        this.password = password;
+        this.name = name;
+        this.email = email;
+    }
 
     public User(long id,
-                String name,
                 String login,
+                String password,
+                String name,
                 String email,
                 LocalDateTime createDate) {
         this.id = id;
-        this.name = name;
         this.login = login;
+        this.password = password;
+        this.name = name;
         this.email = email;
         this.createDate = createDate;
     }
@@ -27,37 +49,55 @@ public class User {
         return this.id;
     }
 
-    public String getName() {
-        return name;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getLogin() {
         return login;
     }
 
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public User rename(String newName) {
-        return new User(
-                this.id,
-                newName,
-                this.login,
-                this.email,
-                this.createDate
-        );
+    public void setCreateDate(LocalDateTime createDate) {
+        this.createDate = createDate;
     }
 
     public boolean loginIsEqual(String login) {
         return this.login.equals(login);
     }
 
-    public String createDateToString() {
+    public String shortCreateDate() {
         return this.createDate.format(
                 DateTimeFormatter.ofLocalizedDateTime(
                         FormatStyle.SHORT,
@@ -70,8 +110,8 @@ public class User {
     public String toString() {
         return "User{"
                 + "id=" + this.id
-                + ", name='" + this.name + '\''
                 + ", login='" + this.login + '\''
+                + ", name='" + this.name + '\''
                 + ", email='" + this.email + '\''
                 + ", created=" + this.createDate
                 + '}';

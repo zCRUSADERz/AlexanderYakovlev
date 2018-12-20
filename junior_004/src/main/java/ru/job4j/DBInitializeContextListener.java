@@ -26,11 +26,12 @@ public class DBInitializeContextListener implements ServletContextListener {
                 statement.execute(
                         ""
                                 + "CREATE TABLE IF NOT EXISTS users ("
-                                + "id BIGSERIAL PRIMARY KEY,"
-                                + "login CHARACTER VARYING UNIQUE NOT NULL,"
-                                + "name CHARACTER VARYING NOT NULL,"
-                                + "email CHARACTER VARYING NOT NULL,"
-                                + "created_date TIMESTAMP WITH TIME ZONE DEFAULT LOCALTIMESTAMP"
+                                + "id BIGSERIAL PRIMARY KEY, "
+                                + "login CHARACTER VARYING UNIQUE NOT NULL, "
+                                + "password CHARACTER VARYING NOT NULL, "
+                                + "name CHARACTER VARYING NOT NULL, "
+                                + "email CHARACTER VARYING NOT NULL, "
+                                + "created_date TIMESTAMP DEFAULT LOCALTIMESTAMP"
                                 + ")"
                 );
             }

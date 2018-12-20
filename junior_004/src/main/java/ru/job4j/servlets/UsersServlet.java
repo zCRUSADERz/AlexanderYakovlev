@@ -31,7 +31,7 @@ public class UsersServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         final Collection<User> users = this.validateService.findAll();
         final Map<Long, String> usersCreateDate = users.stream()
-                .collect(Collectors.toMap(User::getId, User::createDateToString));
+                .collect(Collectors.toMap(User::getId, User::shortCreateDate));
         req.setAttribute("users", users);
         req.setAttribute("usersCreateDate", usersCreateDate);
         req.getRequestDispatcher("/WEB-INF/views/Users.jsp").forward(req, resp);

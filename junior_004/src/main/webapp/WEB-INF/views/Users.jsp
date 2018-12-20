@@ -14,9 +14,6 @@
             text-align: left;
             padding: 8px;
         }
-        tr:nth-child(even) {
-            background-color: #dddddd;
-        }
     </style>
 </head>
 <body>
@@ -42,13 +39,13 @@
                 <td>${user.email}</td>
                 <td>${usersCreateDate[user.id]}</td>
                 <td>
-                    <form action="${pageContext.request.contextPath}/edit" method="get">
+                    <form action="${pageContext.request.contextPath}/users/edit" method="get">
                         <input type="hidden" name="id" value="${user.id}">
                         <br><input type="submit" value="Edit">
                     </form>
                 </td>
                 <td>
-                    <form action="${pageContext.request.contextPath}/" method="post">
+                    <form action="${pageContext.request.contextPath}/users/" method="post">
                         <input type="hidden" name="action" value="delete">
                         <input type="hidden" name="id" value="${user.id}">
                         <br><input type="submit" value="Delete">
@@ -57,7 +54,7 @@
             </tr>
         </c:forEach>
     </table>
-    <form action="${pageContext.request.contextPath}/create" method="get">
+    <form action="${pageContext.request.contextPath}/users/create" method="get">
         <br><input type="submit" value="Create new User">
     </form>
 </body>

@@ -31,26 +31,22 @@ public class MemoryStore implements Store {
      * Add new User.
      * Synchronized, потому что необходимо для каждого user
      * поддерживать уникальность поля login
-     * @param name user name.
-     * @param login user login.
-     * @param email user email.
+     * @param user added user.
      */
     @Override
-    public synchronized void add(String name,
-                                           String login,
-                                           String email) {
-        final Optional<User> userWithSameLogin = this.users
+    public synchronized void add(User user) {
+        final boolean loginExist = this.users
                 .values()
                 .stream()
-                .filter(user -> user.loginIsEqual(login))
-                .findFirst();
-        if (!userWithSameLogin.isPresent()) {
+                .anyMatch(userInMemory -> userInMemory.loginIsEqual(user.getLogin()));
+        if (!loginExist) {
             final long newId = this.idCounter.incrementAndGet();
             final User newUser = new User(
                     newId,
-                    name,
-                    login,
-                    email,
+                    user.getLogin(),
+                    user.getPassword(),
+                    user.getName(),
+                    user.getEmail(),
                     LocalDateTime.now()
             );
             this.users.put(newId, newUser);
@@ -59,14 +55,18 @@ public class MemoryStore implements Store {
 
     /**
      * Update user name.
-     * @param id user id.
-     * @param name user name.
+     * @param user updated user.
      */
     @Override
-    public void update(long id, String name) {
+    public void update(User user) {
         this.users.computeIfPresent(
-                id,
-                (aLong, user) -> user.rename(name)
+                user.getId(),
+                (aLong, userInMemory) -> {
+                    userInMemory.setPassword(user.getPassword());
+                    userInMemory.setName(user.getName());
+                    userInMemory.setEmail(user.getEmail());
+                    return userInMemory;
+                }
         );
     }
 
@@ -96,6 +96,14 @@ public class MemoryStore implements Store {
     @Override
     public Optional<User> findById(long id) {
         return Optional.ofNullable(this.users.get(id));
+    }
+
+    @Override
+    public Optional<User> isCredentials(User user) {
+        return users.values().stream()
+                .filter(userInMemory -> userInMemory.getLogin().equals(user.getLogin())
+                        && userInMemory.getPassword().equals(user.getPassword()))
+                .findFirst();
     }
 
     public static MemoryStore getInstance() {

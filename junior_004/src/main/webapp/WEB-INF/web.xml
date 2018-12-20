@@ -11,7 +11,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>UserServlet</servlet-name>
-        <url-pattern>/</url-pattern>
+        <url-pattern>/users/</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -20,7 +20,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>UsersServlet</servlet-name>
-        <url-pattern>/list</url-pattern>
+        <url-pattern>/users/list</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -29,7 +29,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>UserCreateServlet</servlet-name>
-        <url-pattern>/create</url-pattern>
+        <url-pattern>/users/create</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -38,7 +38,25 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>UserUpdateServlet</servlet-name>
-        <url-pattern>/edit</url-pattern>
+        <url-pattern>/users/edit</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>SigningServlet</servlet-name>
+        <servlet-class>ru.job4j.servlets.SigningServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SigningServlet</servlet-name>
+        <url-pattern>/signin</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LogOutServlet</servlet-name>
+        <servlet-class>ru.job4j.servlets.LogOutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogOutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -50,7 +68,18 @@
         <url-pattern>/echo</url-pattern>
     </servlet-mapping>
 
+    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>ru.job4j.servlets.AuthFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/users/*</url-pattern>
+    </filter-mapping>
+
     <listener>
         <listener-class>ru.job4j.DBInitializeContextListener</listener-class>
     </listener>
+
+
 </web-app>

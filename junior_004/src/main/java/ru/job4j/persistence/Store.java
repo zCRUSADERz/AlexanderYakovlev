@@ -15,18 +15,15 @@ public interface Store {
 
     /**
      * Add new User.
-     * @param name user name.
-     * @param login user login.
-     * @param email user email.
+     * @param user added user.
      */
-    void add(String login, String name, String email);
+    void add(User user);
 
     /**
      * Update user name.
-     * @param id user id.
-     * @param name user name.
+     * @param user updated user.
      */
-    void update(long id, String name);
+    void update(User user);
 
     /**
      * Delete user with id.
@@ -46,4 +43,6 @@ public interface Store {
      * @return Optional with user, or empty.
      */
     Optional<User> findById(long id);
+
+    Optional<User> isCredentials(User user);
 }

@@ -1,5 +1,7 @@
 package ru.job4j.servlets;
 
+import org.apache.log4j.Logger;
+import ru.job4j.persistence.model.UserException;
 import ru.job4j.service.ValidateService;
 import ru.job4j.persistence.model.User;
 
@@ -18,6 +20,7 @@ import java.util.Optional;
  */
 public class UserUpdateServlet extends HttpServlet {
     private final ValidateService validateService = ValidateService.getInstance();
+    private final Logger logger = Logger.getLogger(UserUpdateServlet.class);
 
     /**
      * Return user update form.
@@ -27,8 +30,15 @@ public class UserUpdateServlet extends HttpServlet {
      * @throws IOException IOException.
      */
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        final Optional<User> optUser = this.validateService.findById(req.getParameter("id"));
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        Optional<User> optUser;
+        final String id = req.getParameter("id");
+        try {
+             optUser = this.validateService.findById(id);
+        } catch (UserException ex) {
+            this.logger.error(String.format("Find by id: %s, error.", id), ex);
+            optUser = Optional.empty();
+        }
         if (optUser.isPresent()) {
             req.setAttribute("userFound", true);
             req.setAttribute("user", optUser.get());
