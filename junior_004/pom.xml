@@ -11,12 +11,6 @@
     <artifactId>junior_004</artifactId>
     <packaging>war</packaging>
 
-    <properties>
-        <maven.compilier.source>1.8</maven.compilier.source>
-        <maven.compilier.target>1.8</maven.compilier.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>

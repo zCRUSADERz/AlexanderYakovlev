@@ -6,7 +6,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
+
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.*;
 
 /**
@@ -24,10 +25,12 @@ public class ParallelSearchTest {
         ParallelSearch search = new ParallelSearch(root, "123", Arrays.asList("txt", "java"));
         search.init();
         List<String> result = search.result();
-        List<String> expected = Arrays.asList(
-                root + File.separator + "first" + File.separator + "text2.txt",
-                root + File.separator + "text.txt"
+        assertThat(
+                result,
+                containsInAnyOrder(
+                        String.format("%s%stext.txt", root, File.separator),
+                        String.format("%s%2$sfirst%2$stext2.txt", root, File.separator)
+                )
         );
-        assertThat(result, is(expected));
     }
 }
