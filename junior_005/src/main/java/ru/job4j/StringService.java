@@ -28,7 +28,7 @@ public class StringService {
         }
         int b = in.read();
         while (b != -1) {
-            transfer.transfer(b);
+            transfer.transfer((byte) b);
             b = in.read();
         }
         transfer.flush();
@@ -47,7 +47,7 @@ public class StringService {
          * @param nextByte source.
          * @throws IOException IOException.
          */
-        void transfer(final int nextByte) throws IOException;
+        void transfer(final byte nextByte) throws IOException;
 
         /**
          * Flush buffer.
@@ -64,14 +64,14 @@ public class StringService {
      */
     public static class WithoutAbuseWord implements BufferedFilter {
         private final BufferedFilter filter;
-        private final char[] abuseWord;
-        private final char[] buffer;
+        private final byte[] abuseWord;
+        private final byte[] buffer;
         private int cursor = 0;
 
         public WithoutAbuseWord(final BufferedFilter filter, final String abuse) {
             this.filter = filter;
-            this.abuseWord = abuse.toCharArray();
-            this.buffer = new char[this.abuseWord.length];
+            this.abuseWord = abuse.getBytes();
+            this.buffer = new byte[this.abuseWord.length];
         }
 
         /**
@@ -80,10 +80,9 @@ public class StringService {
          * @throws IOException IOException.
          */
         @Override
-        public void transfer(final int nextByte) throws IOException {
-            final char nextChar = (char) nextByte;
-            if (nextChar == this.abuseWord[this.cursor]) {
-                this.buffer[this.cursor++] = nextChar;
+        public void transfer(final byte nextByte) throws IOException {
+            if (nextByte == this.abuseWord[this.cursor]) {
+                this.buffer[this.cursor++] = nextByte;
                 if (this.cursor == this.abuseWord.length) {
                     this.cursor = 0;
                 }
@@ -116,7 +115,7 @@ public class StringService {
                         this.buffer, tempCursor, this.cursor
                 );
                 if (cmpResult == 0) {
-                    final char[] tempBuffer = Arrays.copyOfRange(
+                    final byte[] tempBuffer = Arrays.copyOfRange(
                             this.buffer, tempCursor, this.cursor
                     );
                     System.arraycopy(tempBuffer, 0, this.buffer, 0, tempBuffer.length);
@@ -146,7 +145,7 @@ public class StringService {
          * @throws IOException IOException.
          */
         @Override
-        public void transfer(final int nextByte) throws IOException {
+        public void transfer(final byte nextByte) throws IOException {
             this.outputStream.write(nextByte);
         }
 

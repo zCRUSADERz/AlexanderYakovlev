@@ -31,9 +31,9 @@ public class StringServiceTest {
     public void whenDropSomeAbuseWords() throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         this.service.dropAbuses(
-                new ByteArrayInputStream("Hello world! Aaaargh. aarg".getBytes()),
+                new ByteArrayInputStream("¢Hello world! Aaaargh. aarg".getBytes()),
                 out,
-                new String[] {"o", "o w", "aargh"}
+                new String[] {"o", "o w", "aargh", "¢"}
         );
         final String expected = "Hellrld! Aa. aarg";
         assertEquals(expected, new String(out.toByteArray()));
