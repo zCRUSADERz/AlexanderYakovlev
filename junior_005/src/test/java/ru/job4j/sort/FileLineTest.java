@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 import static org.junit.Assert.assertEquals;
@@ -26,7 +27,7 @@ public class FileLineTest {
         try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             line.write(out);
             final String expected = String.format("789%n987%n");
-            assertEquals(out.toString(), expected);
+            assertEquals(out.toString(StandardCharsets.UTF_8), expected);
         }
     }
 

@@ -39,8 +39,9 @@ public class FileLineStreamTest {
     @Test
     public void whenReadTestFileWithTwoStringTwiceThenReturnTwoFileLine() {
         this.lineStream.next();
+        int pos = 9 + System.lineSeparator().getBytes().length;
         final Optional<FileLine> expected = Optional.of(new FileLine(
-                FileLineTest.TEST_FILE_PATH, 11, 6
+                FileLineTest.TEST_FILE_PATH, pos, 6
         ));
         assertEquals(expected, this.lineStream.next());
     }
