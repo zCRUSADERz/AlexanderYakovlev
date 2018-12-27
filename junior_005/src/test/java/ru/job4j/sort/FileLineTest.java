@@ -23,7 +23,8 @@ public class FileLineTest {
 
     @Test
     public void whenWriteLineToOutputStream() throws IOException {
-        final FileLine line = new FileLine(TEST_FILE_PATH, 6, 8);
+        int bytes = 6 + System.lineSeparator().getBytes().length;
+        final FileLine line = new FileLine(TEST_FILE_PATH, 6, bytes);
         try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             line.write(out);
             final String expected = String.format("789%n987%n");
