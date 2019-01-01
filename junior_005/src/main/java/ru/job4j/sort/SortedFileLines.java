@@ -1,12 +1,9 @@
 package ru.job4j.sort;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Path;
 import java.util.Optional;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.stream.Stream;
 
 /**
  * Sorted file line.
@@ -22,25 +19,38 @@ public final class SortedFileLines {
     }
 
     /**
-     * Write sorted lines to OutputStream.
+     * Copy sorted lines to OutputStream.
      * @param out OutputStream.
-     * @throws FileNotFoundException if file not found.
      */
-    public final void write(OutputStream out) throws FileNotFoundException {
-        try (final FileLineStream lineStream = new FileLineStream(this.filePath)) {
-            final SortedSet<FileLine> lines = new TreeSet<>();
-            Optional<FileLine> optFileLine = lineStream.next();
-            while (optFileLine.isPresent()) {
-                lines.add(optFileLine.get());
-                optFileLine = lineStream.next();
-            }
-            lines.forEach(fileLine -> fileLine.write(out));
-        } catch (FileNotFoundException ex) {
-            throw ex;
-        } catch (IOException ex) {
-            throw new IllegalStateException(
-                    "Exception by file line stream close.", ex
-            );
+    public final void copy(OutputStream out) {
+        try (final LineStream lineStream
+                     = new LineStream(
+                new BufferedInputStream(
+                        new FileInputStream(filePath.toFile())));
+             final RandomAccessFile from
+                     = new RandomAccessFile(filePath.toFile(), "r")) {
+            Stream.iterate(
+                    lineStream.next(),
+                    Optional::isPresent,
+                    fileLine -> {
+                        try {
+                            return lineStream.next();
+                        } catch (IOException ex) {
+                            throw new UncheckedIOException(ex);
+                        }
+                    }
+            )
+                    .map(Optional::get)
+                    .sorted()
+                    .forEach(fileLine -> {
+                        try {
+                            fileLine.write(from, out);
+                        } catch (IOException ex) {
+                            throw new UncheckedIOException(ex);
+                        }
+                    });
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 }

@@ -25,7 +25,7 @@ public class SortedFileLinesTest {
                 "resources", "TestText.txt"
         ));
         try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            sortedFileLines.write(out);
+            sortedFileLines.copy(out);
             assertEquals(
                     String.format(""
                             + "123%n"

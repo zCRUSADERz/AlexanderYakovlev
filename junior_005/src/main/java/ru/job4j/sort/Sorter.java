@@ -18,9 +18,11 @@ public final class Sorter {
      * @throws FileNotFoundException if source file not found.
      */
     public static void sort(File source, File dest) throws IOException {
+        Files.deleteIfExists(dest.toPath());
         Files.createFile(dest.toPath());
-        try (final OutputStream out = new FileOutputStream(dest)) {
-            new SortedFileLines(source.toPath()).write(out);
+        try (final OutputStream out = new BufferedOutputStream(
+                             new FileOutputStream(dest))) {
+            new SortedFileLines(source.toPath()).copy(out);
         }
     }
 }
