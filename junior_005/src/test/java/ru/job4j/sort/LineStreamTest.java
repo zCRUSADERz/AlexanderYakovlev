@@ -40,7 +40,7 @@ public class LineStreamTest {
     @Test
     public void whenReadTestFileWithTwoStringOnceThenReturnFirstFileLine() throws IOException {
         final Optional<FileLine> expected = Optional.of(
-                new FileLine(0, 11)
+                new FileLine(0, 9 + System.lineSeparator().getBytes().length)
         );
         assertEquals(expected, this.lineStream.next());
     }
