@@ -1,9 +1,14 @@
 package ru.job4j.sort;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
@@ -16,16 +21,33 @@ import static org.junit.Assert.*;
  * @since 27.12.2018
  */
 public class SortedFileLinesTest {
+    private final Path file = Path.of(
+            ".", "src", "test",
+            "resources", "TestText.txt"
+    );
+    private final Charset charset = StandardCharsets.UTF_8;
+    private RandomAccessFile access;
+    private final SortedFileLines sortedFileLines = new SortedFileLines(
+            this.file,
+            this.charset,
+            "\r\n",
+            path -> this.access
+    );
+
+    @Before
+    public void setUp() throws FileNotFoundException {
+        this.access = new RandomAccessFile(this.file.toFile(), "r");
+    }
+
+    @After
+    public void close() throws IOException {
+        this.access.close();
+    }
 
     @Test
     public void whenWriteTestFileToOutputStreamThenLinesSorted() throws IOException {
-        final SortedFileLines sortedFileLines
-                = new SortedFileLines(Path.of(
-                ".", "src", "test",
-                "resources", "TestText.txt"
-        ));
         try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            sortedFileLines.copy(out);
+            this.sortedFileLines.copy(out);
             assertEquals(
                     String.format(""
                             + "123%n"

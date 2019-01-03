@@ -1,6 +1,7 @@
 package ru.job4j.sort;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 /**
@@ -20,9 +21,16 @@ public final class Sorter {
     public static void sort(File source, File dest) throws IOException {
         Files.deleteIfExists(dest.toPath());
         Files.createFile(dest.toPath());
-        try (final OutputStream out = new BufferedOutputStream(
-                             new FileOutputStream(dest))) {
-            new SortedFileLines(source.toPath()).copy(out);
+        try (final OutputStream out
+                     = new BufferedOutputStream(new FileOutputStream(dest));
+             final RandomAccessFile randomAccess
+                     = new RandomAccessFile(source, "r")) {
+            new SortedFileLines(
+                    source.toPath(),
+                    StandardCharsets.UTF_8,
+                    "\r\n",
+                    path -> randomAccess
+            ).copy(out);
         }
     }
 }

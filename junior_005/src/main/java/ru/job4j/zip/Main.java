@@ -25,17 +25,17 @@ public class Main {
         }
         if (directory.isEmpty()) {
             throw new IllegalStateException(
-                    "Directory path missing in command line arguments"
+                    "Directory path missing in command next arguments"
             );
         }
         if (matcher.isEmpty()) {
             throw new IllegalStateException(
-                    "Extensions missing in command line arguments"
+                    "Extensions missing in command next arguments"
             );
         }
         if (archivePath.isEmpty()) {
             throw new IllegalStateException(
-                    "Target archive path missing in command line arguments"
+                    "Target archive path missing in command next arguments"
             );
         }
         try (final ZipArchive zipArchive = new ZipArchive(archivePath.get())) {
