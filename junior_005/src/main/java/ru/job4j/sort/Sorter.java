@@ -28,7 +28,6 @@ public final class Sorter {
             new SortedFileLines(
                     source.toPath(),
                     StandardCharsets.UTF_8,
-                    "\r\n",
                     path -> randomAccess
             ).copy(out);
         }

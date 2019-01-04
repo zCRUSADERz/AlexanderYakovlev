@@ -35,7 +35,6 @@ public class FileLinesTest {
                     "resources", "FileLinesTest.txt"
             ),
             this.charset,
-            "\r\n",
             path -> this.access
 
     );
@@ -65,7 +64,7 @@ public class FileLinesTest {
                         new FileLine(
                                 this.file,
                                 path -> this.access,
-                                11,
+                                9 + System.lineSeparator().getBytes(this.charset).length,
                                 6,
                                 this.charset
                         )
@@ -85,7 +84,7 @@ public class FileLinesTest {
                                     9
                             ),
                             new LinePosition(
-                                    11,
+                                    9 + System.lineSeparator().getBytes(this.charset).length,
                                     6,
                                     6
                             )

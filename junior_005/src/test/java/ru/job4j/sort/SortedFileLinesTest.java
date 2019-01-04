@@ -30,7 +30,6 @@ public class SortedFileLinesTest {
     private final SortedFileLines sortedFileLines = new SortedFileLines(
             this.file,
             this.charset,
-            "\r\n",
             path -> this.access
     );
 
@@ -56,7 +55,7 @@ public class SortedFileLinesTest {
                             + "46357375%n"
                             + "5¢Hello world! Aaaargh. aarg%n"
                     ),
-                    out.toString(StandardCharsets.UTF_8)
+                    out.toString(this.charset)
             );
         }
     }

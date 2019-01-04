@@ -15,17 +15,12 @@ import java.util.stream.Stream;
 public final class SortedFileLines {
     private final Path path;
     private final Charset charset;
-    private final String lineSeparator;
-    private final byte[] lineSeparatorBytes;
     private final Function<Path, RandomAccessFile> filesAccess;
 
     public SortedFileLines(final Path path, final Charset charset,
-                           final String lineSeparator,
                            final Function<Path, RandomAccessFile> filesAccess) {
         this.path = path;
         this.charset = charset;
-        this.lineSeparator = lineSeparator;
-        this.lineSeparatorBytes = lineSeparator.getBytes(charset);
         this.filesAccess = filesAccess;
     }
 
@@ -34,9 +29,8 @@ public final class SortedFileLines {
      * @param out OutputStream.
      */
     public final void copy(OutputStream out) {
-        try (final Stream<LinePosition> positions
-                     = new FileLines(this.path, this.charset,
-                this.lineSeparator, filesAccess).positions()) {
+        try (final Stream<LinePosition> positions = new FileLines(
+                this.path, this.charset, filesAccess).positions()) {
             positions
                     .sorted()
                     .map(lineProperties ->
@@ -44,7 +38,9 @@ public final class SortedFileLines {
                     .forEach(fileLine -> {
                         try {
                             fileLine.copy(out);
-                            out.write(this.lineSeparatorBytes);
+                            out.write(
+                                    System.lineSeparator().getBytes(this.charset)
+                            );
                         } catch (IOException ex) {
                             throw new UncheckedIOException(ex);
                         }

@@ -54,7 +54,6 @@ public class Entrance {
                             new FileLines(
                                     answersFile,
                                     StandardCharsets.UTF_8,
-                                    "\r\n",
                                     path -> accessFile
                             ).lines(),
                             writer

@@ -25,11 +25,10 @@ public final class FileLines {
     private final Function<Path, RandomAccessFile> filesAccess;
 
     public FileLines(final Path path, final Charset charset,
-                           final String lineSeparator,
                            final Function<Path, RandomAccessFile> filesAccess) {
         this.path = path;
         this.charset = charset;
-        this.separatorBytes = lineSeparator.getBytes(charset).length;
+        this.separatorBytes = System.lineSeparator().getBytes(charset).length;
         this.filesAccess = filesAccess;
     }
 
