@@ -10,8 +10,6 @@ import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.*;
@@ -70,26 +68,5 @@ public class FileLinesTest {
                         )
                 )
         );
-    }
-
-    @Test
-    public void positionsReturnLinePositions() {
-        try (final Stream<LinePosition> stream = this.fileLines.positions()) {
-            assertThat(
-                    stream.collect(Collectors.toList()),
-                    contains(
-                            new LinePosition(
-                                    0,
-                                    9,
-                                    9
-                            ),
-                            new LinePosition(
-                                    9 + System.lineSeparator().getBytes(this.charset).length,
-                                    6,
-                                    6
-                            )
-                    )
-            );
-        }
     }
 }
