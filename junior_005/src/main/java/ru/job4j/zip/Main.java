@@ -1,53 +1,45 @@
 package ru.job4j.zip;
 
+import ru.job4j.CommandLineArgument;
+import ru.job4j.SafeCommandLineArg;
+
 import java.io.IOException;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.util.Optional;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        Optional<Path> directory = Optional.empty();
-        Optional<PathMatcher> matcher = Optional.empty();
-        Optional<Path> archivePath = Optional.empty();
-        for (int i = 0; i < args.length; i++) {
-            if ("-d".equals(args[i])) {
-                directory = Optional.of(Path.of(args[++i]));
-            } else if ("-e".equals(args[i])) {
-                matcher = Optional.of(FileSystems.getDefault()
-                        .getPathMatcher(String.format("glob:*.{%s}", args[++i])));
-            } else if ("-o".equals(args[i])) {
-                archivePath = Optional.of(Path.of(args[++i]));
-            }
-        }
-        if (directory.isEmpty()) {
-            throw new IllegalStateException(
-                    "Directory path missing in command line arguments"
-            );
-        }
-        if (matcher.isEmpty()) {
-            throw new IllegalStateException(
-                    "Extensions missing in command line arguments"
-            );
-        }
-        if (archivePath.isEmpty()) {
-            throw new IllegalStateException(
-                    "Target archive path missing in command line arguments"
-            );
-        }
-        try (final ZipArchive zipArchive = new ZipArchive(archivePath.get())) {
-            final Path dirPath = directory.get();
-            Files.walkFileTree(
-                    dirPath,
-                    new FilteredFileVisitor(
-                            matcher.get(),
-                            path -> zipArchive.add(path, dirPath.relativize(path))
-                    )
-            );
-        }
-
+        new FileDirectory(
+                new SafeCommandLineArg<>(
+                        new CommandLineArgument<>(
+                                "-d",
+                                args,
+                                value -> Path.of(value)
+                        ),
+                        "Directory path missing in command line arguments"
+                ).arg(),
+                pathConsumer -> new FilteredFileVisitor(
+                        new SafeCommandLineArg<>(
+                                new CommandLineArgument<>(
+                                        "-e",
+                                        args,
+                                        value -> FileSystems.getDefault()
+                                                .getPathMatcher(String.format("glob:*.{%s}", value))
+                                ),
+                                "Extensions missing in command line arguments"
+                        ).arg(),
+                        pathConsumer
+                )
+        ).toZip(
+                new SafeCommandLineArg<>(
+                        new CommandLineArgument<>(
+                                "-o",
+                                args,
+                                value -> Path.of(value)
+                        ),
+                        "Target archive path missing in command line arguments"
+                ).arg()
+        );
     }
 }

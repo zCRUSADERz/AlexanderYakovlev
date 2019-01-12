@@ -21,7 +21,7 @@ public final class FilteredFileVisitor extends SimpleFileVisitor<Path> {
     public FileVisitResult visitFile(final Path file,
                                      final BasicFileAttributes attrs)  {
         if (this.fileNameMatcher.matches(file.getFileName())) {
-            filePathConsumer.accept(file);
+            this.filePathConsumer.accept(file);
         }
         return FileVisitResult.CONTINUE;
     }
