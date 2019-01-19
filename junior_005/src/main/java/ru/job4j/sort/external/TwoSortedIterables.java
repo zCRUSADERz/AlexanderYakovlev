@@ -10,7 +10,7 @@ import java.util.Iterator;
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 19.01.2019
  */
-public class TwoSortedIterables<T> implements Iterable<T> {
+public final class TwoSortedIterables<T> implements Iterable<T> {
     private final Iterable<T> left;
     private final Iterable<T> right;
     private final Comparator<T> comparator;
@@ -23,7 +23,7 @@ public class TwoSortedIterables<T> implements Iterable<T> {
     }
 
     @Override
-    public Iterator<T> iterator() {
+    public final Iterator<T> iterator() {
         return new SortingIterator<>(
                 this.left.iterator(),
                 this.right.iterator(),
