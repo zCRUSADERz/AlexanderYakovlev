@@ -1,0 +1,5 @@
+0-null
+1-привет
+2-hello world
+3-iterator
+4-part file
