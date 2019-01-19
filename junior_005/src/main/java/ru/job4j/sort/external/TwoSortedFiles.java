@@ -15,7 +15,7 @@ import java.util.Objects;
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 18.01.2019
  */
-public class TwoSortedFiles {
+public final class TwoSortedFiles {
     private final Path firstFile;
     private final Path secondFile;
     private final Comparator<String> lineComparator;

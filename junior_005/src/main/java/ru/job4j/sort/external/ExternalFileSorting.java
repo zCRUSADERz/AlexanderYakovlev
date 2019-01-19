@@ -1,11 +1,11 @@
-package ru.job4j.sort;
+package ru.job4j.sort.external;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
+
+import static java.nio.charset.StandardCharsets.*;
 
 /**
  * External file sorting.
@@ -15,14 +15,33 @@ import java.util.*;
  */
 public final class ExternalFileSorting {
     private final File source;
+    /**
+     * Путь к директории в которой будут
+     * созданы временные файлы во время сортировки.
+     */
     private final Path tempDirectoryPath;
+    /**
+     * Максимальный размер одной части файла.
+     * Исходный файл разбивается на множество файлов этого размера.
+     */
     private final long maxSize;
+    private final Comparator<String> lineComparator;
 
     public ExternalFileSorting(final File source, final Path tempDirectoryPath,
                                final long maxSize) {
+        this(
+                source, tempDirectoryPath, maxSize,
+                Comparator.comparingInt(String::length)
+        );
+    }
+
+    public ExternalFileSorting(final File source, final Path tempDirectoryPath,
+                               final long maxSize,
+                               final Comparator<String> lineComparator) {
         this.source = source;
         this.maxSize = maxSize;
         this.tempDirectoryPath = tempDirectoryPath;
+        this.lineComparator = lineComparator;
     }
 
     /**
@@ -32,27 +51,29 @@ public final class ExternalFileSorting {
     public final void sortTo(final File dest) {
         final Path tempDir = split();
         try {
-            File[] tempFiles = tempDir.toFile().listFiles();
+            File[] tempFiles = Objects.requireNonNull(tempDir.toFile().listFiles());
             while (tempFiles.length > 2) {
                 int secondIndex = 1;
                 while (secondIndex < tempFiles.length) {
-                    final Path tempFile = Files.createTempFile(
-                            tempDir, "sorted", ".txt"
+                    merge(
+                            tempFiles[secondIndex - 1].toPath(),
+                            tempFiles[secondIndex].toPath(),
+                            Files.createTempFile(
+                                    tempDir, "sorted", ".txt"
+                            )
                     );
-                    merge(tempFiles[secondIndex - 1], tempFiles[secondIndex], tempFile);
                     secondIndex += 2;
                 }
-                tempFiles = tempDir.toFile().listFiles();
+                tempFiles = Objects.requireNonNull(tempDir.toFile().listFiles());
             }
             Files.createFile(dest.toPath());
-            merge(tempFiles[0], tempFiles[1], dest.toPath());
+            merge(tempFiles[0].toPath(), tempFiles[1].toPath(), dest.toPath());
             tempDir.toFile().delete();
         } catch (IOException ex) {
-            File[] tempFiles = tempDir.toFile().listFiles();
-            if (Objects.nonNull(tempFiles)) {
-                for (File tempFile : tempFiles) {
-                    tempFile.delete();
-                }
+            File[] tempFiles
+                    = Objects.requireNonNull(tempDir.toFile().listFiles());
+            for (File tempFile : tempFiles) {
+                tempFile.delete();
             }
             tempDir.toFile().delete();
             throw new UncheckedIOException(ex);
@@ -82,14 +103,14 @@ public final class ExternalFileSorting {
                     if (Objects.isNull(line)) {
                         break;
                     }
-                    lines.add(new String(line.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+                    lines.add(new String(line.getBytes(ISO_8859_1), UTF_8));
                 }
                 lastPosition = raf.getFilePointer();
                 final Path tempFile = Files.createTempFile(
                         tempDir, "sorted", ".txt"
                 );
-                lines.sort(Comparator.comparingInt(String::length));
-                Files.write(tempFile, lines, StandardCharsets.UTF_8);
+                lines.sort(this.lineComparator);
+                Files.write(tempFile, lines, UTF_8);
                 lines.clear();
             }
         } catch (IOException e) {
@@ -104,31 +125,19 @@ public final class ExternalFileSorting {
         return tempDir;
     }
 
-    private void merge(final File first, final File second,
+    /**
+     * Слияние двух отсортированных файлов в один.
+     * Строки в новом фале будут так же отсортированны.
+     * @param first первый файл для слияния.
+     * @param second второй файл для слияния.
+     * @param dest результат слияния.
+     * @throws IOException если исключение было выброшенно при чтении исходных
+     * файлов или записи в конечный файл.
+     */
+    private void merge(final Path first, final Path second,
                        final Path dest) throws IOException {
-        try (final BufferedReader readerFirst
-                     = Files.newBufferedReader(first.toPath());
-             final BufferedReader readerSecond
-                     = Files.newBufferedReader(second.toPath());
-             final BufferedWriter writer
-                     = Files.newBufferedWriter(dest, StandardOpenOption.WRITE)) {
-            String leftLine = readerFirst.readLine();
-            String rightLine = readerSecond.readLine();
-            while (!(Objects.isNull(leftLine) && Objects.isNull(rightLine))) {
-                if (Objects.nonNull(leftLine)
-                        && (Objects.isNull(rightLine)
-                                || (leftLine.length() <= rightLine.length()))) {
-                    writer.write(leftLine);
-                    writer.newLine();
-                    leftLine = readerFirst.readLine();
-                } else {
-                    writer.write(rightLine);
-                    writer.newLine();
-                    rightLine = readerSecond.readLine();
-                }
-            }
-        }
-        Files.delete(first.toPath());
-        Files.delete(second.toPath());
+        new TwoSortedFiles(first, second, this.lineComparator).merge(dest);
+        Files.delete(first);
+        Files.delete(second);
     }
 }

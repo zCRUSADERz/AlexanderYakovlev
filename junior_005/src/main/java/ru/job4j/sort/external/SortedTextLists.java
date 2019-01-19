@@ -13,7 +13,7 @@ import java.util.function.Function;
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 18.01.2019
  */
-public class SortedTextLists {
+public final class SortedTextLists {
     private final Iterable<List<String>> lists;
 
     /**
@@ -49,7 +49,7 @@ public class SortedTextLists {
      * @throws IOException в случае если было выброшено исключение
      * во время записи файла.
      */
-    public void writeSeparately(final Function<List<String>, Path> filePathGenerator) throws IOException {
+    public final void writeSeparately(final Function<List<String>, Path> filePathGenerator) throws IOException {
         for (final List<String> list : this.lists) {
             Files.write(filePathGenerator.apply(list), list);
         }
@@ -78,7 +78,7 @@ public class SortedTextLists {
         }
 
         @Override
-        public boolean hasNext() {
+        public final boolean hasNext() {
             return origin.hasNext();
         }
 
@@ -87,7 +87,7 @@ public class SortedTextLists {
          * @return следующий отсортированный список строк.
          */
         @Override
-        public List<String> next() {
+        public final List<String> next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
