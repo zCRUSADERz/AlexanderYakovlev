@@ -136,7 +136,7 @@ public final class ExternalFileSorting {
      */
     private void merge(final Path first, final Path second,
                        final Path dest) throws IOException {
-        new TwoSortedFiles(first, second, this.lineComparator).merge(dest);
+        new TwoSortedFiles(first, second, this.lineComparator).mergeToFile(dest);
         Files.delete(first);
         Files.delete(second);
     }

@@ -39,7 +39,7 @@ public class TwoSortedFilesTest {
                 dirPath,
                 dirPath,
                 this.lineComparator
-        ).merge(dirPath);
+        ).mergeToFile(dirPath);
     }
 
     @Test
@@ -47,7 +47,7 @@ public class TwoSortedFilesTest {
         final Path tempDir = Path.of(System.getProperty("java.io.tmpdir"));
         final Path tempFile
                 = Files.createTempFile(tempDir, "sorted", ".txt");
-        new TwoSortedFiles(first, second, this.lineComparator).merge(tempFile);
+        new TwoSortedFiles(first, second, this.lineComparator).mergeToFile(tempFile);
         final List<String> expected = Arrays.asList(
                 "1-g", "2-qb", "3-235", "4-245л", "5-qwevr", "6-зице16"
         );

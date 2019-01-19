@@ -1,13 +1,10 @@
 package ru.job4j.sort.external;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
-import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * Two sorted files.
@@ -33,28 +30,16 @@ public final class TwoSortedFiles {
      * @throws IOException если было выброшено исключение
      * во время чтения или записи файлов.
      */
-    public final void merge(final Path dest) throws IOException {
-        try (final BufferedReader readerFirst
-                     = Files.newBufferedReader(this.firstFile);
-             final BufferedReader readerSecond
-                     = Files.newBufferedReader(this.secondFile);
-             final BufferedWriter writer
-                     = Files.newBufferedWriter(dest, StandardOpenOption.WRITE)) {
-            String leftLine = readerFirst.readLine();
-            String rightLine = readerSecond.readLine();
-            while (!(Objects.isNull(leftLine) && Objects.isNull(rightLine))) {
-                if (Objects.nonNull(leftLine)
-                        && (Objects.isNull(rightLine)
-                        || (this.lineComparator.compare(leftLine, rightLine) <= 0))) {
-                    writer.write(leftLine);
-                    writer.newLine();
-                    leftLine = readerFirst.readLine();
-                } else {
-                    writer.write(rightLine);
-                    writer.newLine();
-                    rightLine = readerSecond.readLine();
-                }
-            }
+    public final void mergeToFile(final Path dest) throws IOException {
+        try (final Stream<String> firstStream = Files.lines(this.firstFile);
+             final Stream<String> secondStream = Files.lines(this.secondFile)) {
+            Files.write(
+                    dest,
+                    new TwoSortedIterables<>(
+                            firstStream::iterator,
+                            secondStream::iterator,
+                            this.lineComparator
+                    ));
         }
     }
 }
