@@ -4,14 +4,17 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Bishop figure.
+ * Bomb.
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
- * @since 7.01.2017
- * @version 1.0
+ * @since 2.03.2019
  */
 public final class Bomb implements CellImage {
 
+    /**
+     * Вернет картинку соответствующую бомбе.
+     * @return картинка бомбы.
+     */
     @Override
     public final Image image() {
         return new ImageIcon(

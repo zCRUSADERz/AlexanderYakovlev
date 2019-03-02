@@ -5,10 +5,13 @@ import ru.job4j.coordinates.*;
 import ru.job4j.gui.GameFrame;
 import ru.job4j.gui.GamePanel;
 import ru.job4j.gui.listeners.*;
+import ru.job4j.utils.MapOf;
 
+import java.util.AbstractMap;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * MinesweeperApp.
@@ -33,40 +36,60 @@ public final class MinesweeperApp {
         final int width = 9;
         final int height = 9;
         final int bombCount = 10;
+        final int imageSize = 25;
         final CellType[][] cells = new CellType[width][height];
+        final AtomicBoolean gameFinished = new AtomicBoolean(false);
+        final AtomicBoolean firstClick = new AtomicBoolean(true);
         final Runnable fillCells = () -> Arrays.stream(cells)
                 .forEach(cellTypes -> Arrays.fill(
                         cellTypes, CellType.UN_OPENED
                 ));
         fillCells.run();
-        final AtomicBoolean gameFinished = new AtomicBoolean(false);
-        final AtomicBoolean firstClick = new AtomicBoolean(true);
         new GameFrame(
                 new GamePanel(
                         cells,
+                        imageSize,
                         new BoardCoordinates(cells),
-                        Map.of(
-                                CellType.UN_OPENED,
-                                coordinate -> new Unopened.ImageCell(),
-                                CellType.UN_OPENED_BOMB,
-                                coordinate -> new Unopened.ImageCell(),
-                                CellType.FLAG,
-                                coordinate -> new Flag.ImageCell(),
-                                CellType.BOMB_WITH_FLAG,
-                                coordinate -> new Flag.ImageCell(),
-                                CellType.EMPTY,
-                                coordinate -> new Empty.ImageCell(),
-                                CellType.DANGER,
-                                coordinate -> new Danger.ImageCell(
-                                        coordinate, cells
+                        new MapOf<CellType, Function<Coordinate, CellImage>>(
+                                new AbstractMap.SimpleEntry<>(
+                                        CellType.UN_OPENED,
+                                        coordinate -> new Unopened.ImageCell()
                                 ),
-                                CellType.BOMB,
-                                coordinate -> new Bomb(),
-                                CellType.NO_BOMB,
-                                coordinate -> new NoBomb(),
-                                CellType.EXPLODED_BOMB,
-                                coordinate -> new ExplodedBomb()
-                        ),
+                                new AbstractMap.SimpleEntry<>(
+                                        CellType.UN_OPENED_BOMB,
+                                        coordinate -> new Unopened.ImageCell()
+                                ),
+                                new AbstractMap.SimpleEntry<>(
+                                        CellType.FLAG,
+                                        coordinate -> new Flag.ImageCell()
+                                ),
+                                new AbstractMap.SimpleEntry<>(
+                                        CellType.BOMB_WITH_FLAG,
+                                        coordinate -> new Flag.ImageCell()
+                                ),
+                                new AbstractMap.SimpleEntry<>(
+                                        CellType.EMPTY,
+                                        coordinate -> new Empty.ImageCell()
+                                ),
+                                new AbstractMap.SimpleEntry<>(
+                                        CellType.DANGER,
+                                        coordinate -> new Danger.ImageCell(
+                                                coordinate, cells
+                                        )
+                                ),
+                                new AbstractMap.SimpleEntry<>(
+                                        CellType.BOMB,
+                                        coordinate -> new Bomb()
+                                ),
+                                new AbstractMap.SimpleEntry<>(
+                                        CellType.NO_BOMB,
+                                        coordinate -> new NoBomb()
+                                ),
+                                new AbstractMap.SimpleEntry<>(
+                                        CellType.EXPLODED_BOMB,
+                                        coordinate -> new ExplodedBomb()
+                                )
+                        ).map(),
                         jPanel -> new Repaint(
                                 jPanel,
                                 new GameFinished(
@@ -88,16 +111,24 @@ public final class MinesweeperApp {
                                                 new Flags(cells),
                                                 new UnopenedCells(cells),
                                                 gameFinished,
-                                                new FirstClickListener(
-                                                        cells,
-                                                        new RandomBombs(width, height, bombCount),
-                                                        firstClick,
-                                                        new CellClickListener(new GameBoard(
+                                                new FirstClick(
+                                                        new GameBoard(
                                                                 cells,
                                                                 openingCells(cells, gameFinished),
                                                                 unopenedCells(cells),
                                                                 checkedCells(cells)
-                                                        ))
+                                                        ),
+                                                        imageSize,
+                                                        new RandomBombs(width, height, bombCount),
+                                                        firstClick,
+                                                        new CellClick(
+                                                                new GameBoard(
+                                                                        cells,
+                                                                        openingCells(cells, gameFinished),
+                                                                        unopenedCells(cells),
+                                                                        checkedCells(cells)
+                                                                ), imageSize
+                                                        )
                                                 )
                                         )
                                 )
@@ -116,26 +147,34 @@ public final class MinesweeperApp {
             final CellType[][] cells, final AtomicBoolean gameFinished) {
         return new CellsFactory<>(
                 cells,
-                Map.of(
-                        CellType.UN_OPENED,
-                        (gameBoard, coordinate) -> new Unopened.Opening(
-                                coordinate, cells, gameBoard
+                new MapOf<CellType, BiFunction<Board, Coordinate, OpeningCell>>(
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.UN_OPENED,
+                                (gameBoard, coordinate) -> new Unopened.Opening(
+                                        coordinate, cells, gameBoard
+                                )
                         ),
-                        CellType.UN_OPENED_BOMB,
-                        (gameBoard, coordinate) -> new UnopenedBomb.Opening(
-                                coordinate, gameBoard, gameFinished
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.UN_OPENED_BOMB,
+                                (gameBoard, coordinate) -> new UnopenedBomb.Opening(
+                                        coordinate, gameBoard, gameFinished
+                                )
                         ),
-                        CellType.EMPTY,
-                        (gameBoard, coordinate) -> new Empty.Opening(
-                                coordinate, gameBoard, cells
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.EMPTY,
+                                (gameBoard, coordinate) -> new Empty.Opening(
+                                        coordinate, gameBoard, cells
+                                )
                         ),
-                        CellType.DANGER,
-                        (gameBoard, coordinate) -> new Danger.Opening(
-                                coordinate, gameBoard, cells
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.DANGER,
+                                (gameBoard, coordinate) -> new Danger.Opening(
+                                        coordinate, gameBoard, cells
+                                )
                         )
-                ),
-                (gameBoard, coordinate) -> () -> {
-                }
+                ).map(),
+                (gameBoard, coordinate) ->
+                        () -> { }
         );
     }
 
@@ -148,30 +187,38 @@ public final class MinesweeperApp {
     private static CellsFactory<UnopenedCell> unopenedCells(final CellType[][] cells) {
         return new CellsFactory<>(
                 cells,
-                Map.of(
-                        CellType.UN_OPENED,
-                        (gameBoard, coordinate) -> new Unopened.Marked(
-                                coordinate,
-                                gameBoard
+                new MapOf<CellType, BiFunction<Board, Coordinate, UnopenedCell>>(
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.UN_OPENED,
+                                (gameBoard, coordinate) -> new Unopened.Marked(
+                                        coordinate,
+                                        gameBoard
+                                )
                         ),
-                        CellType.UN_OPENED_BOMB,
-                        (gameBoard, coordinate) -> new UnopenedBomb.Marked(
-                                coordinate,
-                                gameBoard
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.UN_OPENED_BOMB,
+                                (gameBoard, coordinate) -> new UnopenedBomb.Marked(
+                                        coordinate,
+                                        gameBoard
+                                )
                         ),
-                        CellType.FLAG,
-                        (gameBoard, coordinate) -> new Flag.Marked(
-                                coordinate,
-                                gameBoard
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.FLAG,
+                                (gameBoard, coordinate) -> new Flag.Marked(
+                                        coordinate,
+                                        gameBoard
+                                )
                         ),
-                        CellType.BOMB_WITH_FLAG,
-                        (gameBoard, coordinate) -> new MarkedBomb(
-                                coordinate,
-                                gameBoard
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.BOMB_WITH_FLAG,
+                                (gameBoard, coordinate) -> new MarkedBomb(
+                                        coordinate,
+                                        gameBoard
+                                )
                         )
-                ),
-                (gameBoard, coordinate) -> () -> {
-                }
+                ).map(),
+                (gameBoard, coordinate) ->
+                        () -> { }
         );
     }
 
@@ -184,25 +231,31 @@ public final class MinesweeperApp {
     private static CellsFactory<CheckedCell> checkedCells(final CellType[][] cells) {
         return new CellsFactory<>(
                 cells,
-                Map.of(
-                        CellType.UN_OPENED_BOMB,
-                        (gameBoard, coordinate) -> new UnopenedBomb.Checked(
-                                coordinate,
-                                gameBoard
+                new MapOf<CellType, BiFunction<Board, Coordinate, CheckedCell>>(
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.UN_OPENED_BOMB,
+                                (gameBoard, coordinate) -> new UnopenedBomb.Checked(
+                                        coordinate,
+                                        gameBoard
+                                )
                         ),
-                        CellType.FLAG,
-                        (gameBoard, coordinate) -> new Flag.Checked(
-                                coordinate,
-                                gameBoard
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.FLAG,
+                                (gameBoard, coordinate) -> new Flag.Checked(
+                                        coordinate,
+                                        gameBoard
+                                )
                         ),
-                        CellType.BOMB_WITH_FLAG,
-                        (gameBoard, coordinate) -> new MarkedBomb(
-                                coordinate,
-                                gameBoard
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.BOMB_WITH_FLAG,
+                                (gameBoard, coordinate) -> new MarkedBomb(
+                                        coordinate,
+                                        gameBoard
+                                )
                         )
-                ),
-                (gameBoard, coordinate) -> () -> {
-                }
+                ).map(),
+                (gameBoard, coordinate) ->
+                        () -> { }
         );
     }
 }

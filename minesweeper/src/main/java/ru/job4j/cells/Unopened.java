@@ -8,6 +8,13 @@ import ru.job4j.coordinates.Coordinate;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Unopened.
+ * Закрытая ячейка
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 2.03.2019
+ */
 public final class Unopened {
 
     public final static class Opening implements OpeningCell {
@@ -35,6 +42,9 @@ public final class Unopened {
             this.bombs = bombs;
         }
 
+        /**
+         * Открыть закрытую ячейку.
+         */
         @Override
         public void open() {
             final int bombCount = this.bombs.count(
@@ -58,6 +68,9 @@ public final class Unopened {
             this.board = board;
         }
 
+        /**
+         * Пометить флажком ячейку.
+         */
         @Override
         public final void mark() {
             this.board.replace(this.coordinate, CellType.FLAG);
@@ -66,6 +79,10 @@ public final class Unopened {
 
     public final static class ImageCell implements CellImage {
 
+        /**
+         * Вернет картинку закрытой ячейки.
+         * @return картинка  закрытой ячейки.
+         */
         @Override
         public final Image image() {
             return new ImageIcon(

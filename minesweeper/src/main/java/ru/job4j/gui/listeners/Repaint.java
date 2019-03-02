@@ -5,6 +5,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+/**
+ * Repaint.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 2.03.2019
+ */
 public final class Repaint extends MouseAdapter {
     private final JPanel panel;
     private final MouseListener origin;
@@ -14,6 +20,10 @@ public final class Repaint extends MouseAdapter {
         this.origin = origin;
     }
 
+    /**
+     * При каждом клике игровое поле будет перерисованно.
+     * @param e MouseEvent.
+     */
     @Override
     public final void mouseClicked(final MouseEvent e) {
         this.origin.mouseClicked(e);

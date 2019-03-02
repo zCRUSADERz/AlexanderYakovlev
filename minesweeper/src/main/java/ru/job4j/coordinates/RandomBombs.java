@@ -5,6 +5,12 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+/**
+ * RandomBombs.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 2.03.2019
+ */
 public final class RandomBombs {
     private final int width;
     private final int height;
@@ -23,6 +29,13 @@ public final class RandomBombs {
         this.random = random;
     }
 
+    /**
+     * Генерирует рандомные координаты игровой доски
+     * с исключением переданной координаты.
+     * @param excluded координата, которая не должна находится
+     *                 в результирующем списке.
+     * @return рандомные координаты игровой доски.
+     */
     public final Iterable<Coordinate> coordinates(final Coordinate excluded) {
         final Set<Coordinate> bombsCoordinate = new HashSet<>();
         while (bombsCoordinate.size() != this.bombs) {

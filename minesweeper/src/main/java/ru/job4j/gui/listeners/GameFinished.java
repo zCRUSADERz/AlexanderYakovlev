@@ -9,6 +9,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * GameFinished.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 2.03.2019
+ */
 public final class GameFinished extends MouseAdapter {
     private final AtomicBoolean gameFinished;
     private final NewGame newGame;
@@ -26,6 +32,10 @@ public final class GameFinished extends MouseAdapter {
         this.origin = origin;
     }
 
+    /**
+     * Если текущая игра окончена, то будет запущена новая.
+     * @param e MouseEvent.
+     */
     @Override
     public final void mouseClicked(final MouseEvent e) {
         if (this.gameFinished.get()) {

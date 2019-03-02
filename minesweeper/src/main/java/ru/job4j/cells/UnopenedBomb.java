@@ -5,6 +5,13 @@ import ru.job4j.coordinates.Coordinate;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * UnopenedBomb.
+ * Закрытая ячейка в которой находится бомба.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 2.03.2019
+ */
 public final class UnopenedBomb {
 
     public final static class Opening implements OpeningCell {
@@ -19,6 +26,10 @@ public final class UnopenedBomb {
             this.gameOver = gameOver;
         }
 
+        /**
+         * Открыть ячейку.
+         * Открытие ячейки с бомбой приводит к ее взрыву и окончанию игры.
+         */
         @Override
         public final void open() {
             this.board.replace(this.coordinate, CellType.EXPLODED_BOMB);
@@ -35,6 +46,9 @@ public final class UnopenedBomb {
             this.board = board;
         }
 
+        /**
+         * Пометить ячейку флажком.
+         */
         @Override
         public final void mark() {
             this.board.replace(this.coordinate, CellType.BOMB_WITH_FLAG);
@@ -50,6 +64,10 @@ public final class UnopenedBomb {
             this.board = board;
         }
 
+        /**
+         * Проверить правильно ли установлен флажок.
+         * В ячейке будет открыта бомба без ее взрыва.
+         */
         @Override
         public void check() {
             this.board.replace(this.coordinate, CellType.BOMB);

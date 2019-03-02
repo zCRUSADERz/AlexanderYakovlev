@@ -2,6 +2,12 @@ package ru.job4j.gui;
 
 import javax.swing.*;
 
+/**
+ * GameFrame.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 2.03.2019
+ */
 public final class GameFrame extends JFrame {
     private final GamePanel panel;
 

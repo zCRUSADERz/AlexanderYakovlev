@@ -6,8 +6,21 @@ import ru.job4j.coordinates.*;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Danger.
+ * Ячейка вокруг которой есть одна или более бомб.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 2.03.2019
+ */
 public final class Danger {
 
+    /**
+     * Opening.
+     *
+     * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+     * @since 2.03.2019
+     */
     public final static class Opening implements OpeningCell {
         private final Coordinate coordinate;
         private final AroundCoordinates aroundCoordinates;
@@ -28,6 +41,9 @@ public final class Danger {
             );
         }
 
+        /**
+         * Main constructor.
+         */
         public Opening(final Coordinate coordinate,
                       final AroundCoordinates aroundCoordinates, final Board board,
                       final Flags flags, final Bombs bombs,
@@ -40,6 +56,13 @@ public final class Danger {
             this.unopenedCells = unopenedCells;
         }
 
+        /**
+         * Открыть ячейку.
+         * В сапере клик на ячейку с числом бомб означает требование
+         * открыть все закрытые, не помеченные флажком, ячейки вокруг.
+         * Ячейки будут открыты если соблюдено уловие, что число бомб
+         * равно числу флажков вокруг.
+         */
         @Override
         public final void open() {
             final int bombsCount = this.bombs.count(
@@ -73,6 +96,10 @@ public final class Danger {
             this.bombs = bombs;
         }
 
+        /**
+         * Вернет картинку ячейки.
+         * @return картинка ячейки.
+         */
         @Override
         public Image image() {
             final int bombCount = this.bombs.count(

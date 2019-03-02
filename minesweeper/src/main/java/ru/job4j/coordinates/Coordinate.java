@@ -2,6 +2,12 @@ package ru.job4j.coordinates;
 
 import java.util.Objects;
 
+/**
+ * Coordinate.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 2.03.2019
+ */
 public final class Coordinate {
     private final int x;
     private final int y;

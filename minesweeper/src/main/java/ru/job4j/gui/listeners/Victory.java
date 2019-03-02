@@ -9,6 +9,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Victory.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 2.03.2019
+ */
 public final class Victory extends MouseAdapter {
     private final Bombs bombs;
     private final Flags flags;
@@ -26,6 +32,10 @@ public final class Victory extends MouseAdapter {
         this.origin = origin;
     }
 
+    /**
+     * Проверяет условие победы при каждом клике.
+     * @param e MouseEvent.
+     */
     @Override
     public final void mouseClicked(final MouseEvent e) {
         this.origin.mouseClicked(e);

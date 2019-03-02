@@ -11,18 +11,26 @@ import java.awt.event.MouseListener;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * GamePanel.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 01.03.2019
+ */
 public final class GamePanel extends JPanel {
-    public final static int IMAGE_SIZE = 25;
     private final CellType[][] cells;
+    private final int imageSize;
     private final BoardCoordinates boardCoordinates;
     private final Map<CellType, Function<Coordinate, CellImage>> viewsFactory;
     private final Function<JPanel, MouseListener> listenerFactory;
 
     public GamePanel(
-            final CellType[][] cells, final BoardCoordinates boardCoordinates,
+            final CellType[][] cells, final int imageSize,
+            final BoardCoordinates boardCoordinates,
             final Map<CellType, Function<Coordinate, CellImage>> viewsFactory,
             final Function<JPanel, MouseListener> listenerFactory) {
         this.cells = cells;
+        this.imageSize = imageSize;
         this.boardCoordinates = boardCoordinates;
         this.viewsFactory = viewsFactory;
         this.listenerFactory = listenerFactory;
@@ -31,13 +39,17 @@ public final class GamePanel extends JPanel {
     public final void init() {
         this.setPreferredSize(
                 new Dimension(
-                        this.cells.length * IMAGE_SIZE,
-                        this.cells[0].length * IMAGE_SIZE
+                        this.cells.length * this.imageSize,
+                        this.cells[0].length * this.imageSize
                 )
         );
         this.addMouseListener(this.listenerFactory.apply(this));
     }
 
+    /**
+     * Отрисовка игрового поля.
+     * @param g Graphics.
+     */
     @Override
     protected final void paintComponent(final Graphics g) {
         super.paintComponent(g);
@@ -49,10 +61,10 @@ public final class GamePanel extends JPanel {
                     .image();
             g.drawImage(
                     image,
-                    coordinate.x() * IMAGE_SIZE,
-                    coordinate.y() * IMAGE_SIZE,
-                    IMAGE_SIZE,
-                    IMAGE_SIZE,
+                    coordinate.x() * this.imageSize,
+                    coordinate.y() * this.imageSize,
+                    this.imageSize,
+                    this.imageSize,
                     this
             );
         });
