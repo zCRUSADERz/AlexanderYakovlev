@@ -3,8 +3,8 @@ package ru.job4j.cells;
 import ru.job4j.Board;
 import ru.job4j.coordinates.*;
 
-import javax.swing.*;
 import java.awt.*;
+import java.util.Map;
 
 /**
  * Danger.
@@ -28,18 +28,6 @@ public final class Danger {
         private final Flags flags;
         private final Bombs bombs;
         private final UnopenedCells unopenedCells;
-
-        public Opening(final Coordinate coordinate, final Board board,
-                       final CellType[][] cells) {
-            this(
-                    coordinate,
-                    new AroundCoordinates(cells),
-                    board,
-                    new Flags(cells),
-                    new Bombs(cells),
-                    new UnopenedCells(cells)
-            );
-        }
 
         /**
          * Main constructor.
@@ -83,17 +71,15 @@ public final class Danger {
         private final Coordinate coordinate;
         private final AroundCoordinates aroundCoordinates;
         private final Bombs bombs;
-
-        public ImageCell(final Coordinate coordinate, final CellType[][] cells) {
-            this(coordinate, new AroundCoordinates(cells), new Bombs(cells));
-        }
+        private final Map<String, Image> images;
 
         public ImageCell(final Coordinate coordinate,
                          final AroundCoordinates aroundCoordinates,
-                         final Bombs bombs) {
+                         final Bombs bombs, final Map<String, Image> images) {
             this.coordinate = coordinate;
             this.aroundCoordinates = aroundCoordinates;
             this.bombs = bombs;
+            this.images = images;
         }
 
         /**
@@ -105,11 +91,7 @@ public final class Danger {
             final int bombCount = this.bombs.count(
                     this.aroundCoordinates.coordinates(this.coordinate)
             );
-            return new ImageIcon(
-                    getClass().getResource(
-                            String.format("/img/num%s.png", bombCount)
-                    )
-            ).getImage();
+            return this.images.get(String.format("num%s", bombCount));
         }
     }
 }

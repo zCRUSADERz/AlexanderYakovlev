@@ -1,7 +1,5 @@
 package ru.job4j.coordinates;
 
-import ru.job4j.cells.CellType;
-
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -14,10 +12,6 @@ import java.util.stream.Stream;
  */
 public final class AroundCoordinates {
     private final BoardCoordinates boardCoordinates;
-
-    public AroundCoordinates(final CellType[][] cells) {
-        this(new BoardCoordinates(cells));
-    }
 
     public AroundCoordinates(final BoardCoordinates boardCoordinates) {
         this.boardCoordinates = boardCoordinates;

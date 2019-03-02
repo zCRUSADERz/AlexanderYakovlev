@@ -5,9 +5,6 @@ import ru.job4j.coordinates.AroundCoordinates;
 import ru.job4j.coordinates.Bombs;
 import ru.job4j.coordinates.Coordinate;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
  * Unopened.
  * Закрытая ячейка
@@ -22,16 +19,6 @@ public final class Unopened {
         private final AroundCoordinates aroundCoordinates;
         private final Board board;
         private final Bombs bombs;
-
-        public Opening(final Coordinate coordinate, final CellType[][] cells,
-                       final Board board) {
-            this(
-                    coordinate,
-                    new AroundCoordinates(cells),
-                    board,
-                    new Bombs(cells)
-            );
-        }
 
         public Opening(final Coordinate coordinate,
                        final AroundCoordinates aroundCoordinates,
@@ -74,20 +61,6 @@ public final class Unopened {
         @Override
         public final void mark() {
             this.board.replace(this.coordinate, CellType.FLAG);
-        }
-    }
-
-    public final static class ImageCell implements CellImage {
-
-        /**
-         * Вернет картинку закрытой ячейки.
-         * @return картинка  закрытой ячейки.
-         */
-        @Override
-        public final Image image() {
-            return new ImageIcon(
-                    getClass().getResource("/img/closed.png")
-            ).getImage();
         }
     }
 }
