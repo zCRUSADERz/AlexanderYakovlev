@@ -1,13 +1,13 @@
 package ru.job4j.coordinates;
 
-import ru.job4j.cells.CellTypes;
+import ru.job4j.cells.CellType;
 
 import java.util.stream.Stream;
 
 public class Flags {
-    private final CellTypes[][] cells;
+    private final CellType[][] cells;
 
-    public Flags(final CellTypes[][] cells) {
+    public Flags(final CellType[][] cells) {
         this.cells = cells;
     }
 
@@ -24,8 +24,8 @@ public class Flags {
 
     public final int count() {
         int result = 0;
-        for (CellTypes[] cellTypes : this.cells) {
-            for (CellTypes type : cellTypes) {
+        for (CellType[] cellTypes : this.cells) {
+            for (CellType type : cellTypes) {
                 if (this.isFlag(type)) {
                     result++;
                 }
@@ -34,8 +34,8 @@ public class Flags {
         return result;
     }
 
-    private boolean isFlag(final CellTypes type) {
-        return type.equals(CellTypes.FLAG)
-                || type.equals(CellTypes.BOMB_WITH_FLAG);
+    private boolean isFlag(final CellType type) {
+        return type.equals(CellType.FLAG)
+                || type.equals(CellType.BOMB_WITH_FLAG);
     }
 }

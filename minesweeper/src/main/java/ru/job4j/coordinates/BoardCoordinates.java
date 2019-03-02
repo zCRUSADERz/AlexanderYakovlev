@@ -1,6 +1,6 @@
 package ru.job4j.coordinates;
 
-import ru.job4j.cells.CellTypes;
+import ru.job4j.cells.CellType;
 
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -9,7 +9,7 @@ public final class BoardCoordinates {
     private final int width;
     private final int height;
 
-    public BoardCoordinates(final CellTypes[][] cells) {
+    public BoardCoordinates(final CellType[][] cells) {
         this(
                 cells.length,
                 cells[0].length

@@ -14,11 +14,11 @@ public final class MarkedBomb implements UnopenedCell, CheckedCell {
 
     @Override
     public final void mark() {
-        this.board.replace(this.coordinate, CellTypes.UN_OPENED_BOMB);
+        this.board.replace(this.coordinate, CellType.UN_OPENED_BOMB);
     }
 
     @Override
     public void check() {
-        this.board.replace(this.coordinate, CellTypes.BOMB);
+        this.board.replace(this.coordinate, CellType.BOMB);
     }
 }

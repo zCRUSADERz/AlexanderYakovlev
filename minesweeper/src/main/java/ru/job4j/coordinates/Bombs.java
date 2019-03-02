@@ -1,13 +1,13 @@
 package ru.job4j.coordinates;
 
-import ru.job4j.cells.CellTypes;
+import ru.job4j.cells.CellType;
 
 import java.util.stream.Stream;
 
 public final class Bombs {
-    private final CellTypes[][] cells;
+    private final CellType[][] cells;
 
-    public Bombs(final CellTypes[][] cells) {
+    public Bombs(final CellType[][] cells) {
         this.cells = cells;
     }
 
@@ -24,8 +24,8 @@ public final class Bombs {
 
     public final int count() {
         int result = 0;
-        for (CellTypes[] cellTypes : this.cells) {
-            for (CellTypes type : cellTypes) {
+        for (CellType[] cellTypes : this.cells) {
+            for (CellType type : cellTypes) {
                 if (this.isBomb(type)) {
                     result++;
                 }
@@ -34,10 +34,10 @@ public final class Bombs {
         return result;
     }
 
-    private boolean isBomb(final CellTypes type) {
-        return type.equals(CellTypes.UN_OPENED_BOMB)
-                || type.equals(CellTypes.BOMB_WITH_FLAG)
-                || type.equals(CellTypes.EXPLODED_BOMB)
-                || type.equals(CellTypes.BOMB);
+    private boolean isBomb(final CellType type) {
+        return type.equals(CellType.UN_OPENED_BOMB)
+                || type.equals(CellType.BOMB_WITH_FLAG)
+                || type.equals(CellType.EXPLODED_BOMB)
+                || type.equals(CellType.BOMB);
     }
 }

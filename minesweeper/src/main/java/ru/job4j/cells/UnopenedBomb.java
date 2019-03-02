@@ -21,7 +21,7 @@ public final class UnopenedBomb {
 
         @Override
         public final void open() {
-            this.board.replace(this.coordinate, CellTypes.EXPLODED_BOMB);
+            this.board.replace(this.coordinate, CellType.EXPLODED_BOMB);
             this.gameOver.set(true);
         }
     }
@@ -37,7 +37,7 @@ public final class UnopenedBomb {
 
         @Override
         public final void mark() {
-            this.board.replace(this.coordinate, CellTypes.BOMB_WITH_FLAG);
+            this.board.replace(this.coordinate, CellType.BOMB_WITH_FLAG);
         }
     }
 
@@ -52,7 +52,7 @@ public final class UnopenedBomb {
 
         @Override
         public void check() {
-            this.board.replace(this.coordinate, CellTypes.BOMB);
+            this.board.replace(this.coordinate, CellType.BOMB);
         }
     }
 }

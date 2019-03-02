@@ -17,7 +17,7 @@ public final class Danger {
         private final UnopenedCells unopenedCells;
 
         public Opening(final Coordinate coordinate, final Board board,
-                       final CellTypes[][] cells) {
+                       final CellType[][] cells) {
             this(
                     coordinate,
                     new AroundCoordinates(cells),
@@ -61,7 +61,7 @@ public final class Danger {
         private final AroundCoordinates aroundCoordinates;
         private final Bombs bombs;
 
-        public ImageCell(final Coordinate coordinate, final CellTypes[][] cells) {
+        public ImageCell(final Coordinate coordinate, final CellType[][] cells) {
             this(coordinate, new AroundCoordinates(cells), new Bombs(cells));
         }
 

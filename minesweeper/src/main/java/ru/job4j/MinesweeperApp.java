@@ -10,6 +10,12 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * MinesweeperApp.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 01.03.2019
+ */
 public final class MinesweeperApp {
 
     private MinesweeperApp() {
@@ -19,49 +25,46 @@ public final class MinesweeperApp {
         new MinesweeperApp().start();
     }
 
+    /**
+     * В данном методе происходит сборка всех объектов
+     * в единое целое и запуск приложения.
+     */
     public final void start() {
         final int width = 9;
         final int height = 9;
         final int bombCount = 10;
-        final CellTypes[][] cells = new CellTypes[width][height];
+        final CellType[][] cells = new CellType[width][height];
         final Runnable fillCells = () -> Arrays.stream(cells)
                 .forEach(cellTypes -> Arrays.fill(
-                        cellTypes, CellTypes.UN_OPENED
+                        cellTypes, CellType.UN_OPENED
                 ));
         fillCells.run();
         final AtomicBoolean gameFinished = new AtomicBoolean(false);
         final AtomicBoolean firstClick = new AtomicBoolean(true);
-        final Board board = new GameBoard(
-                cells,
-                openingCells(cells, gameFinished),
-                unopenedCells(cells),
-                checkedCells(cells)
-        );
-        final BoardCoordinates boardCoordinates = new BoardCoordinates(cells);
         new GameFrame(
                 new GamePanel(
                         cells,
-                        boardCoordinates,
+                        new BoardCoordinates(cells),
                         Map.of(
-                                CellTypes.UN_OPENED,
+                                CellType.UN_OPENED,
                                 coordinate -> new Unopened.ImageCell(),
-                                CellTypes.UN_OPENED_BOMB,
+                                CellType.UN_OPENED_BOMB,
                                 coordinate -> new Unopened.ImageCell(),
-                                CellTypes.FLAG,
+                                CellType.FLAG,
                                 coordinate -> new Flag.ImageCell(),
-                                CellTypes.BOMB_WITH_FLAG,
+                                CellType.BOMB_WITH_FLAG,
                                 coordinate -> new Flag.ImageCell(),
-                                CellTypes.EMPTY,
+                                CellType.EMPTY,
                                 coordinate -> new Empty.ImageCell(),
-                                CellTypes.DANGER,
+                                CellType.DANGER,
                                 coordinate -> new Danger.ImageCell(
                                         coordinate, cells
                                 ),
-                                CellTypes.BOMB,
+                                CellType.BOMB,
                                 coordinate -> new Bomb(),
-                                CellTypes.NO_BOMB,
+                                CellType.NO_BOMB,
                                 coordinate -> new NoBomb(),
-                                CellTypes.EXPLODED_BOMB,
+                                CellType.EXPLODED_BOMB,
                                 coordinate -> new ExplodedBomb()
                         ),
                         jPanel -> new Repaint(
@@ -73,8 +76,13 @@ public final class MinesweeperApp {
                                                 () -> gameFinished.set(false),
                                                 () -> firstClick.set(true)
                                         )),
-                                        board,
-                                        boardCoordinates,
+                                        new GameBoard(
+                                                cells,
+                                                openingCells(cells, gameFinished),
+                                                unopenedCells(cells),
+                                                checkedCells(cells)
+                                        ),
+                                        new BoardCoordinates(cells),
                                         new Victory(
                                                 new Bombs(cells),
                                                 new Flags(cells),
@@ -84,7 +92,12 @@ public final class MinesweeperApp {
                                                         cells,
                                                         new RandomBombs(width, height, bombCount),
                                                         firstClick,
-                                                        new CellClickListener(board)
+                                                        new CellClickListener(new GameBoard(
+                                                                cells,
+                                                                openingCells(cells, gameFinished),
+                                                                unopenedCells(cells),
+                                                                checkedCells(cells)
+                                                        ))
                                                 )
                                         )
                                 )
@@ -93,24 +106,30 @@ public final class MinesweeperApp {
         ).init();
     }
 
-    private static Cells<OpeningCell> openingCells(
-            final CellTypes[][] cells, final AtomicBoolean gameFinished) {
-        return new Cells<>(
+    /**
+     * Возвращает фабрику ячеек, которые еще не были открыты.
+     *
+     * @param cells массив ячеек содержащий их текущее состояние.
+     * @return CellsFactory<OpeningCell>
+     */
+    private static CellsFactory<OpeningCell> openingCells(
+            final CellType[][] cells, final AtomicBoolean gameFinished) {
+        return new CellsFactory<>(
                 cells,
                 Map.of(
-                        CellTypes.UN_OPENED,
+                        CellType.UN_OPENED,
                         (gameBoard, coordinate) -> new Unopened.Opening(
                                 coordinate, cells, gameBoard
                         ),
-                        CellTypes.UN_OPENED_BOMB,
+                        CellType.UN_OPENED_BOMB,
                         (gameBoard, coordinate) -> new UnopenedBomb.Opening(
                                 coordinate, gameBoard, gameFinished
                         ),
-                        CellTypes.EMPTY,
+                        CellType.EMPTY,
                         (gameBoard, coordinate) -> new Empty.Opening(
                                 coordinate, gameBoard, cells
                         ),
-                        CellTypes.DANGER,
+                        CellType.DANGER,
                         (gameBoard, coordinate) -> new Danger.Opening(
                                 coordinate, gameBoard, cells
                         )
@@ -120,26 +139,32 @@ public final class MinesweeperApp {
         );
     }
 
-    private static Cells<UnopenedCell> unopenedCells(final CellTypes[][] cells) {
-        return new Cells<>(
+    /**
+     * Возвращает фабрику ячеек, которые можно помечать флажком.
+     *
+     * @param cells массив ячеек содержащий их текущее состояние.
+     * @return CellsFactory<UnopenedCell>
+     */
+    private static CellsFactory<UnopenedCell> unopenedCells(final CellType[][] cells) {
+        return new CellsFactory<>(
                 cells,
                 Map.of(
-                        CellTypes.UN_OPENED,
+                        CellType.UN_OPENED,
                         (gameBoard, coordinate) -> new Unopened.Marked(
                                 coordinate,
                                 gameBoard
                         ),
-                        CellTypes.UN_OPENED_BOMB,
+                        CellType.UN_OPENED_BOMB,
                         (gameBoard, coordinate) -> new UnopenedBomb.Marked(
                                 coordinate,
                                 gameBoard
                         ),
-                        CellTypes.FLAG,
+                        CellType.FLAG,
                         (gameBoard, coordinate) -> new Flag.Marked(
                                 coordinate,
                                 gameBoard
                         ),
-                        CellTypes.BOMB_WITH_FLAG,
+                        CellType.BOMB_WITH_FLAG,
                         (gameBoard, coordinate) -> new MarkedBomb(
                                 coordinate,
                                 gameBoard
@@ -150,21 +175,27 @@ public final class MinesweeperApp {
         );
     }
 
-    private static Cells<CheckedCell> checkedCells(final CellTypes[][] cells) {
-        return new Cells<>(
+    /**
+     * Возвращает фабрику ячеек, которые реализуют интерфейс CheckedCell.
+     *
+     * @param cells массив ячеек содержащий их текущее состояние.
+     * @return CellsFactory<CheckedCell>
+     */
+    private static CellsFactory<CheckedCell> checkedCells(final CellType[][] cells) {
+        return new CellsFactory<>(
                 cells,
                 Map.of(
-                        CellTypes.UN_OPENED_BOMB,
+                        CellType.UN_OPENED_BOMB,
                         (gameBoard, coordinate) -> new UnopenedBomb.Checked(
                                 coordinate,
                                 gameBoard
                         ),
-                        CellTypes.FLAG,
+                        CellType.FLAG,
                         (gameBoard, coordinate) -> new Flag.Checked(
                                 coordinate,
                                 gameBoard
                         ),
-                        CellTypes.BOMB_WITH_FLAG,
+                        CellType.BOMB_WITH_FLAG,
                         (gameBoard, coordinate) -> new MarkedBomb(
                                 coordinate,
                                 gameBoard

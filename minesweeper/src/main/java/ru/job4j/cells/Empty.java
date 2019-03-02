@@ -17,7 +17,7 @@ public final class Empty {
         private final UnopenedCells unopenedCells;
 
         public Opening(final Coordinate coordinate, final Board board,
-                       final CellTypes[][] cells) {
+                       final CellType[][] cells) {
             this(
                     coordinate,
                     new AroundCoordinates(cells),

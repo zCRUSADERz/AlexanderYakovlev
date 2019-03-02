@@ -1,6 +1,6 @@
 package ru.job4j.cells;
 
-public enum CellTypes {
+public enum CellType {
     UN_OPENED,
     UN_OPENED_BOMB,
     FLAG,

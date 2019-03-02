@@ -16,7 +16,7 @@ public final class Unopened {
         private final Board board;
         private final Bombs bombs;
 
-        public Opening(final Coordinate coordinate, final CellTypes[][] cells,
+        public Opening(final Coordinate coordinate, final CellType[][] cells,
                        final Board board) {
             this(
                     coordinate,
@@ -41,10 +41,10 @@ public final class Unopened {
                     this.aroundCoordinates.coordinates(this.coordinate)
             );
             if (bombCount == 0) {
-                this.board.replace(this.coordinate, CellTypes.EMPTY);
+                this.board.replace(this.coordinate, CellType.EMPTY);
                 this.board.open(this.coordinate);
             } else {
-                this.board.replace(this.coordinate, CellTypes.DANGER);
+                this.board.replace(this.coordinate, CellType.DANGER);
             }
         }
     }
@@ -60,7 +60,7 @@ public final class Unopened {
 
         @Override
         public final void mark() {
-            this.board.replace(this.coordinate, CellTypes.FLAG);
+            this.board.replace(this.coordinate, CellType.FLAG);
         }
     }
 

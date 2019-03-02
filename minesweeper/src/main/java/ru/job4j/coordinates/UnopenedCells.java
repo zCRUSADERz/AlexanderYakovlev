@@ -1,13 +1,13 @@
 package ru.job4j.coordinates;
 
-import ru.job4j.cells.CellTypes;
+import ru.job4j.cells.CellType;
 
 import java.util.stream.Stream;
 
 public final class UnopenedCells {
-    private final CellTypes[][] cells;
+    private final CellType[][] cells;
 
-    public UnopenedCells(final CellTypes[][] cells) {
+    public UnopenedCells(final CellType[][] cells) {
         this.cells = cells;
     }
 
@@ -24,8 +24,8 @@ public final class UnopenedCells {
 
     public final int count() {
         int result = 0;
-        for (CellTypes[] cellTypes : this.cells) {
-            for (CellTypes type : cellTypes) {
+        for (CellType[] cellTypes : this.cells) {
+            for (CellType type : cellTypes) {
                 if (this.isUnopened(type)) {
                     result++;
                 }
@@ -34,8 +34,8 @@ public final class UnopenedCells {
         return result;
     }
 
-    private boolean isUnopened(final CellTypes type) {
-        return type.equals(CellTypes.UN_OPENED)
-                || type.equals(CellTypes.UN_OPENED_BOMB);
+    private boolean isUnopened(final CellType type) {
+        return type.equals(CellType.UN_OPENED)
+                || type.equals(CellType.UN_OPENED_BOMB);
     }
 }

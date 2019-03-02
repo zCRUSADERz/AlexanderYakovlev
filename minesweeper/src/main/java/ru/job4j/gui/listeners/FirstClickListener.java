@@ -1,6 +1,6 @@
 package ru.job4j.gui.listeners;
 
-import ru.job4j.cells.CellTypes;
+import ru.job4j.cells.CellType;
 import ru.job4j.coordinates.Coordinate;
 import ru.job4j.coordinates.RandomBombs;
 import ru.job4j.gui.GamePanel;
@@ -11,12 +11,12 @@ import java.awt.event.MouseListener;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class FirstClickListener extends MouseAdapter {
-    private final CellTypes[][] cells;
+    private final CellType[][] cells;
     private final RandomBombs bombs;
     private final AtomicBoolean firstClick;
     private final MouseListener origin;
 
-    public FirstClickListener(final CellTypes[][] cells, final RandomBombs bombs,
+    public FirstClickListener(final CellType[][] cells, final RandomBombs bombs,
                               final AtomicBoolean firstClick,
                               final MouseListener origin) {
         this.cells = cells;
@@ -35,7 +35,7 @@ public final class FirstClickListener extends MouseAdapter {
             );
             for (Coordinate coordinate : this.bombs.coordinates(clickedCoordinate)) {
                 this.cells[coordinate.x()][coordinate.y()]
-                        = CellTypes.UN_OPENED_BOMB;
+                        = CellType.UN_OPENED_BOMB;
             }
         }
         this.origin.mouseClicked(e);

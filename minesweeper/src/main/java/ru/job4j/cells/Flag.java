@@ -19,7 +19,7 @@ public final class Flag {
 
         @Override
         public final void mark() {
-            this.board.replace(this.coordinate, CellTypes.UN_OPENED);
+            this.board.replace(this.coordinate, CellType.UN_OPENED);
         }
     }
 
@@ -44,7 +44,7 @@ public final class Flag {
 
         @Override
         public final void check() {
-            this.board.replace(this.coordinate, CellTypes.NO_BOMB);
+            this.board.replace(this.coordinate, CellType.NO_BOMB);
         }
     }
 }

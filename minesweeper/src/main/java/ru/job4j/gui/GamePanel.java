@@ -1,7 +1,7 @@
 package ru.job4j.gui;
 
 import ru.job4j.cells.CellImage;
-import ru.job4j.cells.CellTypes;
+import ru.job4j.cells.CellType;
 import ru.job4j.coordinates.BoardCoordinates;
 import ru.job4j.coordinates.Coordinate;
 
@@ -13,14 +13,14 @@ import java.util.function.Function;
 
 public final class GamePanel extends JPanel {
     public final static int IMAGE_SIZE = 25;
-    private final CellTypes[][] cells;
+    private final CellType[][] cells;
     private final BoardCoordinates boardCoordinates;
-    private final Map<CellTypes, Function<Coordinate, CellImage>> viewsFactory;
+    private final Map<CellType, Function<Coordinate, CellImage>> viewsFactory;
     private final Function<JPanel, MouseListener> listenerFactory;
 
     public GamePanel(
-            final CellTypes[][] cells, final BoardCoordinates boardCoordinates,
-            final Map<CellTypes, Function<Coordinate, CellImage>> viewsFactory,
+            final CellType[][] cells, final BoardCoordinates boardCoordinates,
+            final Map<CellType, Function<Coordinate, CellImage>> viewsFactory,
             final Function<JPanel, MouseListener> listenerFactory) {
         this.cells = cells;
         this.boardCoordinates = boardCoordinates;
@@ -42,7 +42,7 @@ public final class GamePanel extends JPanel {
     protected final void paintComponent(final Graphics g) {
         super.paintComponent(g);
         this.boardCoordinates.coordinates().forEach(coordinate -> {
-            final CellTypes cellType = this.cells[coordinate.x()][coordinate.y()];
+            final CellType cellType = this.cells[coordinate.x()][coordinate.y()];
             final Image image = this.viewsFactory
                     .get(cellType)
                     .apply(coordinate)
