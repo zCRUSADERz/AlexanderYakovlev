@@ -10,11 +10,13 @@ import ru.job4j.utils.MapOf;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -38,139 +40,180 @@ public final class MinesweeperApp {
      * в единое целое и запуск приложения.
      */
     public final void start() {
-        final int width = 9;
-        final int height = 9;
-        final int bombCount = 10;
-        final int imageSize = 25;
-        final CellType[][] cells = new CellType[width][height];
-        final AtomicBoolean gameFinished = new AtomicBoolean();
-        final AtomicBoolean firstClick = new AtomicBoolean();
-        final AroundCoordinates aroundCoordinates = new AroundCoordinates(
-                new BoardCoordinates(cells)
-        );
-        final Bombs bombs = new Bombs(cells);
-        final Flags flags = new Flags(cells);
-        //----------------------------------------------------------------------
-        final Runnable fillCells = () -> Arrays.stream(cells)
-                .forEach(cellTypes -> Arrays.fill(
-                        cellTypes, CellType.UN_OPENED)
-                );
-        final Function<JPanel, NewGame> newGameFunction =
-                panel -> new NewGame(Arrays.asList(
-                        fillCells,
-                        () -> gameFinished.set(false),
-                        () -> firstClick.set(true),
-                        panel::repaint
-                ));
-        //----------------------------------------------------------------------
-        final Board gameBoard = new GameBoard(
-                cells,
-                openingCells(cells, gameFinished),
-                unopenedCells(cells),
-                checkedCells(cells)
-        );
-        //----------------------------------------------------------------------
-        final Function<JPanel, MouseListener> panelClickListener = jPanel -> new Repaint(
-                jPanel,
-                new GameFinished(
-                        gameFinished,
-                        newGameFunction.apply(jPanel),
-                        gameBoard,
-                        new BoardCoordinates(cells),
-                        new Victory(
-                                bombs,
-                                flags,
-                                new UnopenedCells(cells),
-                                gameFinished,
-                                new FirstClick(
-                                        gameBoard,
-                                        imageSize,
-                                        new RandomBombs(width, height, bombCount),
-                                        firstClick,
-                                        new CellClick(gameBoard, imageSize)
-                                )
-                        )
-                )
-        );
-        //----------------------------------------------------------------------
-        final Map<String, Image> images = new Images(Arrays.asList(
-                "bomb", "bombed", "closed", "flaged", "nobomb",
-                "num1", "num2", "num3", "num4", "num5", "num6", "num7", "num8",
-                "opened", "zero"
-        )).images();
-        final GamePanel cellPanel = new GamePanel(
-                cells,
-                imageSize,
-                new BoardCoordinates(cells),
-                new MapOf<CellType, Function<Coordinate, CellImage>>(
-                        new AbstractMap.SimpleEntry<>(
-                                CellType.UN_OPENED,
-                                coordinate -> (CellImage) () -> images.get("closed")
-                        ),
-                        new AbstractMap.SimpleEntry<>(
-                                CellType.UN_OPENED_BOMB,
-                                coordinate ->
-                                        (CellImage) () -> images.get("closed")
-                        ),
-                        new AbstractMap.SimpleEntry<>(
-                                CellType.FLAG,
-                                coordinate ->
-                                        (CellImage) () -> images.get("flaged")
-                        ),
-                        new AbstractMap.SimpleEntry<>(
-                                CellType.BOMB_WITH_FLAG,
-                                coordinate ->
-                                        (CellImage) () -> images.get("flaged")
-                        ),
-                        new AbstractMap.SimpleEntry<>(
-                                CellType.EMPTY,
-                                coordinate ->
-                                        (CellImage) () -> images.get("zero")
-                        ),
-                        new AbstractMap.SimpleEntry<>(
-                                CellType.DANGER,
-                                coordinate -> new Danger.ImageCell(
-                                        coordinate, aroundCoordinates,
-                                        bombs, images
-                                )
-                        ),
-                        new AbstractMap.SimpleEntry<>(
-                                CellType.BOMB,
-                                coordinate ->
-                                        (CellImage) () -> images.get("bomb")
-                        ),
-                        new AbstractMap.SimpleEntry<>(
-                                CellType.NO_BOMB,
-                                coordinate ->
-                                        (CellImage) () -> images.get("nobomb")
-                        ),
-                        new AbstractMap.SimpleEntry<>(
-                                CellType.EXPLODED_BOMB,
-                                coordinate ->
-                                        (CellImage) () -> images.get("bombed")
-                        )
-                ).map(),
-                panelClickListener
+        new GameFrame(
+                new BoardProperties(9, 9, 10),
+                panel(),
+                menu()
+        ).init();
+    }
 
-        );
-        //----------------------------------------------------------------------
-        final NewGame newGame = newGameFunction.apply(cellPanel);
-        //----------------------------------------------------------------------
-        final JMenuBar menu = new JMenuBar();
-        final JMenu game = menu.add(new JMenu("Игра"));
-        final JMenuItem newGameItem = game.add("Начать новую игру");
-        newGameItem.addActionListener(event -> newGame.start());
-        game.addSeparator();
-        final JMenuItem beginner = game.add("Новичок");
-        final JMenuItem intermediate = game.add("Любитель");
-        final JMenuItem expert = game.add("Профессионал");
-        final JMenuItem custom = game.add("Особый");
-        game.addSeparator();
-        final JMenuItem exit = game.add("Выход");
-        exit.addActionListener(event -> System.exit(0));
-        //----------------------------------------------------------------------
-        newGame.start();
-        new GameFrame(cellPanel, menu).init();
+    private static BiFunction<GameFrame, BoardProperties, JMenuBar> menu() {
+        return (gameFrame, boardProperties) -> {
+            final AtomicReference<BoardProperties> boardPropertiesHolder
+                    = new AtomicReference<>(boardProperties);
+            final JMenuBar menu = new JMenuBar();
+            final JMenu game = menu.add(new JMenu("Игра"));
+            final JMenuItem newGameItem = game.add("Начать новую игру");
+            final ActionListener newGameListener =
+                    event -> gameFrame.update(boardPropertiesHolder.get());
+            final Function<BoardProperties, ActionListener> actionListenerFunction
+                    = properties -> (ActionListener) e -> {
+                boardPropertiesHolder.set(properties);
+                newGameListener.actionPerformed(e);
+            };
+            newGameItem.addActionListener(newGameListener);
+            game.addSeparator();
+            game
+                    .add("Новичок")
+                    .addActionListener(actionListenerFunction.apply(
+                            new BoardProperties(9, 9, 10))
+                    );
+            game
+                    .add("Любитель")
+                    .addActionListener(actionListenerFunction.apply(
+                            new BoardProperties(16, 16, 40))
+                    );
+            game
+                    .add("Профессионал")
+                    .addActionListener(actionListenerFunction.apply(
+                            new BoardProperties(30, 16, 99))
+                    );
+            game
+                    .add("Особый")
+                    .addActionListener(actionListenerFunction.apply(
+                            new BoardProperties(40, 40, 160))
+                    );
+            game.addSeparator();
+            game
+                    .add("Выход")
+                    .addActionListener(event -> System.exit(0));
+            return menu;
+        };
+    }
+
+    private static Function<BoardProperties, JPanel> panel() {
+        return boardProperties -> {
+            final int width = boardProperties.width();
+            final int height = boardProperties.height();
+            final int bombCount = boardProperties.bombs();
+            final int imageSize = 25;
+            final CellType[][] cells = new CellType[width][height];
+            final AtomicBoolean gameFinished = new AtomicBoolean();
+            final AtomicBoolean firstClick = new AtomicBoolean();
+            final AroundCoordinates aroundCoordinates = new AroundCoordinates(
+                    new BoardCoordinates(cells)
+            );
+            final Bombs bombs = new Bombs(cells);
+            final Flags flags = new Flags(cells);
+            //----------------------------------------------------------------------
+            final Runnable fillCells = () -> Arrays.stream(cells)
+                    .forEach(cellTypes -> Arrays.fill(
+                            cellTypes, CellType.UN_OPENED)
+                    );
+            final Function<JPanel, NewGame> newGameFunction =
+                    panel -> new NewGame(Arrays.asList(
+                            fillCells,
+                            () -> gameFinished.set(false),
+                            () -> firstClick.set(true),
+                            panel::repaint
+                    ));
+            //----------------------------------------------------------------------
+            final Board gameBoard = new GameBoard(
+                    cells,
+                    openingCells(cells, gameFinished),
+                    unopenedCells(cells),
+                    checkedCells(cells)
+            );
+            //----------------------------------------------------------------------
+            final Function<JPanel, MouseListener> panelClickListener = jPanel -> new Repaint(
+                    jPanel,
+                    new GameFinished(
+                            gameFinished,
+                            newGameFunction.apply(jPanel),
+                            gameBoard,
+                            new BoardCoordinates(cells),
+                            new Victory(
+                                    bombs,
+                                    flags,
+                                    new UnopenedCells(cells),
+                                    gameFinished,
+                                    new FirstClick(
+                                            gameBoard,
+                                            imageSize,
+                                            new RandomBombs(width, height, bombCount),
+                                            firstClick,
+                                            new CellClick(gameBoard, imageSize)
+                                    )
+                            )
+                    )
+            );
+            //----------------------------------------------------------------------
+            final Map<String, Image> images = new Images(Arrays.asList(
+                    "bomb", "bombed", "closed", "flaged", "nobomb",
+                    "num1", "num2", "num3", "num4", "num5", "num6", "num7", "num8",
+                    "opened", "zero"
+            )).images();
+            final GamePanel cellPanel = new GamePanel(
+                    cells,
+                    imageSize,
+                    new BoardCoordinates(cells),
+                    new MapOf<CellType, Function<Coordinate, CellImage>>(
+                            new AbstractMap.SimpleEntry<>(
+                                    CellType.UN_OPENED,
+                                    coordinate -> (CellImage) () -> images.get("closed")
+                            ),
+                            new AbstractMap.SimpleEntry<>(
+                                    CellType.UN_OPENED_BOMB,
+                                    coordinate ->
+                                            (CellImage) () -> images.get("closed")
+                            ),
+                            new AbstractMap.SimpleEntry<>(
+                                    CellType.FLAG,
+                                    coordinate ->
+                                            (CellImage) () -> images.get("flaged")
+                            ),
+                            new AbstractMap.SimpleEntry<>(
+                                    CellType.BOMB_WITH_FLAG,
+                                    coordinate ->
+                                            (CellImage) () -> images.get("flaged")
+                            ),
+                            new AbstractMap.SimpleEntry<>(
+                                    CellType.EMPTY,
+                                    coordinate ->
+                                            (CellImage) () -> images.get("zero")
+                            ),
+                            new AbstractMap.SimpleEntry<>(
+                                    CellType.DANGER,
+                                    coordinate -> new Danger.ImageCell(
+                                            coordinate, aroundCoordinates,
+                                            bombs, images
+                                    )
+                            ),
+                            new AbstractMap.SimpleEntry<>(
+                                    CellType.BOMB,
+                                    coordinate ->
+                                            (CellImage) () -> images.get("bomb")
+                            ),
+                            new AbstractMap.SimpleEntry<>(
+                                    CellType.NO_BOMB,
+                                    coordinate ->
+                                            (CellImage) () -> images.get("nobomb")
+                            ),
+                            new AbstractMap.SimpleEntry<>(
+                                    CellType.EXPLODED_BOMB,
+                                    coordinate ->
+                                            (CellImage) () -> images.get("bombed")
+                            )
+                    ).map(),
+                    panelClickListener
+
+            );
+            //----------------------------------------------------------------------
+            final NewGame newGame = newGameFunction.apply(cellPanel);
+            cellPanel.init();
+            newGame.start();
+            return cellPanel;
+        };
     }
 
     /**
