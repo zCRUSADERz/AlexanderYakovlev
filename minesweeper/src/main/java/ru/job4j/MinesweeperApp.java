@@ -51,27 +51,17 @@ public final class MinesweeperApp {
         final Bombs bombs = new Bombs(cells);
         final Flags flags = new Flags(cells);
         //----------------------------------------------------------------------
-        final JMenuBar menu = new JMenuBar();
-        final JMenu game = menu.add(new JMenu("Игра"));
-        final JMenuItem newGameItem = game.add("Начать новую игру");
-        game.addSeparator();
-        final JMenuItem beginner = game.add("Новичок");
-        final JMenuItem intermediate = game.add("Любитель");
-        final JMenuItem expert = game.add("Профессионал");
-        final JMenuItem custom = game.add("Особый");
-        game.addSeparator();
-        final JMenuItem exit = game.add("Выход");
-        //----------------------------------------------------------------------
         final Runnable fillCells = () -> Arrays.stream(cells)
                 .forEach(cellTypes -> Arrays.fill(
                         cellTypes, CellType.UN_OPENED)
                 );
-        final Function<JPanel, NewGame> newGame = panel -> new NewGame(Arrays.asList(
-                fillCells,
-                () -> gameFinished.set(false),
-                () -> firstClick.set(true),
-                panel::repaint
-        ));
+        final Function<JPanel, NewGame> newGameFunction =
+                panel -> new NewGame(Arrays.asList(
+                        fillCells,
+                        () -> gameFinished.set(false),
+                        () -> firstClick.set(true),
+                        panel::repaint
+                ));
         //----------------------------------------------------------------------
         final Board gameBoard = new GameBoard(
                 cells,
@@ -84,7 +74,7 @@ public final class MinesweeperApp {
                 jPanel,
                 new GameFinished(
                         gameFinished,
-                        newGame.apply(jPanel),
+                        newGameFunction.apply(jPanel),
                         gameBoard,
                         new BoardCoordinates(cells),
                         new Victory(
@@ -164,7 +154,22 @@ public final class MinesweeperApp {
 
         );
         //----------------------------------------------------------------------
-        newGame.apply(cellPanel).start();
+        final NewGame newGame = newGameFunction.apply(cellPanel);
+        //----------------------------------------------------------------------
+        final JMenuBar menu = new JMenuBar();
+        final JMenu game = menu.add(new JMenu("Игра"));
+        final JMenuItem newGameItem = game.add("Начать новую игру");
+        newGameItem.addActionListener(event -> newGame.start());
+        game.addSeparator();
+        final JMenuItem beginner = game.add("Новичок");
+        final JMenuItem intermediate = game.add("Любитель");
+        final JMenuItem expert = game.add("Профессионал");
+        final JMenuItem custom = game.add("Особый");
+        game.addSeparator();
+        final JMenuItem exit = game.add("Выход");
+        exit.addActionListener(event -> System.exit(0));
+        //----------------------------------------------------------------------
+        newGame.start();
         new GameFrame(cellPanel, menu).init();
     }
 
