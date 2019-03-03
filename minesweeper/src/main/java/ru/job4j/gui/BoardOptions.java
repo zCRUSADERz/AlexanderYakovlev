@@ -11,6 +11,16 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+/**
+ * BoardOptions.
+ * Окно для ввода собственных свойств(ширина, высота, количество бомб)
+ * игровой доски.
+ * Получив валидные данные от пользователя отправляет созданный экземпляр
+ * BoardProperties по назначению. Окно при этом закрывается.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 03.03.2019
+ */
 public class BoardOptions extends JFrame {
     private final BoardProperties defaultProperties;
     private final Consumer<BoardProperties> boardPropertiesConsumer;
