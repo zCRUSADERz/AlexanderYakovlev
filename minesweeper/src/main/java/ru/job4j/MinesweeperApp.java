@@ -8,7 +8,9 @@ import ru.job4j.gui.listeners.*;
 import ru.job4j.utils.Images;
 import ru.job4j.utils.MapOf;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseListener;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Map;
@@ -36,124 +38,134 @@ public final class MinesweeperApp {
      * в единое целое и запуск приложения.
      */
     public final void start() {
-        final int width = 100;
-        final int height = 100;
-        final int bombCount = 1500;
-        final int imageSize = 10;
+        final int width = 9;
+        final int height = 9;
+        final int bombCount = 10;
+        final int imageSize = 25;
         final CellType[][] cells = new CellType[width][height];
-        final AtomicBoolean gameFinished = new AtomicBoolean(false);
-        final AtomicBoolean firstClick = new AtomicBoolean(true);
+        final AtomicBoolean gameFinished = new AtomicBoolean();
+        final AtomicBoolean firstClick = new AtomicBoolean();
+        final AroundCoordinates aroundCoordinates = new AroundCoordinates(
+                new BoardCoordinates(cells)
+        );
+        final Bombs bombs = new Bombs(cells);
+        final Flags flags = new Flags(cells);
+        //----------------------------------------------------------------------
+        final JMenuBar menu = new JMenuBar();
+        final JMenu game = menu.add(new JMenu("Игра"));
+        final JMenuItem newGameItem = game.add("Начать новую игру");
+        game.addSeparator();
+        final JMenuItem beginner = game.add("Новичок");
+        final JMenuItem intermediate = game.add("Любитель");
+        final JMenuItem expert = game.add("Профессионал");
+        final JMenuItem custom = game.add("Особый");
+        game.addSeparator();
+        final JMenuItem exit = game.add("Выход");
+        //----------------------------------------------------------------------
+        final Runnable fillCells = () -> Arrays.stream(cells)
+                .forEach(cellTypes -> Arrays.fill(
+                        cellTypes, CellType.UN_OPENED)
+                );
+        final Function<JPanel, NewGame> newGame = panel -> new NewGame(Arrays.asList(
+                fillCells,
+                () -> gameFinished.set(false),
+                () -> firstClick.set(true),
+                panel::repaint
+        ));
+        //----------------------------------------------------------------------
+        final Board gameBoard = new GameBoard(
+                cells,
+                openingCells(cells, gameFinished),
+                unopenedCells(cells),
+                checkedCells(cells)
+        );
+        //----------------------------------------------------------------------
+        final Function<JPanel, MouseListener> panelClickListener = jPanel -> new Repaint(
+                jPanel,
+                new GameFinished(
+                        gameFinished,
+                        newGame.apply(jPanel),
+                        gameBoard,
+                        new BoardCoordinates(cells),
+                        new Victory(
+                                bombs,
+                                flags,
+                                new UnopenedCells(cells),
+                                gameFinished,
+                                new FirstClick(
+                                        gameBoard,
+                                        imageSize,
+                                        new RandomBombs(width, height, bombCount),
+                                        firstClick,
+                                        new CellClick(gameBoard, imageSize)
+                                )
+                        )
+                )
+        );
+        //----------------------------------------------------------------------
         final Map<String, Image> images = new Images(Arrays.asList(
                 "bomb", "bombed", "closed", "flaged", "nobomb",
                 "num1", "num2", "num3", "num4", "num5", "num6", "num7", "num8",
                 "opened", "zero"
         )).images();
-        final Runnable fillCells = () -> Arrays.stream(cells)
-                .forEach(cellTypes -> Arrays.fill(
-                        cellTypes, CellType.UN_OPENED
-                ));
-        fillCells.run();
-        final BoardCoordinates boardCoordinates = new BoardCoordinates(cells);
-        final AroundCoordinates aroundCoordinates = new AroundCoordinates(boardCoordinates);
-        final Bombs bombs = new Bombs(cells);
-        new GameFrame(
-                new GamePanel(
-                        cells,
-                        imageSize,
-                        new BoardCoordinates(cells),
-                        new MapOf<CellType, Function<Coordinate, CellImage>>(
-                                new AbstractMap.SimpleEntry<>(
-                                        CellType.UN_OPENED,
-                                        coordinate -> (CellImage) () -> images.get("closed")
-                                ),
-                                new AbstractMap.SimpleEntry<>(
-                                        CellType.UN_OPENED_BOMB,
-                                        coordinate ->
-                                                (CellImage) () -> images.get("closed")
-                                ),
-                                new AbstractMap.SimpleEntry<>(
-                                        CellType.FLAG,
-                                        coordinate ->
-                                                (CellImage) () -> images.get("flaged")
-                                ),
-                                new AbstractMap.SimpleEntry<>(
-                                        CellType.BOMB_WITH_FLAG,
-                                        coordinate ->
-                                                (CellImage) () -> images.get("flaged")
-                                ),
-                                new AbstractMap.SimpleEntry<>(
-                                        CellType.EMPTY,
-                                        coordinate ->
-                                                (CellImage) () -> images.get("zero")
-                                ),
-                                new AbstractMap.SimpleEntry<>(
-                                        CellType.DANGER,
-                                        coordinate -> new Danger.ImageCell(
-                                                coordinate, aroundCoordinates,
-                                                bombs, images
-                                        )
-                                ),
-                                new AbstractMap.SimpleEntry<>(
-                                        CellType.BOMB,
-                                        coordinate ->
-                                                (CellImage) () -> images.get("bomb")
-                                ),
-                                new AbstractMap.SimpleEntry<>(
-                                        CellType.NO_BOMB,
-                                        coordinate ->
-                                                (CellImage) () -> images.get("nobomb")
-                                ),
-                                new AbstractMap.SimpleEntry<>(
-                                        CellType.EXPLODED_BOMB,
-                                        coordinate ->
-                                                (CellImage) () -> images.get("bombed")
+        final GamePanel cellPanel = new GamePanel(
+                cells,
+                imageSize,
+                new BoardCoordinates(cells),
+                new MapOf<CellType, Function<Coordinate, CellImage>>(
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.UN_OPENED,
+                                coordinate -> (CellImage) () -> images.get("closed")
+                        ),
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.UN_OPENED_BOMB,
+                                coordinate ->
+                                        (CellImage) () -> images.get("closed")
+                        ),
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.FLAG,
+                                coordinate ->
+                                        (CellImage) () -> images.get("flaged")
+                        ),
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.BOMB_WITH_FLAG,
+                                coordinate ->
+                                        (CellImage) () -> images.get("flaged")
+                        ),
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.EMPTY,
+                                coordinate ->
+                                        (CellImage) () -> images.get("zero")
+                        ),
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.DANGER,
+                                coordinate -> new Danger.ImageCell(
+                                        coordinate, aroundCoordinates,
+                                        bombs, images
                                 )
-                        ).map(),
-                        jPanel -> new Repaint(
-                                jPanel,
-                                new GameFinished(
-                                        gameFinished,
-                                        new NewGame(Arrays.asList(
-                                                fillCells,
-                                                () -> gameFinished.set(false),
-                                                () -> firstClick.set(true)
-                                        )),
-                                        new GameBoard(
-                                                cells,
-                                                openingCells(cells, gameFinished),
-                                                unopenedCells(cells),
-                                                checkedCells(cells)
-                                        ),
-                                        new BoardCoordinates(cells),
-                                        new Victory(
-                                                new Bombs(cells),
-                                                new Flags(cells),
-                                                new UnopenedCells(cells),
-                                                gameFinished,
-                                                new FirstClick(
-                                                        new GameBoard(
-                                                                cells,
-                                                                openingCells(cells, gameFinished),
-                                                                unopenedCells(cells),
-                                                                checkedCells(cells)
-                                                        ),
-                                                        imageSize,
-                                                        new RandomBombs(width, height, bombCount),
-                                                        firstClick,
-                                                        new CellClick(
-                                                                new GameBoard(
-                                                                        cells,
-                                                                        openingCells(cells, gameFinished),
-                                                                        unopenedCells(cells),
-                                                                        checkedCells(cells)
-                                                                ), imageSize
-                                                        )
-                                                )
-                                        )
-                                )
+                        ),
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.BOMB,
+                                coordinate ->
+                                        (CellImage) () -> images.get("bomb")
+                        ),
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.NO_BOMB,
+                                coordinate ->
+                                        (CellImage) () -> images.get("nobomb")
+                        ),
+                        new AbstractMap.SimpleEntry<>(
+                                CellType.EXPLODED_BOMB,
+                                coordinate ->
+                                        (CellImage) () -> images.get("bombed")
                         )
-                )
-        ).init();
+                ).map(),
+                panelClickListener
+
+        );
+        //----------------------------------------------------------------------
+        newGame.apply(cellPanel).start();
+        new GameFrame(cellPanel, menu).init();
     }
 
     /**
@@ -164,11 +176,11 @@ public final class MinesweeperApp {
      */
     private static CellsFactory<OpeningCell> openingCells(
             final CellType[][] cells, final AtomicBoolean gameFinished) {
-        final BoardCoordinates boardCoordinates = new BoardCoordinates(cells);
-        final AroundCoordinates aroundCoordinates = new AroundCoordinates(boardCoordinates);
+        final AroundCoordinates aroundCoordinates = new AroundCoordinates(
+                new BoardCoordinates(cells)
+        );
         final Bombs bombs = new Bombs(cells);
         final UnopenedCells unopenedCells = new UnopenedCells(cells);
-        final Flags flags = new Flags(cells);
         return new CellsFactory<>(
                 cells,
                 new MapOf<CellType, BiFunction<Board, Coordinate, OpeningCell>>(
@@ -196,12 +208,13 @@ public final class MinesweeperApp {
                                 CellType.DANGER,
                                 (gameBoard, coordinate) -> new Danger.Opening(
                                         coordinate, aroundCoordinates, gameBoard,
-                                        flags, bombs, unopenedCells
+                                        new Flags(cells), bombs, unopenedCells
                                 )
                         )
                 ).map(),
                 (gameBoard, coordinate) ->
-                        () -> { }
+                        () -> {
+                        }
         );
     }
 
@@ -245,7 +258,8 @@ public final class MinesweeperApp {
                         )
                 ).map(),
                 (gameBoard, coordinate) ->
-                        () -> { }
+                        () -> {
+                        }
         );
     }
 
@@ -282,7 +296,8 @@ public final class MinesweeperApp {
                         )
                 ).map(),
                 (gameBoard, coordinate) ->
-                        () -> { }
+                        () -> {
+                        }
         );
     }
 }
