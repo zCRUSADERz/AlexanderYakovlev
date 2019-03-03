@@ -41,14 +41,16 @@ public final class MinesweeperApp {
      * в единое целое и запуск приложения.
      */
     public final void start() {
+        final BoardProperties defaultProperties = new BoardProperties(9, 9, 10);
         new GameFrame(
-                new BoardProperties(9, 9, 10),
+                defaultProperties,
                 panel(),
-                menu()
+                menu(defaultProperties)
         ).init();
     }
 
-    private static BiFunction<GameFrame, BoardProperties, JMenuBar> menu() {
+    private static BiFunction<GameFrame, BoardProperties, JMenuBar> menu(
+            final BoardProperties defaultProperties) {
         return (gameFrame, boardProperties) -> {
             final AtomicReference<BoardProperties> boardPropertiesHolder
                     = new AtomicReference<>(boardProperties);
@@ -81,7 +83,15 @@ public final class MinesweeperApp {
                     );
             game
                     .add("Особый")
-                    .addActionListener(event -> new BoardOptions().init());
+                    .addActionListener(event ->
+                            new BoardOptions(
+                                    defaultProperties,
+                                    properties -> {
+                                        boardPropertiesHolder.set(properties);
+                                        gameFrame.update(properties);
+                                    }
+                            ).init()
+                    );
             game.addSeparator();
             game
                     .add("Выход")
