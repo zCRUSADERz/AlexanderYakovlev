@@ -2,6 +2,7 @@ package ru.job4j;
 
 import ru.job4j.cells.*;
 import ru.job4j.coordinates.*;
+import ru.job4j.gui.BoardOptions;
 import ru.job4j.gui.GameFrame;
 import ru.job4j.gui.GamePanel;
 import ru.job4j.gui.listeners.*;
@@ -80,9 +81,7 @@ public final class MinesweeperApp {
                     );
             game
                     .add("Особый")
-                    .addActionListener(actionListenerFunction.apply(
-                            new BoardProperties(40, 40, 160))
-                    );
+                    .addActionListener(event -> new BoardOptions().init());
             game.addSeparator();
             game
                     .add("Выход")
