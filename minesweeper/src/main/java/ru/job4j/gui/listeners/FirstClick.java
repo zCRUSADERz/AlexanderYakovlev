@@ -40,7 +40,7 @@ public final class FirstClick extends MouseAdapter {
      * @param e MouseEvent.
      */
     @Override
-    public final void mouseClicked(final MouseEvent e) {
+    public final void mouseReleased(final MouseEvent e) {
         if (this.firstClick.get()) {
             this.firstClick.set(false);
             final Coordinate clickedCoordinate = new Coordinate(
@@ -51,6 +51,6 @@ public final class FirstClick extends MouseAdapter {
                 this.board.replace(coordinate, CellType.UN_OPENED_BOMB);
             }
         }
-        this.origin.mouseClicked(e);
+        this.origin.mouseReleased(e);
     }
 }

@@ -28,7 +28,7 @@ public final class CellClick extends MouseAdapter {
      * @param e MouseEvent.
      */
     @Override
-    public final void mouseClicked(final MouseEvent e) {
+    public final void mouseReleased(final MouseEvent e) {
         final Coordinate coordinate = new Coordinate(
                 e.getX() / this.imageSize,
                 e.getY() / this.imageSize

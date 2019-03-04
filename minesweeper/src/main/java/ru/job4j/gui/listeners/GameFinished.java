@@ -37,11 +37,11 @@ public final class GameFinished extends MouseAdapter {
      * @param e MouseEvent.
      */
     @Override
-    public final void mouseClicked(final MouseEvent e) {
+    public final void mouseReleased(final MouseEvent e) {
         if (this.gameFinished.get()) {
             this.newGame.start();
         } else {
-            this.origin.mouseClicked(e);
+            this.origin.mouseReleased(e);
             if (this.gameFinished.get()) {
                 this.boardCoordinates.coordinates().forEach(this.board::check);
             }

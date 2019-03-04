@@ -25,8 +25,8 @@ public final class Repaint extends MouseAdapter {
      * @param e MouseEvent.
      */
     @Override
-    public final void mouseClicked(final MouseEvent e) {
-        this.origin.mouseClicked(e);
+    public final void mouseReleased(final MouseEvent e) {
+        this.origin.mouseReleased(e);
         this.panel.repaint();
     }
 }

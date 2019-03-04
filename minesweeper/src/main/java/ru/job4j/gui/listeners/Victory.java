@@ -37,8 +37,8 @@ public final class Victory extends MouseAdapter {
      * @param e MouseEvent.
      */
     @Override
-    public final void mouseClicked(final MouseEvent e) {
-        this.origin.mouseClicked(e);
+    public final void mouseReleased(final MouseEvent e) {
+        this.origin.mouseReleased(e);
         final int bombCount = this.bombs.count();
         final int flags = this.flags.count();
         final int unopened = this.unopenedCells.count();
