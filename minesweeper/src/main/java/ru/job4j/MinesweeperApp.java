@@ -12,6 +12,7 @@ import ru.job4j.utils.MapOf;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Map;
@@ -51,6 +52,7 @@ public final class MinesweeperApp {
      * Сборка меню для основного фрейма игры.
      * Изменяющееся состояние для меню - boardPropertiesHolder хранящее
      * в себе прошлые настройки игрового поля. Все остальные объекты Immutable.
+     *
      * @return функцию для создания объекта JMenuBar.
      */
     private static BiFunction<GameFrame, BoardProperties, JMenuBar> menu() {
@@ -113,6 +115,7 @@ public final class MinesweeperApp {
      * 3. AtomicBoolean firstClick. Значение true означает, что в текущем
      * раунде все поле закрыто и бомбы не раставлены по игровому полю.
      * Все остальные объекты Immutable.
+     *
      * @return функцию принимающую параметры игровой доски и возвращающую
      * игровую доску с этими параметрами.
      */
@@ -140,45 +143,46 @@ public final class MinesweeperApp {
             bombsField.setForeground(Color.RED);
             bombsField.setEditable(false);
             //------------------------------------------------------------------
+            final Icon okIcon = new ImageIcon(
+                    MinesweeperApp.class.getResource(
+                            "/img/new game.gif"
+                    )
+            );
+            final JButton reset = new JButton("", okIcon);
+            reset.setBorder(BorderFactory.createLoweredBevelBorder());
+            //------------------------------------------------------------------
             final Function<JPanel, NewGame> newGameFactory =
                     panel -> new NewGame(Arrays.asList(
                             fillCells,
                             () -> gameFinished.set(false),
                             () -> firstClick.set(true),
                             () -> bombsField.setText(Integer.toString(bombCount)),
+                            () -> reset.setIcon(okIcon),
                             panel::repaint
-
                     ));
-            //------------------------------------------------------------------
-            final JButton reset = new JButton(
-                    "",
-                    new ImageIcon(
-                            MinesweeperApp.class.getResource(
-                                    "/img/new game.gif"
-                            )
-                    ));
-            reset.setBorder(BorderFactory.createLoweredBevelBorder());
             //------------------------------------------------------------------
             final Board gameBoard = new GameBoard(
                     cells,
-                    openingCells(cells, gameFinished, reset),
+                    openingCells(cells, gameFinished, reset, boardProperties),
                     unopenedCells(cells),
                     checkedCells(cells)
             );
+            final Bombs bombs = new Bombs(cells, bombCount);
+            final Flags flags = new Flags(cells);
             //------------------------------------------------------------------
-            final GamePanel cellPanel = new GamePanel(
-                    cells,
-                    imageSize,
-                    new BoardCoordinates(cells),
-                    cellImageFactory(cells),
-                    jPanel -> new MousePressed(
-                            reset,
-                            new ImageIcon(
-                                    MinesweeperApp.class.getResource("/img/press.gif")
-                            ),
-                            new ImageIcon(
-                                    MinesweeperApp.class.getResource("/img/new game.gif")
-                            ),
+            final Function<JPanel, MouseListener> mouseListenerFactory
+                    = jPanel -> new MousePressed(
+                    reset,
+                    new ImageIcon(
+                            MinesweeperApp.class.getResource("/img/press.gif")
+                    ),
+                    new ImageIcon(
+                            MinesweeperApp.class.getResource("/img/new game.gif")
+                    ),
+                    new FlagsCounter(
+                            bombsField,
+                            flags,
+                            bombs,
                             new Repaint(
                                     jPanel,
                                     new GameFinished(
@@ -187,8 +191,8 @@ public final class MinesweeperApp {
                                             gameBoard,
                                             new BoardCoordinates(cells),
                                             new Victory(
-                                                    new Bombs(cells),
-                                                    new Flags(cells),
+                                                    bombs,
+                                                    flags,
                                                     new UnopenedCells(cells),
                                                     gameFinished,
                                                     new FirstClick(
@@ -203,7 +207,17 @@ public final class MinesweeperApp {
                             )
                     )
             );
-            newGameFactory.apply(cellPanel).start();
+            //------------------------------------------------------------------
+            final GamePanel cellPanel = new GamePanel(
+                    cells,
+                    imageSize,
+                    new BoardCoordinates(cells),
+                    cellImageFactory(cells, boardProperties),
+                    mouseListenerFactory
+            );
+            final NewGame newGame = newGameFactory.apply(cellPanel);
+            reset.addActionListener(event -> newGame.start());
+            newGame.start();
             cellPanel.init();
             //------------------------------------------------------------------
             final JTextField timeField = new JTextField("000", 3);
@@ -243,16 +257,17 @@ public final class MinesweeperApp {
 
     /**
      * Возвращает фабрику ячеек, которые еще не были открыты.
+     *
      * @param cells массив ячеек содержащий их текущее состояние.
      * @return CellsFactory<OpeningCell>
      */
     private static CellsFactory<OpeningCell> openingCells(
             final CellType[][] cells, final AtomicBoolean gameFinished,
-            final JButton reset) {
+            final JButton reset, final BoardProperties boardProperties) {
         final AroundCoordinates aroundCoordinates = new AroundCoordinates(
                 new BoardCoordinates(cells)
         );
-        final Bombs bombs = new Bombs(cells);
+        final Bombs bombs = new Bombs(cells, boardProperties.bombs());
         final UnopenedCells unopenedCells = new UnopenedCells(cells);
         return new CellsFactory<>(
                 cells,
@@ -298,6 +313,7 @@ public final class MinesweeperApp {
 
     /**
      * Возвращает фабрику ячеек, которые можно помечать флажком.
+     *
      * @param cells массив ячеек содержащий их текущее состояние.
      * @return CellsFactory<UnopenedCell>
      */
@@ -341,6 +357,7 @@ public final class MinesweeperApp {
 
     /**
      * Возвращает фабрику ячеек, которые реализуют интерфейс CheckedCell.
+     *
      * @param cells массив ячеек содержащий их текущее состояние.
      * @return CellsFactory<CheckedCell>
      */
@@ -361,13 +378,6 @@ public final class MinesweeperApp {
                                         coordinate,
                                         gameBoard
                                 )
-                        ),
-                        new AbstractMap.SimpleEntry<>(
-                                CellType.BOMB_WITH_FLAG,
-                                (gameBoard, coordinate) -> new MarkedBomb(
-                                        coordinate,
-                                        gameBoard
-                                )
                         )
                 ).map(),
                 (gameBoard, coordinate) -> () -> {
@@ -378,11 +388,12 @@ public final class MinesweeperApp {
     /**
      * Возвращает карту, в которой каждому типу ячейки присвоена
      * функция(фабрика) возвращающая реализацию интерфейса CellImage.
+     *
      * @param cells массив ячеек содержащий их текущее состояние.
      * @return карту CellType -> фабрика CellImage.
      */
     private static Map<CellType, Function<Coordinate, CellImage>> cellImageFactory(
-            final CellType[][] cells) {
+            final CellType[][] cells, final BoardProperties boardProperties) {
         final Map<String, Image> images = new Images(Arrays.asList(
                 "bomb", "bombed", "closed", "flaged", "nobomb",
                 "num1", "num2", "num3", "num4", "num5", "num6", "num7", "num8",
@@ -391,7 +402,7 @@ public final class MinesweeperApp {
         final AroundCoordinates aroundCoordinates = new AroundCoordinates(
                 new BoardCoordinates(cells)
         );
-        final Bombs bombs = new Bombs(cells);
+        final Bombs bombs = new Bombs(cells, boardProperties.bombs());
         return new MapOf<CellType, Function<Coordinate, CellImage>>(
                 new AbstractMap.SimpleEntry<>(
                         CellType.UN_OPENED,

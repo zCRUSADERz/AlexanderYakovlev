@@ -12,9 +12,11 @@ import java.util.stream.Stream;
  */
 public final class Bombs {
     private final CellType[][] cells;
+    private final int count;
 
-    public Bombs(final CellType[][] cells) {
+    public Bombs(final CellType[][] cells, final int count) {
         this.cells = cells;
+        this.count = count;
     }
 
     public final Stream<Coordinate> coordinates(
@@ -37,15 +39,7 @@ public final class Bombs {
      * @return общее количество бомб.
      */
     public final int count() {
-        int result = 0;
-        for (CellType[] cellTypes : this.cells) {
-            for (CellType type : cellTypes) {
-                if (this.isBomb(type)) {
-                    result++;
-                }
-            }
-        }
-        return result;
+        return this.count;
     }
 
     private boolean isBomb(final CellType type) {
