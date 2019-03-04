@@ -174,7 +174,52 @@ public final class MinesweeperApp {
             );
             newGameFactory.apply(cellPanel).start();
             cellPanel.init();
-            return cellPanel;
+            //------------------------------------------------------------------
+            final JTextField bombsField = new JTextField("" + bombCount, 3);
+            bombsField.setBorder(BorderFactory.createLoweredBevelBorder());
+            bombsField.setFont(new Font("DigtalFont.TTF", Font.BOLD, 25));
+            bombsField.setBackground(Color.BLACK);
+            bombsField.setForeground(Color.RED);
+            bombsField.setEditable(false);
+            //------------------------------------------------------------------
+            final JTextField timeField = new JTextField("000", 3);
+            timeField.setEditable(false);
+            timeField.setFont(new Font("DigtalFont.TTF", Font.BOLD, 25));
+            timeField.setBackground(Color.BLACK);
+            timeField.setForeground(Color.RED);
+            timeField.setBorder(BorderFactory.createLoweredBevelBorder());
+            //------------------------------------------------------------------
+            final JButton reset = new JButton("");
+            reset.setIcon(new ImageIcon(
+                    MinesweeperApp.class.getResource("/img/new game.gif")
+            ));
+            reset.setBorder(BorderFactory.createLoweredBevelBorder());
+            //------------------------------------------------------------------
+            final JPanel infoPanel = new JPanel(
+                    new FlowLayout(FlowLayout.CENTER, 0, 0)
+            );
+            infoPanel.setLayout(new BorderLayout());
+            infoPanel.add(timeField, BorderLayout.WEST);
+            infoPanel.add(reset, BorderLayout.CENTER);
+            infoPanel.add(bombsField, BorderLayout.EAST);
+            infoPanel.setBorder(BorderFactory.createLoweredBevelBorder());
+            //------------------------------------------------------------------
+            final JPanel boardBorder = new JPanel(
+                    new FlowLayout(FlowLayout.CENTER, 0, 0)
+            );
+            boardBorder.setBorder(
+                    BorderFactory.createCompoundBorder(
+                            BorderFactory.createEmptyBorder(10, 10, 10, 10),
+                            BorderFactory.createLoweredBevelBorder()
+                    )
+            );
+            boardBorder.add(cellPanel);
+            //------------------------------------------------------------------
+            final JPanel panel = new JPanel();
+            panel.setLayout(new BorderLayout());
+            panel.add(infoPanel, BorderLayout.NORTH);
+            panel.add(boardBorder, BorderLayout.CENTER);
+            return panel;
         };
     }
 

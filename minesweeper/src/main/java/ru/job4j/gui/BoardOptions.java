@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 /**
  * BoardOptions.
@@ -78,8 +77,8 @@ public class BoardOptions extends JFrame {
 
         @Override
         public final void actionPerformed(final ActionEvent e) {
-            final Predicate<String> digitValidator
-                    = Pattern.compile("^\\d+$").asMatchPredicate();
+            final Predicate<String> digitValidator =
+                    text -> text.matches("^\\d{1,9}$");
             boolean error = true;
             if (digitValidator.test(this.widthField.getText())
                     && digitValidator.test(this.heightField.getText())
