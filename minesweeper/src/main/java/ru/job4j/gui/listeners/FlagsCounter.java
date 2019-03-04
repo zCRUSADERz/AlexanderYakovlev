@@ -8,6 +8,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+/**
+ * FlagsCounter.
+ * Счетчик установленных флагов на поле. Результат записывается в
+ * соответствующее текстовое поле.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 2.03.2019
+ */
 public class FlagsCounter extends MouseAdapter {
     private final JTextField bombsField;
     private final Flags flags;

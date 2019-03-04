@@ -5,6 +5,12 @@ import ru.job4j.NewGame;
 import javax.swing.*;
 import java.util.function.Function;
 
+/**
+ * ResetButton.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 04.03.2019
+ */
 public class ResetButton extends JButton {
     private final Function<JPanel, NewGame> newGameFactory;
     private final Icon icon;

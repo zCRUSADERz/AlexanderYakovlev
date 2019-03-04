@@ -13,6 +13,7 @@ import java.util.function.Function;
 
 /**
  * BoardPanel.
+ * Панель с ячейками.
  *
  * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
  * @since 01.03.2019

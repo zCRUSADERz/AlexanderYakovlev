@@ -3,6 +3,12 @@ package ru.job4j.gui;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * TimerField.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 04.03.2019
+ */
 public class TimerField extends JTextField {
 
     public TimerField() {

@@ -3,6 +3,15 @@ package ru.job4j.gui;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * InfoPanel.
+ * Информационная панель с двумя текстовыми полями(прошедшее время с начала
+ * раунда, необходимое количество флажков для покрытия всех бомб), и кнопкой
+ * рестарта раунда.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 04.03.2019
+ */
 public class InfoPanel extends JPanel {
     private final TimerField timeField;
     private final ResetButton reset;

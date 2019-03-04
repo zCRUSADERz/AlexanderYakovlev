@@ -6,6 +6,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.function.Function;
 
+/**
+ * GamePanel.
+ * Основная игровая панель.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 04.03.2019
+ */
 public class GamePanel extends JPanel {
     private final InfoPanel infoPanel;
     private final BoardPanel boardPanel;
@@ -31,6 +38,9 @@ public class GamePanel extends JPanel {
         this.worker.start();
     }
 
+    /**
+     * Закрывает все процессы связанные с этой игровой панелью.
+     */
     public final void destroy() {
         this.worker.interrupt();
     }

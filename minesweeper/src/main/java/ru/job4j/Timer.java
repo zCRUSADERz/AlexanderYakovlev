@@ -4,6 +4,12 @@ import javax.swing.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Timer.
+ *
+ * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
+ * @since 04.03.2019
+ */
 public class Timer implements Runnable {
     private final JTextField timeField;
     private final AtomicLong startedTime;
@@ -16,6 +22,10 @@ public class Timer implements Runnable {
         this.gameFinished = gameFinished;
     }
 
+    /**
+     * Обновляет текстовое поле каждые 100 миллисекунд. Записывает время
+     * прошедшее с начала текущего раунда.
+     */
     @Override
     public final void run() {
         while (!Thread.interrupted()) {
