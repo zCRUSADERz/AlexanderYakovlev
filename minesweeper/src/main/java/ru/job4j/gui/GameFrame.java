@@ -3,6 +3,7 @@ package ru.job4j.gui;
 import ru.job4j.BoardProperties;
 
 import javax.swing.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -15,12 +16,13 @@ import java.util.function.Function;
 public class GameFrame extends JFrame {
     private final BoardProperties defaultBoardProperties;
     private final BiFunction<GameFrame, BoardProperties, JMenuBar> menuFactory;
-    private final Function<BoardProperties, JPanel> panelFactory;
-
+    private final Function<BoardProperties, GamePanel> panelFactory;
+    private final AtomicReference<GamePanel> panelHolder
+            = new AtomicReference<>();
 
     public GameFrame(
             final BoardProperties defaultBoardProperties,
-            final Function<BoardProperties, JPanel> panelFactory,
+            final Function<BoardProperties, GamePanel> panelFactory,
             final BiFunction<GameFrame, BoardProperties, JMenuBar> menuFactory) {
         super("Minesweeper");
         this.defaultBoardProperties = defaultBoardProperties;
@@ -40,7 +42,12 @@ public class GameFrame extends JFrame {
                 ).getImage()
         );
         this.setLocationRelativeTo(null);
-        update(this.defaultBoardProperties);
+        final GamePanel panel = this.panelFactory.apply(
+                this.defaultBoardProperties
+        );
+        this.panelHolder.set(panel);
+        this.add(panel);
+        this.pack();
         this.setVisible(true);
     }
 
@@ -50,7 +57,11 @@ public class GameFrame extends JFrame {
      */
     public void update(final BoardProperties boardProperties) {
         this.getContentPane().removeAll();
-        this.add(this.panelFactory.apply(boardProperties));
+        final GamePanel panel = this.panelHolder.getAndSet(
+                this.panelFactory.apply(boardProperties)
+        );
+        panel.destroy();
+        this.add(this.panelHolder.get());
         this.pack();
     }
 }

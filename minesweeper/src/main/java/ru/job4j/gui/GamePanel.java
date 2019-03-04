@@ -1,72 +1,37 @@
 package ru.job4j.gui;
 
-import ru.job4j.cells.CellImage;
-import ru.job4j.cells.CellType;
-import ru.job4j.coordinates.BoardCoordinates;
-import ru.job4j.coordinates.Coordinate;
+import ru.job4j.NewGame;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseListener;
-import java.util.Map;
 import java.util.function.Function;
 
-/**
- * GamePanel.
- *
- * @author Alexander Yakovlev (sanyakovlev@yandex.ru)
- * @since 01.03.2019
- */
-public final class GamePanel extends JPanel {
-    private final CellType[][] cells;
-    private final int imageSize;
-    private final BoardCoordinates boardCoordinates;
-    private final Map<CellType, Function<Coordinate, CellImage>> viewsFactory;
-    private final Function<JPanel, MouseListener> listenerFactory;
+public class GamePanel extends JPanel {
+    private final InfoPanel infoPanel;
+    private final BoardPanel boardPanel;
+    private final Function<JPanel, NewGame> newGameFactory;
+    private final Thread worker;
 
-    public GamePanel(
-            final CellType[][] cells, final int imageSize,
-            final BoardCoordinates boardCoordinates,
-            final Map<CellType, Function<Coordinate, CellImage>> viewsFactory,
-            final Function<JPanel, MouseListener> listenerFactory) {
-        this.cells = cells;
-        this.imageSize = imageSize;
-        this.boardCoordinates = boardCoordinates;
-        this.viewsFactory = viewsFactory;
-        this.listenerFactory = listenerFactory;
+    public GamePanel(final InfoPanel infoPanel, final BoardPanel boardPanel,
+                     final Function<JPanel, NewGame> newGameFactory,
+                     final Thread worker) {
+        super(new BorderLayout());
+        this.infoPanel = infoPanel;
+        this.boardPanel = boardPanel;
+        this.newGameFactory = newGameFactory;
+        this.worker = worker;
     }
 
     public final void init() {
-        this.setPreferredSize(
-                new Dimension(
-                        this.cells.length * this.imageSize,
-                        this.cells[0].length * this.imageSize
-                )
-        );
-        this.addMouseListener(this.listenerFactory.apply(this));
+        this.infoPanel.init(this);
+        this.boardPanel.init();
+        this.add(infoPanel, BorderLayout.NORTH);
+        this.add(boardPanel, BorderLayout.CENTER);
+        this.newGameFactory.apply(this).start();
+        this.worker.start();
     }
 
-    /**
-     * Отрисовка игрового поля.
-     * @param g Graphics.
-     */
-    @Override
-    protected final void paintComponent(final Graphics g) {
-        super.paintComponent(g);
-        this.boardCoordinates.coordinates().forEach(coordinate -> {
-            final CellType cellType = this.cells[coordinate.x()][coordinate.y()];
-            final Image image = this.viewsFactory
-                    .get(cellType)
-                    .apply(coordinate)
-                    .image();
-            g.drawImage(
-                    image,
-                    coordinate.x() * this.imageSize,
-                    coordinate.y() * this.imageSize,
-                    this.imageSize,
-                    this.imageSize,
-                    this
-            );
-        });
+    public final void destroy() {
+        this.worker.interrupt();
     }
 }
