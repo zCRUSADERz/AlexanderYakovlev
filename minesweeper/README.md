@@ -1,9 +1,9 @@
 # Minesweeper
 
 <p align="middle">
-  <img src="../images/Minesweeper.png" />  
-  <img src="../images/Minesweeper-2.png" /> 
-  <img src="../images/Minesweeper-3.png" /> 
+  <img src="../minesweeper/images/Minesweeper.png" />  
+  <img src="../minesweeper/images/Minesweeper-2.png" /> 
+  <img src="../minesweeper/images/Minesweeper-3.png" /> 
 </p>
 
 ## How to play
