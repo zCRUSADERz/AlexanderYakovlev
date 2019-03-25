@@ -106,7 +106,7 @@ public class Game {
     private boolean isLockedStartPosition(ReentrantLock[][] locks, Collection<Position> heroPositions) {
         boolean result = true;
         for (Position pos : heroPositions) {
-            if (pos.getArrElement(locks).isLocked()) {
+            if (!pos.getArrElement(locks).isLocked()) {
                 result = false;
             }
         }
