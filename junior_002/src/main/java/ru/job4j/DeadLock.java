@@ -69,9 +69,7 @@ public class DeadLock {
 
         @Override
         public String toString() {
-            return "SomeObject{" +
-                    "name='" + name + '\'' +
-                    '}';
+            return "SomeObject{" + "name='" + this.name + '\'' + '}';
         }
     }
 }
