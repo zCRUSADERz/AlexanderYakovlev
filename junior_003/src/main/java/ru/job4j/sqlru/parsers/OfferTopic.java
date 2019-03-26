@@ -9,15 +9,19 @@ import ru.job4j.sqlru.utils.SimpleDate;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.function.Function;
 
 public class OfferTopic {
     private final String url;
     private final SimpleDate updated;
+    private final Function<String, Date> sqlRuDate;
     private final Logger logger = Logger.getLogger(OfferTopic.class);
 
-    public OfferTopic(final String url, final SimpleDate updated) {
+    public OfferTopic(final String url, final SimpleDate updated,
+                      final Function<String, Date> sqlRuDate) {
         this.url = url;
         this.updated = updated;
+        this.sqlRuDate = sqlRuDate;
     }
 
     public boolean isUpdatedLaterThan(Date date) {
@@ -41,7 +45,7 @@ public class OfferTopic {
                     .substring(0, createdLine.indexOf("["))
                     .trim();
             SimpleDate created = new SimpleDate(
-                    new DateParser(createdLine).parse()
+                    this.sqlRuDate.apply(createdLine)
             );
             return new Offer(id, title, text, created, url);
         } catch (IOException e) {

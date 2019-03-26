@@ -2,13 +2,18 @@ package ru.job4j.sqlru.parsers;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 public class DateParser {
     private final String dateLine;
+    private final SimpleDateFormat dateFormat;
 
-    public DateParser(final String dateLine) {
+    public DateParser(final String dateLine, final SimpleDateFormat dateFormat) {
         this.dateLine = dateLine;
+        this.dateFormat = dateFormat;
     }
 
     /**
@@ -29,17 +34,13 @@ public class DateParser {
             today.roll(Calendar.DAY_OF_MONTH, false);
             result = today.getTime();
         } else {
-            String pattern = "d MMM yy, HH:mm";
             try {
-                result = new SimpleDateFormat(
-                        pattern,
-                        new Locale("ru")
-                ).parse(this.dateLine);
+                result = this.dateFormat.parse(this.dateLine);
             } catch (ParseException e) {
                 throw new IllegalStateException(
                         String.format(
                                 "Wrong date format, parse error.%nPattern: %s, dateString: %s.",
-                                pattern, this.dateLine
+                                this.dateFormat.toPattern(), this.dateLine
                         ), e
                 );
             }

@@ -1,20 +1,29 @@
 package ru.job4j.sqlru;
 
 import org.apache.log4j.Logger;
-import org.quartz.*;
-import ru.job4j.sqlru.offers.*;
-import ru.job4j.sqlru.parsers.SqlRuTopicParser;
-import ru.job4j.sqlru.parsers.filters.TopicsUpdatedNotEarlierThan;
-import ru.job4j.sqlru.store.SimpleOfferStore;
-import ru.job4j.sqlru.store.SqlRuAppDB;
+import org.quartz.Job;
+import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import ru.job4j.sqlru.offers.JavaOffers;
+import ru.job4j.sqlru.offers.OffersSaveToStore;
 import ru.job4j.sqlru.offers.filters.OffersCreatedNotEarlierThan;
 import ru.job4j.sqlru.offers.filters.OffersNotExistingInStore;
 import ru.job4j.sqlru.offers.filters.SpecificOffers;
+import ru.job4j.sqlru.parsers.DateParser;
 import ru.job4j.sqlru.parsers.SqlRuOffersParser;
+import ru.job4j.sqlru.parsers.SqlRuTopicParser;
+import ru.job4j.sqlru.parsers.filters.TopicsUpdatedNotEarlierThan;
 import ru.job4j.sqlru.store.OfferStore;
+import ru.job4j.sqlru.store.SimpleOfferStore;
+import ru.job4j.sqlru.store.SqlRuAppDB;
 import ru.job4j.sqlru.utils.Config;
 
-import java.util.*;
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
 /**
  * Задача сбора Java вакансий.
@@ -31,6 +40,17 @@ public class SqlRuJob implements Job {
         this.logger.info(String.format("SqlRuJob run. %s", new Date()));
         JobDataMap data = jobExecutionContext.getJobDetail().getJobDataMap();
         Date createdNotEarlierThan = getSearchDate(data);
+        DateFormatSymbols dfs = DateFormatSymbols.getInstance(
+                new Locale("ru")
+        );
+        dfs.setShortMonths(new String[]{
+                "янв", "фев", "мар", "апр", "май", "июн",
+                "июл", "авг", "сен", "окт", "ноя", "дек"});
+        SimpleDateFormat sdf = new SimpleDateFormat(
+                "dd MMM yy, HH:mm",
+                new Locale("ru")
+        );
+        sdf.setDateFormatSymbols(dfs);
         try (OfferStore store = new SimpleOfferStore(
                 new SqlRuAppDB((Config) data.get("config")).getConnection())) {
             new OffersSaveToStore<>(
@@ -39,7 +59,11 @@ public class SqlRuJob implements Job {
                                     new OffersCreatedNotEarlierThan(
                                             new SqlRuOffersParser(
                                                     new TopicsUpdatedNotEarlierThan(
-                                                            new SqlRuTopicParser(),
+                                                            new SqlRuTopicParser(
+                                                                    date -> new DateParser(
+                                                                            date, sdf
+                                                                    ).parse()
+                                                            ),
                                                             createdNotEarlierThan
                                                     )
                                             ), createdNotEarlierThan

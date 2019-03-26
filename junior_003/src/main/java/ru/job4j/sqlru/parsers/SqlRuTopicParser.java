@@ -8,15 +8,22 @@ import org.jsoup.select.Elements;
 import ru.job4j.sqlru.utils.SimpleDate;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.Function;
 
 public class SqlRuTopicParser implements Iterable<OfferTopic> {
+    private final Function<String, Date> sqlRuDate;
     private final Logger logger = Logger.getLogger(SqlRuTopicParser.class);
+
+    public SqlRuTopicParser(final Function<String, Date> sqlRuDate) {
+        this.sqlRuDate = sqlRuDate;
+    }
 
     @Override
     public Iterator<OfferTopic> iterator() {
-        return new OfferTopicsIterator(new PagesIterator());
+        return new OfferTopicsIterator(new PagesIterator(), sqlRuDate);
     }
 
     private Elements parseNextPage(String url) throws ParseException {
@@ -34,7 +41,7 @@ public class SqlRuTopicParser implements Iterable<OfferTopic> {
     }
 
     private static Elements justOfferTopics(Elements allTopic) {
-        Boolean offersWithInfoTopics = true;
+        boolean offersWithInfoTopics = true;
         do {
             Element nextTopic = allTopic.first();
             String topicTitle = nextTopic.selectFirst("td.postslisttopic").text();
@@ -108,13 +115,16 @@ public class SqlRuTopicParser implements Iterable<OfferTopic> {
          * Links elements on page iterator.
          */
         private Iterator<Element> offerTopics;
+        private final Function<String, Date> sqlRuDate;
         /**
          * true, if loaded next page.
          */
         private boolean loaded = false;
 
-        public OfferTopicsIterator(final Iterator<Elements> pagesIterator) {
+        public OfferTopicsIterator(final Iterator<Elements> pagesIterator,
+                                   final Function<String, Date> sqlRuDate) {
             this.pagesIterator = pagesIterator;
+            this.sqlRuDate = sqlRuDate;
         }
 
         @Override
@@ -137,7 +147,12 @@ public class SqlRuTopicParser implements Iterable<OfferTopic> {
                 this.loaded = false;
             }
             return new OfferTopic(
-                    url, new SimpleDate(new DateParser(updated).parse()));
+                    url,
+                    new SimpleDate(
+                            this.sqlRuDate.apply(updated)
+                    ),
+                    this.sqlRuDate
+            );
         }
 
         private void loadNextLinks() {
