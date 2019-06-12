@@ -76,10 +76,4 @@
         <filter-name>AuthFilter</filter-name>
         <url-pattern>/users/*</url-pattern>
     </filter-mapping>
-
-    <listener>
-        <listener-class>ru.job4j.DBInitializeContextListener</listener-class>
-    </listener>
-
-
 </web-app>
