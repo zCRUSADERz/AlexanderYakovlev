@@ -26,11 +26,11 @@
     <div class="main">
         <div class="field">
             <label for="login">User name</label>
-            <input type="text" id="login" name="login" value="${login}"/>
+            <input type="text" id="login" name="login" value="${param.login}"/>
         </div>
         <div class="field">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" value="${password}" />
+            <input type="password" id="password" name="password" value="${param.password}" />
         </div>
         <div class="field">
             <input type="submit" value="Sign in">

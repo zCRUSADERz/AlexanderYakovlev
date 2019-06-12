@@ -29,12 +29,11 @@ public class SigningServlet extends HttpServlet {
                 req.getParameter("login"),
                 req.getParameter("password")
         );
-        req.setAttribute("login", userCredentials.getLogin());
-        req.setAttribute("password", userCredentials.getPassword());
+
         try {
-            final Optional<User> optUser = userService.isCredentials(userCredentials);
+            final Optional<User> optUser = this.userService.isCredentials(userCredentials);
             if (optUser.isPresent()) {
-                HttpSession session = req.getSession();
+                final HttpSession session = req.getSession();
                 session.setAttribute("userId", optUser.get().getId());
                 resp.sendRedirect(req.getContextPath() + "/users/list");
             } else {
